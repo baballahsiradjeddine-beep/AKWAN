@@ -174,7 +174,13 @@ export default function AdminLayout() {
                         </div>
                       ))}
                     </div>
-                    <button className="w-full p-4 text-sm font-bold text-brand-primary hover:bg-slate-50 transition-colors border-t border-slate-100">
+                    <button 
+                      onClick={() => {
+                        setShowNotifications(false);
+                        navigate('/admin/orders'); // Assuming this is where notifications lead
+                      }}
+                      className="w-full p-4 text-sm font-bold text-brand-primary hover:bg-slate-50 transition-colors border-t border-slate-100"
+                    >
                       عرض جميع الإشعارات
                     </button>
                   </motion.div>
@@ -209,20 +215,6 @@ export default function AdminLayout() {
                     <div className="p-5 border-b border-slate-100 bg-slate-50/50">
                       <p className="text-sm font-black text-slate-800">أهلاً بك، مدير النظام</p>
                       <p className="text-xs text-slate-400 font-medium mt-0.5">admin@akwan.com</p>
-                    </div>
-                    <div className="p-2">
-                      <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-brand-primary transition-all font-bold text-sm">
-                        <User className="w-4 h-4" />
-                        <span>الملف الشخصي</span>
-                      </button>
-                      <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-brand-primary transition-all font-bold text-sm">
-                        <CreditCard className="w-4 h-4" />
-                        <span>الاشتراك والفواتير</span>
-                      </button>
-                      <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-brand-primary transition-all font-bold text-sm">
-                        <Shield className="w-4 h-4" />
-                        <span>الأمان</span>
-                      </button>
                     </div>
                     <div className="p-2 border-t border-slate-100">
                       <button 

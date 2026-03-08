@@ -9,7 +9,7 @@ export default function PublicLayout() {
   return (
     <div className="min-h-screen bg-brand-bg font-sans text-brand-secondary selection:bg-brand-accent selection:text-brand-secondary flex flex-col">
       <Navbar />
-      <main className={`flex-grow ${isHome ? 'pt-0' : 'pt-24'}`}>
+      <main className={`flex-grow ${isHome ? 'pt-0' : 'pt-0'} bg-brand-surface`}>
         <Outlet />
       </main>
       <Footer />

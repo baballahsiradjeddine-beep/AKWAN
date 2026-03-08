@@ -81,9 +81,6 @@ export default function Navbar() {
               <button className="text-gray-500 hover:text-brand-primary hover:bg-brand-primary/5 transition-all lg:hidden p-2.5 rounded-full">
                 <Search className="h-5 w-5" />
               </button>
-              <button className="text-gray-500 hover:text-brand-primary hover:bg-brand-primary/5 transition-all p-2.5 rounded-full hidden sm:block">
-                <User className="h-5 w-5" />
-              </button>
               <Link to="/cart" className="relative text-gray-500 hover:text-brand-primary hover:bg-brand-primary/5 transition-all p-2.5 rounded-full flex items-center gap-2">
                 <div className="relative">
                   <ShoppingCart className="h-5 w-5" />
@@ -149,13 +146,6 @@ export default function Navbar() {
               </Link>
             ))}
           </nav>
-          
-          <div className="pt-6 mt-6 border-t-4 border-brand-bg border-dashed">
-            <button onClick={() => setIsMenuOpen(false)} className="w-full text-right px-5 py-4 text-lg font-black text-brand-secondary hover:bg-brand-primary/5 hover:text-brand-primary rounded-2xl flex items-center transition-all border-2 border-transparent hover:border-brand-primary/10">
-              <User className="h-6 w-6 ml-3 text-brand-muted" />
-              حسابي الشخصي
-            </button>
-          </div>
         </div>
 
         {/* Footer of Drawer */}

@@ -1,5 +1,6 @@
 import { motion, useScroll, useTransform } from 'motion/react';
 import { Sparkles, Star, Moon, Cloud, Sun } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 
 export default function Hero() {
@@ -10,7 +11,7 @@ export default function Hero() {
   const settings = useStore((state) => state.settings);
 
   return (
-    <div className="relative bg-brand-bg min-h-[100svh] lg:min-h-[90vh] flex items-start lg:items-center pt-12 pb-16 lg:pt-0 lg:pb-0">
+    <div className="relative bg-brand-bg min-h-[100svh] lg:min-h-[90vh] flex items-start lg:items-center pt-20 pb-24 lg:pt-16 lg:pb-16 px-4 lg:px-8">
       {/* Decorative background elements - Playful Shapes */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
         {/* Glowing Orbs */}
@@ -91,7 +92,7 @@ export default function Hero() {
               initial={{ opacity: 0, scale: 0.5, y: -20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ type: "spring", bounce: 0.7, duration: 1.2 }}
-              whileHover={{ scale: 1.05, rotate: [0, -5, 5, 0] }}
+              whileHover={{ scale: 1.05, rotate: -5 }}
               className="inline-flex items-center space-x-2 space-x-reverse bg-white/80 backdrop-blur-sm px-4 py-2 md:px-5 md:py-2.5 rounded-full mb-6 md:mb-8 border-2 border-brand-accent/30 shadow-[0_4px_15px_rgba(255,209,102,0.3)] cursor-pointer"
             >
               <span className="flex h-3 w-3 md:h-4 md:w-4 relative">
@@ -150,14 +151,18 @@ export default function Hero() {
                 <div className="absolute inset-0 h-full w-full bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-[shimmer_1s_infinite]"></div>
               </motion.a>
               
-              <motion.a 
+              <motion.div
                 whileHover={{ scale: 1.05, y: -5, rotate: 2 }}
                 whileTap={{ scale: 0.95, rotate: -2 }}
-                href="#about" 
-                className="inline-flex items-center justify-center px-8 py-4 md:px-10 md:py-5 text-lg md:text-xl font-black text-brand-secondary bg-white border-4 border-white shadow-lg rounded-[2rem] hover:border-brand-primary/30 hover:shadow-xl transition-all w-full sm:w-auto"
+                className="w-full sm:w-auto"
               >
-                تعرف علينا 🎈
-              </motion.a>
+                <Link 
+                  to="/about" 
+                  className="inline-flex items-center justify-center px-8 py-4 md:px-10 md:py-5 text-lg md:text-xl font-black text-brand-secondary bg-white border-4 border-white shadow-lg rounded-[2rem] hover:border-brand-primary/30 hover:shadow-xl transition-all w-full sm:w-auto"
+                >
+                  تعرف علينا 🎈
+                </Link>
+              </motion.div>
             </motion.div>
           </div>
 
