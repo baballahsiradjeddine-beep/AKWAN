@@ -63,7 +63,7 @@ export default function AdminLayout() {
                 className={`flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-xl transition-colors ${
                   isActive 
                     ? 'bg-brand-primary text-white font-bold shadow-lg shadow-brand-primary/20' 
-                    : 'text-white/70 hover:bg-white/10 hover:text-white font-medium'
+                    : 'text-white/90 hover:bg-white/10 hover:text-white font-bold'
                 }`}
               >
                 <Icon className="w-5 h-5" />
@@ -74,13 +74,13 @@ export default function AdminLayout() {
         </nav>
 
         <div className="p-4 border-t border-white/10 space-y-2">
-          <Link to="/" className="flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-xl text-white/70 hover:bg-white/10 hover:text-white transition-colors font-medium">
+          <Link to="/" className="flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-xl text-white/90 hover:bg-white/10 hover:text-white transition-colors font-bold">
             <LayoutDashboard className="w-5 h-5" />
             <span>العودة للمتجر</span>
           </Link>
           <button 
             onClick={handleLogout}
-            className="w-full flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors font-medium"
+            className="w-full flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-xl text-red-300 hover:bg-red-500/10 hover:text-red-200 transition-colors font-bold"
           >
             <LogOut className="w-5 h-5" />
             <span>تسجيل الخروج</span>

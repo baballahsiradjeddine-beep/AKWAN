@@ -2,6 +2,8 @@ import { motion } from 'motion/react';
 import { Users, ShoppingBag, DollarSign, TrendingUp, Package, Activity } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useStore } from '../../store/useStore';
 
 const data = [
   { name: 'السبت', sales: 4000 },
@@ -13,14 +15,23 @@ const data = [
   { name: 'الجمعة', sales: 3490 },
 ];
 
-const stats = [
-  { name: 'إجمالي المبيعات', value: '45,231 ر.س', icon: DollarSign, change: '+20.1%', color: 'bg-brand-primary/10 text-brand-primary' },
-  { name: 'الطلبات الجديدة', value: '156', icon: ShoppingBag, change: '+15%', color: 'bg-brand-secondary/10 text-brand-secondary' },
-  { name: 'العملاء النشطين', value: '2,345', icon: Users, change: '+5.4%', color: 'bg-brand-accent/20 text-brand-dark' },
-  { name: 'المنتجات', value: '48', icon: Package, change: '0%', color: 'bg-yellow-100 text-yellow-600' },
-];
-
 export default function Dashboard() {
+  const products = useStore((state) => state.products);
+  const fetchProducts = useStore((state) => state.fetchProducts);
+
+  useEffect(() => {
+    if (products.length === 0) {
+      fetchProducts();
+    }
+  }, [products.length, fetchProducts]);
+
+  const stats = [
+    { name: 'إجمالي المبيعات', value: '0.00 ر.س', icon: DollarSign, change: '0%', color: 'bg-brand-primary/10 text-brand-primary' },
+    { name: 'الطلبات الجديدة', value: '0', icon: ShoppingBag, change: '0%', color: 'bg-brand-secondary/10 text-brand-secondary' },
+    { name: 'العملاء النشطين', value: '0', icon: Users, change: '0%', color: 'bg-brand-accent/20 text-brand-secondary' },
+    { name: 'المنتجات', value: products.length.toString(), icon: Package, change: 'محدث', color: 'bg-yellow-100 text-yellow-600' },
+  ];
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">

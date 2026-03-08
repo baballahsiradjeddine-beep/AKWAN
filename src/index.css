@@ -10,6 +10,7 @@
   --color-brand-surface: #FFFFFF;
   --color-brand-text: #5C436A;
   --color-brand-muted: #8D699F;
+  --color-brand-dark: #2D1B36; /* New dark color for admin sidebar */
 }
 
 body {
