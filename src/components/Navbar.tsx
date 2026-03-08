@@ -17,7 +17,7 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm">
+      <header className="relative z-50 bg-white border-b border-gray-100 shadow-sm">
         {/* Top Announcement Bar */}
         {settings.announcementText && (
           <div className="bg-brand-primary text-white px-6 py-3 text-center text-sm font-bold tracking-wide shadow-sm">

@@ -10,7 +10,7 @@ export default function Hero() {
   const settings = useStore((state) => state.settings);
 
   return (
-    <div className="relative bg-brand-bg overflow-hidden min-h-[100svh] lg:min-h-[90vh] flex items-center pt-24 pb-16 lg:pt-0 lg:pb-0">
+    <div className="relative bg-brand-bg min-h-[100svh] lg:min-h-[90vh] flex items-start lg:items-center pt-12 pb-16 lg:pt-0 lg:pb-0">
       {/* Decorative background elements - Playful Shapes */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
         {/* Glowing Orbs */}
@@ -86,7 +86,7 @@ export default function Hero() {
         <div className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-8">
           
           {/* Text Content */}
-          <div className="w-full lg:w-1/2 text-center lg:text-right flex flex-col items-center lg:items-start mt-10 lg:mt-0">
+          <div className="w-full lg:w-1/2 text-center lg:text-right flex flex-col items-center lg:items-start mt-0">
             <motion.div
               initial={{ opacity: 0, scale: 0.5, y: -20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}

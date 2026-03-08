@@ -18,7 +18,18 @@ import SplashScreen from './components/SplashScreen';
 import { useStore } from './store/useStore';
 
 export default function App() {
-  const [showSplash, setShowSplash] = useState(true);
+  const [showSplash, setShowSplash] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    
+    // Don't show on admin pages
+    const isAdminPage = window.location.pathname.startsWith('/admin');
+    if (isAdminPage) return false;
+    
+    // Don't show if already shown in this session
+    const hasShownSplash = sessionStorage.getItem('hasShownSplash');
+    return !hasShownSplash;
+  });
+
   const fetchSettings = useStore(state => state.fetchSettings);
   const fetchProducts = useStore(state => state.fetchProducts);
 
@@ -27,9 +38,14 @@ export default function App() {
     fetchProducts();
   }, [fetchSettings, fetchProducts]);
 
+  const handleSplashComplete = () => {
+    setShowSplash(false);
+    sessionStorage.setItem('hasShownSplash', 'true');
+  };
+
   return (
     <>
-      {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
+      {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
       <BrowserRouter>
         <Routes>
           {/* Public Routes */}
