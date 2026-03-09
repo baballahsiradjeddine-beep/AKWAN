@@ -1,16 +1,79 @@
-import { motion } from 'motion/react';
-import { ShoppingCart, Trash2, ArrowLeft, Sparkles, Gift } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { ShoppingCart, Trash2, ArrowLeft, Sparkles, Gift, User, Phone, MapPin, CheckCircle2, Loader2 } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 
 export default function Cart() {
   const cartItems = useStore((state) => state.cart);
   const updateQuantity = useStore((state) => state.updateCartQuantity);
   const removeItem = useStore((state) => state.removeFromCart);
+  const createOrder = useStore((state) => state.createOrder);
+  const navigate = useNavigate();
+
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [orderSuccess, setOrderSuccess] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    address: ''
+  });
 
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const shipping = subtotal > 0 ? 25 : 0;
   const total = subtotal + shipping;
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.name || !formData.phone || !formData.address) return;
+
+    setIsSubmitting(true);
+    try {
+      await createOrder({
+        customer_name: formData.name,
+        customer_phone: formData.phone,
+        customer_address: formData.address,
+        items: cartItems,
+        total_amount: total
+      });
+      setOrderSuccess(true);
+    } catch (error) {
+      console.error('Checkout error:', error);
+      alert('حدث خطأ أثناء إتمام الطلب. يرجى المحاولة مرة أخرى.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (orderSuccess) {
+    return (
+      <div className="min-h-screen bg-brand-surface py-20 flex items-center justify-center px-4">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="bg-white rounded-[3rem] p-12 text-center shadow-2xl border-8 border-brand-bg max-w-2xl w-full"
+        >
+          <motion.div 
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: "spring", bounce: 0.6, delay: 0.2 }}
+            className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-8"
+          >
+            <CheckCircle2 className="w-12 h-12 text-green-500" />
+          </motion.div>
+          <h2 className="text-4xl font-black text-brand-secondary mb-4">تم استلام طلبك بنجاح! 🎉</h2>
+          <p className="text-xl text-brand-muted mb-10">شكراً لتسوقك معنا. سنتواصل معك قريباً لتأكيد الطلب وشحنه.</p>
+          <button 
+            onClick={() => navigate('/')}
+            className="px-10 py-4 bg-brand-primary text-white rounded-full font-black text-xl shadow-lg hover:bg-brand-secondary transition-all"
+          >
+            العودة للرئيسية
+          </button>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-brand-surface py-12 md:py-20 relative overflow-hidden">
@@ -40,7 +103,7 @@ export default function Cart() {
             <ShoppingCart className="w-8 h-8 text-brand-primary" />
           </motion.div>
           <h1 className="text-4xl md:text-5xl font-black text-brand-secondary tracking-tight">
-            سلة المشتريات
+            {isCheckingOut ? 'إتمام الطلب' : 'سلة المشتريات'}
             <Sparkles className="inline-block w-6 h-6 text-brand-accent ml-2 animate-pulse" />
           </h1>
         </div>
@@ -75,69 +138,171 @@ export default function Cart() {
         ) : (
           <div className="flex flex-col lg:flex-row gap-12 lg:gap-16">
             
-            {/* Cart Items */}
+            {/* Main Content Area */}
             <div className="w-full lg:w-2/3 space-y-6">
-              {cartItems.map((item, index) => (
-                <motion.div 
-                  key={item.id}
-                  layout
-                  initial={{ opacity: 0, x: -50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, scale: 0.9, x: 50 }}
-                  transition={{ type: "spring", bounce: 0.4, delay: index * 0.1 }}
-                  className="bg-white rounded-[2.5rem] p-6 sm:p-8 shadow-[0_10px_30px_rgba(92,67,106,0.05)] border-4 border-brand-bg flex flex-col sm:flex-row items-center gap-10 hover:shadow-[0_15px_40px_rgba(141,105,159,0.15)] hover:border-brand-primary/20 transition-all group relative overflow-hidden"
-                >
-                  {/* Decorative side accent */}
-                  <div className="absolute top-0 right-0 w-2 h-full bg-brand-primary/10 group-hover:bg-brand-accent transition-colors"></div>
-
-                  <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-[1.5rem] overflow-hidden bg-brand-surface shrink-0 shadow-inner border-4 border-white">
-                    <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
-                  </div>
-                  
-                  <div className="flex-grow text-center sm:text-right flex flex-col justify-between h-full py-2">
-                    <div>
-                      <h3 className="text-xl sm:text-2xl font-black text-brand-secondary mb-2 leading-snug">
-                        <Link to={`/product/${item.id}`} className="hover:text-brand-primary transition-colors">{item.name}</Link>
-                      </h3>
-                      <div className="text-brand-primary font-black text-xl mb-6">
-                        {item.price.toFixed(2)} <span className="text-sm font-bold text-brand-muted">ر.س</span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-center sm:justify-start gap-8">
-                      <div className="flex items-center bg-brand-surface rounded-2xl p-1 border-2 border-brand-bg shadow-inner">
-                        <button 
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)} 
-                          className="w-10 h-10 flex items-center justify-center bg-white rounded-xl text-brand-secondary font-black hover:text-brand-primary hover:shadow-md transition-all"
-                        >
-                          -
-                        </button>
-                        <span className="w-12 text-center font-black text-xl text-brand-secondary">{item.quantity}</span>
-                        <button 
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)} 
-                          className="w-10 h-10 flex items-center justify-center bg-white rounded-xl text-brand-secondary font-black hover:text-brand-primary hover:shadow-md transition-all"
-                        >
-                          +
-                        </button>
-                      </div>
-                      <button 
-                        onClick={() => removeItem(item.id)}
-                        className="text-red-400 hover:text-white hover:bg-red-500 p-3 bg-red-50 rounded-2xl transition-all shadow-sm hover:shadow-md"
-                        title="حذف"
+              <AnimatePresence mode="wait">
+                {!isCheckingOut ? (
+                  <motion.div 
+                    key="cart-items"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                    className="space-y-6"
+                  >
+                    {cartItems.map((item, index) => (
+                      <motion.div 
+                        key={item.id}
+                        layout
+                        initial={{ opacity: 0, x: -50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, scale: 0.9, x: 50 }}
+                        transition={{ type: "spring", bounce: 0.4, delay: index * 0.1 }}
+                        className="bg-white rounded-[2.5rem] p-6 sm:p-8 shadow-[0_10px_30px_rgba(92,67,106,0.05)] border-4 border-brand-bg flex flex-col sm:flex-row items-center gap-10 hover:shadow-[0_15px_40px_rgba(141,105,159,0.15)] hover:border-brand-primary/20 transition-all group relative overflow-hidden"
                       >
-                        <Trash2 className="w-6 h-6" />
+                        {/* Decorative side accent */}
+                        <div className="absolute top-0 right-0 w-2 h-full bg-brand-primary/10 group-hover:bg-brand-accent transition-colors"></div>
+
+                        <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-[1.5rem] overflow-hidden bg-brand-surface shrink-0 shadow-inner border-4 border-white">
+                          <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
+                        </div>
+                        
+                        <div className="flex-grow text-center sm:text-right flex flex-col justify-between h-full py-2">
+                          <div>
+                            <h3 className="text-xl sm:text-2xl font-black text-brand-secondary mb-2 leading-snug">
+                              <Link to={`/product/${item.id}`} className="hover:text-brand-primary transition-colors">{item.name}</Link>
+                            </h3>
+                            <div className="text-brand-primary font-black text-xl mb-6">
+                              {item.price.toFixed(2)} <span className="text-sm font-bold text-brand-muted">ر.س</span>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center justify-center sm:justify-start gap-8">
+                            <div className="flex items-center bg-brand-surface rounded-2xl p-1 border-2 border-brand-bg shadow-inner">
+                              <button 
+                                onClick={() => updateQuantity(item.id, item.quantity - 1)} 
+                                className="w-10 h-10 flex items-center justify-center bg-white rounded-xl text-brand-secondary font-black hover:text-brand-primary hover:shadow-md transition-all"
+                              >
+                                -
+                              </button>
+                              <span className="w-12 text-center font-black text-xl text-brand-secondary">{item.quantity}</span>
+                              <button 
+                                onClick={() => updateQuantity(item.id, item.quantity + 1)} 
+                                className="w-10 h-10 flex items-center justify-center bg-white rounded-xl text-brand-secondary font-black hover:text-brand-primary hover:shadow-md transition-all"
+                              >
+                                +
+                              </button>
+                            </div>
+                            <button 
+                              onClick={() => removeItem(item.id)}
+                              className="text-red-400 hover:text-white hover:bg-red-500 p-3 bg-red-50 rounded-2xl transition-all shadow-sm hover:shadow-md"
+                              title="حذف"
+                            >
+                              <Trash2 className="w-6 h-6" />
+                            </button>
+                          </div>
+                        </div>
+                        
+                        <div className="hidden sm:flex flex-col items-end justify-center pl-4 border-r-2 border-brand-bg border-dashed h-full">
+                          <span className="text-sm font-bold text-brand-muted mb-1">المجموع</span>
+                          <div className="text-2xl font-black text-brand-secondary">
+                            {(item.price * item.quantity).toFixed(2)} <span className="text-sm font-bold text-brand-muted">ر.س</span>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                ) : (
+                  <motion.div 
+                    key="checkout-form"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    className="bg-white rounded-[3rem] p-8 sm:p-12 shadow-[0_20px_50px_rgba(92,67,106,0.1)] border-8 border-brand-bg"
+                  >
+                    <button 
+                      onClick={() => setIsCheckingOut(false)}
+                      className="flex items-center text-brand-muted font-bold hover:text-brand-primary mb-8 transition-colors group"
+                    >
+                      <ArrowLeft className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                      العودة للسلة
+                    </button>
+
+                    <h2 className="text-3xl font-black text-brand-secondary mb-8">معلومات التوصيل 🚚</h2>
+                    
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                      <div className="space-y-2">
+                        <label className="text-lg font-bold text-brand-secondary block">الاسم الكامل</label>
+                        <div className="relative">
+                          <User className="absolute right-4 top-1/2 -translate-y-1/2 text-brand-muted w-5 h-5" />
+                          <input 
+                            required
+                            type="text"
+                            value={formData.name}
+                            onChange={(e) => setFormData({...formData, name: e.target.value})}
+                            className="w-full bg-brand-surface border-4 border-brand-bg rounded-2xl py-4 pr-12 pl-4 focus:border-brand-primary outline-none transition-all font-bold text-brand-secondary"
+                            placeholder="أدخل اسمك الكامل"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-lg font-bold text-brand-secondary block">رقم الجوال</label>
+                        <div className="relative">
+                          <Phone className="absolute right-4 top-1/2 -translate-y-1/2 text-brand-muted w-5 h-5" />
+                          <input 
+                            required
+                            type="tel"
+                            value={formData.phone}
+                            onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                            className="w-full bg-brand-surface border-4 border-brand-bg rounded-2xl py-4 pr-12 pl-4 focus:border-brand-primary outline-none transition-all font-bold text-brand-secondary"
+                            placeholder="05xxxxxxxx"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-lg font-bold text-brand-secondary block">عنوان التوصيل</label>
+                        <div className="relative">
+                          <MapPin className="absolute right-4 top-6 text-brand-muted w-5 h-5" />
+                          <textarea 
+                            required
+                            rows={3}
+                            value={formData.address}
+                            onChange={(e) => setFormData({...formData, address: e.target.value})}
+                            className="w-full bg-brand-surface border-4 border-brand-bg rounded-2xl py-4 pr-12 pl-4 focus:border-brand-primary outline-none transition-all font-bold text-brand-secondary resize-none"
+                            placeholder="أدخل عنوانك بالتفصيل (المدينة، الحي، الشارع)"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="bg-brand-surface p-6 rounded-2xl border-2 border-brand-bg">
+                        <p className="text-brand-secondary font-bold flex items-center gap-2">
+                          <CheckCircle2 className="w-5 h-5 text-brand-primary" />
+                          الدفع عند الاستلام فقط حالياً
+                        </p>
+                      </div>
+
+                      <button 
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="w-full py-5 bg-brand-primary text-white rounded-[2rem] font-black text-xl shadow-lg hover:bg-brand-secondary transition-all flex items-center justify-center gap-3 disabled:opacity-70"
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 className="w-6 h-6 animate-spin" />
+                            جاري معالجة الطلب...
+                          </>
+                        ) : (
+                          <>
+                            تأكيد الطلب الآن
+                            <ArrowLeft className="w-6 h-6" />
+                          </>
+                        )}
                       </button>
-                    </div>
-                  </div>
-                  
-                  <div className="hidden sm:flex flex-col items-end justify-center pl-4 border-r-2 border-brand-bg border-dashed h-full">
-                    <span className="text-sm font-bold text-brand-muted mb-1">المجموع</span>
-                    <div className="text-2xl font-black text-brand-secondary">
-                      {(item.price * item.quantity).toFixed(2)} <span className="text-sm font-bold text-brand-muted">ر.س</span>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
+                    </form>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             {/* Order Summary */}
@@ -176,14 +341,17 @@ export default function Cart() {
                   </div>
                 </div>
 
-                <motion.button 
-                  whileHover={{ scale: 1.03, y: -2 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="w-full py-5 rounded-[2rem] font-black text-xl flex items-center justify-center space-x-2 space-x-reverse shadow-[0_10px_30px_rgba(141,105,159,0.4)] border-4 border-transparent hover:border-brand-accent/50 bg-brand-primary text-white hover:bg-brand-secondary transition-all mb-6 group"
-                >
-                  <span>إتمام الطلب بأمان</span>
-                  <ArrowLeft className="w-6 h-6 group-hover:-translate-x-2 transition-transform" />
-                </motion.button>
+                {!isCheckingOut && (
+                  <motion.button 
+                    whileHover={{ scale: 1.03, y: -2 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => setIsCheckingOut(true)}
+                    className="w-full py-5 rounded-[2rem] font-black text-xl flex items-center justify-center space-x-2 space-x-reverse shadow-[0_10px_30px_rgba(141,105,159,0.4)] border-4 border-transparent hover:border-brand-accent/50 bg-brand-primary text-white hover:bg-brand-secondary transition-all mb-6 group"
+                  >
+                    <span>إتمام الطلب بأمان</span>
+                    <ArrowLeft className="w-6 h-6 group-hover:-translate-x-2 transition-transform" />
+                  </motion.button>
+                )}
                 
                 <Link to="/shop" className="flex items-center justify-center text-brand-muted font-bold hover:text-brand-primary transition-colors group">
                   <span className="border-b-2 border-transparent group-hover:border-brand-primary">متابعة التسوق</span>

@@ -22,20 +22,23 @@ const topProducts = [
 ];
 
 export default function Dashboard() {
-  const products = useStore((state) => state.products);
-  const fetchProducts = useStore((state) => state.fetchProducts);
+  const { products, fetchProducts, orders, fetchOrders, customers, fetchCustomers, isLoadingProducts, isLoadingOrders, isLoadingCustomers } = useStore();
   const [timeRange, setTimeRange] = useState('7 أيام');
 
   useEffect(() => {
-    if (products.length === 0) {
-      fetchProducts();
-    }
-  }, [products.length, fetchProducts]);
+    fetchProducts();
+    fetchOrders();
+    fetchCustomers();
+  }, [fetchProducts, fetchOrders, fetchCustomers]);
+
+  const totalSales = orders
+    .filter(o => o.status === 'تم التوصيل')
+    .reduce((acc, curr) => acc + curr.total_amount, 0);
 
   const stats = [
     { 
       name: 'إجمالي المبيعات', 
-      value: '12,450.00 ر.س', 
+      value: `${totalSales.toFixed(2)} ر.س`, 
       icon: DollarSign, 
       change: '+12.5%', 
       isUp: true,
@@ -44,7 +47,7 @@ export default function Dashboard() {
     },
     { 
       name: 'الطلبات الجديدة', 
-      value: '426', 
+      value: orders.length.toString(), 
       icon: ShoppingBag, 
       change: '+18.2%', 
       isUp: true,
@@ -53,7 +56,7 @@ export default function Dashboard() {
     },
     { 
       name: 'العملاء النشطين', 
-      value: '1,284', 
+      value: customers.length.toString(), 
       icon: Users, 
       change: '-2.4%', 
       isUp: false,
@@ -234,39 +237,47 @@ export default function Dashboard() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {[
-                { id: '1005', customer: 'أحمد محمد', date: 'منذ 10 دقائق', total: 450.50, status: 'مكتمل' },
-                { id: '1004', customer: 'سارة خالد', date: 'منذ 45 دقيقة', total: 120.00, status: 'قيد المعالجة' },
-                { id: '1003', customer: 'فهر عبدالله', date: 'منذ ساعتين', total: 890.00, status: 'تم الشحن' },
-              ].map((order) => (
-                <tr key={order.id} className="group hover:bg-slate-50/50 transition-colors">
-                  <td className="py-5 pr-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 font-black text-sm">
-                        {order.customer.charAt(0)}
-                      </div>
-                      <span className="font-bold text-slate-800">{order.customer}</span>
-                    </div>
-                  </td>
-                  <td className="py-5 font-bold text-slate-500">#{order.id}</td>
-                  <td className="py-5 text-slate-400 font-medium text-sm">{order.date}</td>
-                  <td className="py-5 font-black text-slate-800">{order.total.toFixed(2)} ر.س</td>
-                  <td className="py-5">
-                    <span className={`px-3 py-1 rounded-full text-[10px] font-black ${
-                      order.status === 'مكتمل' ? 'bg-emerald-100 text-emerald-600' : 
-                      order.status === 'قيد المعالجة' ? 'bg-amber-100 text-amber-600' : 
-                      'bg-blue-100 text-blue-600'
-                    }`}>
-                      {order.status}
-                    </span>
-                  </td>
-                  <td className="py-5 text-center">
-                    <button className="p-2 text-slate-400 hover:text-brand-primary hover:bg-brand-bg rounded-lg transition-all">
-                      <ExternalLink className="w-4 h-4" />
-                    </button>
-                  </td>
+              {isLoadingOrders ? (
+                <tr>
+                  <td colSpan={6} className="py-10 text-center text-slate-400 font-bold">جاري التحميل...</td>
                 </tr>
-              ))}
+              ) : orders.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="py-10 text-center text-slate-400 font-bold">لا توجد طلبات.</td>
+                </tr>
+              ) : (
+                orders.slice(0, 5).map((order) => (
+                  <tr key={order.id} className="group hover:bg-slate-50/50 transition-colors">
+                    <td className="py-5 pr-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 font-black text-sm">
+                          {order.customer_name?.charAt(0)}
+                        </div>
+                        <span className="font-bold text-slate-800">{order.customer_name}</span>
+                      </div>
+                    </td>
+                    <td className="py-5 font-bold text-slate-500">#{order.id}</td>
+                    <td className="py-5 text-slate-400 font-medium text-sm">
+                      {new Date(order.created_at).toLocaleDateString('ar-SA')}
+                    </td>
+                    <td className="py-5 font-black text-slate-800">{order.total_amount.toFixed(2)} ر.س</td>
+                    <td className="py-5">
+                      <span className={`px-3 py-1 rounded-full text-[10px] font-black ${
+                        order.status === 'تم التوصيل' ? 'bg-emerald-100 text-emerald-600' : 
+                        order.status === 'قيد المعالجة' ? 'bg-amber-100 text-amber-600' : 
+                        'bg-blue-100 text-blue-600'
+                      }`}>
+                        {order.status}
+                      </span>
+                    </td>
+                    <td className="py-5 text-center">
+                      <Link to="/admin/orders" className="p-2 text-slate-400 hover:text-brand-primary hover:bg-brand-bg rounded-lg transition-all inline-block">
+                        <ExternalLink className="w-4 h-4" />
+                      </Link>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

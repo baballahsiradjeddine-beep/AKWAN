@@ -19,6 +19,29 @@ export interface CartItem extends Product {
   quantity: number;
 }
 
+export interface Order {
+  id: string;
+  customer_name: string;
+  customer_phone: string;
+  customer_address: string;
+  total_amount: number;
+  status: string;
+  items_count: number;
+  created_at: string;
+  items?: any[];
+}
+
+export interface Customer {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  total_orders: number;
+  total_spent: number;
+  last_order_date: string;
+  created_at: string;
+}
+
 export interface SiteSettings {
   // Global
   siteName: string;
@@ -79,6 +102,8 @@ const defaultSettings: SiteSettings = {
 interface StoreState {
   products: Product[];
   cart: CartItem[];
+  orders: Order[];
+  customers: Customer[];
   settings: SiteSettings;
   isLoadingProducts: boolean;
   fetchProducts: () => Promise<void>;
@@ -89,17 +114,33 @@ interface StoreState {
   removeFromCart: (id: number) => void;
   updateCartQuantity: (id: number, quantity: number) => void;
   clearCart: () => void;
+  isLoadingOrders: boolean;
+  fetchOrders: () => Promise<void>;
+  updateOrderStatus: (id: string, status: string) => Promise<void>;
+  isLoadingCustomers: boolean;
+  fetchCustomers: () => Promise<void>;
   isLoadingSettings: boolean;
   fetchSettings: () => Promise<void>;
   updateSettings: (settings: Partial<SiteSettings>) => Promise<void>;
+  createOrder: (orderData: {
+    customer_name: string;
+    customer_phone: string;
+    customer_address: string;
+    items: CartItem[];
+    total_amount: number;
+  }) => Promise<void>;
 }
 
 export const useStore = create<StoreState>((set, get) => ({
   products: [],
   cart: [],
+  orders: [],
+  customers: [],
   settings: defaultSettings,
   isLoadingSettings: true,
   isLoadingProducts: true,
+  isLoadingOrders: true,
+  isLoadingCustomers: true,
   
   fetchProducts: async () => {
     try {
@@ -210,6 +251,55 @@ export const useStore = create<StoreState>((set, get) => ({
   
   clearCart: () => set({ cart: [] }),
   
+  fetchOrders: async () => {
+    try {
+      set({ isLoadingOrders: true });
+      const { data, error } = await supabase
+        .from('orders')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      set({ orders: data || [], isLoadingOrders: false });
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      set({ isLoadingOrders: false });
+    }
+  },
+
+  updateOrderStatus: async (id, status) => {
+    try {
+      const { error } = await supabase
+        .from('orders')
+        .update({ status })
+        .eq('id', id);
+
+      if (error) throw error;
+      set((state) => ({
+        orders: state.orders.map(o => o.id === id ? { ...o, status } : o)
+      }));
+    } catch (error) {
+      console.error('Error updating order status:', error);
+      throw error;
+    }
+  },
+
+  fetchCustomers: async () => {
+    try {
+      set({ isLoadingCustomers: true });
+      const { data, error } = await supabase
+        .from('customers')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      set({ customers: data || [], isLoadingCustomers: false });
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      set({ isLoadingCustomers: false });
+    }
+  },
+  
   fetchSettings: async () => {
     try {
       set({ isLoadingSettings: true });
@@ -268,6 +358,80 @@ export const useStore = create<StoreState>((set, get) => ({
       }
     } catch (error) {
       console.error('Error updating settings:', error);
+      throw error;
+    }
+  },
+
+  createOrder: async (orderData) => {
+    try {
+      // 1. Create or update customer
+      const { data: customerData, error: customerError } = await supabase
+        .from('customers')
+        .select('*')
+        .eq('phone', orderData.customer_phone)
+        .single();
+
+      let customerId;
+
+      if (customerError && customerError.code === 'PGRST116') {
+        // Customer doesn't exist, create new
+        const { data: newCustomer, error: createError } = await supabase
+          .from('customers')
+          .insert([{
+            name: orderData.customer_name,
+            phone: orderData.customer_phone,
+            total_orders: 1,
+            total_spent: orderData.total_amount,
+            last_order_date: new Date().toISOString()
+          }])
+          .select()
+          .single();
+        
+        if (createError) throw createError;
+        customerId = newCustomer.id;
+      } else if (customerData) {
+        // Update existing customer
+        const { error: updateError } = await supabase
+          .from('customers')
+          .update({
+            total_orders: customerData.total_orders + 1,
+            total_spent: customerData.total_spent + orderData.total_amount,
+            last_order_date: new Date().toISOString()
+          })
+          .eq('id', customerData.id);
+        
+        if (updateError) throw updateError;
+        customerId = customerData.id;
+      }
+
+      // 2. Create the order
+      const { data: newOrder, error: orderError } = await supabase
+        .from('orders')
+        .insert([{
+          customer_name: orderData.customer_name,
+          customer_phone: orderData.customer_phone,
+          customer_address: orderData.customer_address,
+          total_amount: orderData.total_amount,
+          status: 'pending',
+          items_count: orderData.items.reduce((sum, item) => sum + item.quantity, 0)
+        }])
+        .select()
+        .single();
+
+      if (orderError) throw orderError;
+
+      // 3. Create order items (if you have an order_items table)
+      // For now, we'll just store the count in the order table as per the schema
+      // But we could add a JSON column or a separate table if needed.
+
+      // Update local state
+      set((state) => ({
+        orders: [newOrder, ...state.orders],
+        cart: [] // Clear cart after successful order
+      }));
+
+    } catch (error) {
+      console.error('Error creating order:', error);
       throw error;
     }
   }

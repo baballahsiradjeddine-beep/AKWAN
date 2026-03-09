@@ -32,11 +32,15 @@ export default function App() {
 
   const fetchSettings = useStore(state => state.fetchSettings);
   const fetchProducts = useStore(state => state.fetchProducts);
+  const fetchOrders = useStore(state => state.fetchOrders);
+  const fetchCustomers = useStore(state => state.fetchCustomers);
 
   useEffect(() => {
     fetchSettings();
     fetchProducts();
-  }, [fetchSettings, fetchProducts]);
+    fetchOrders();
+    fetchCustomers();
+  }, [fetchSettings, fetchProducts, fetchOrders, fetchCustomers]);
 
   const handleSplashComplete = () => {
     setShowSplash(false);

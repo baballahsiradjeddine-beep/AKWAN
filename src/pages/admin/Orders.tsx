@@ -2,17 +2,10 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Search, Eye, MoreVertical, X, Package, Truck, CheckCircle, Clock, Filter, ChevronRight, ChevronLeft, Download, Printer } from 'lucide-react';
 import React, { useState, useRef, useEffect } from 'react';
 
-// Mock orders data
-const initialOrders = [
-  { id: 'ORD-7234', customer: 'أحمد محمد', date: '2024-03-20', total: 250.00, status: 'تم التوصيل', items: 3, phone: '0501234567', address: 'الرياض، حي النرجس' },
-  { id: 'ORD-7235', customer: 'سارة خالد', date: '2024-03-19', total: 120.50, status: 'قيد المعالجة', items: 1, phone: '0559876543', address: 'جدة، حي الروضة' },
-  { id: 'ORD-7236', customer: 'محمد علي', date: '2024-03-19', total: 450.00, status: 'تم الشحن', items: 5, phone: '0543210987', address: 'الدمام، حي الشاطئ' },
-  { id: 'ORD-7237', customer: 'نورة سعد', date: '2024-03-18', total: 85.00, status: 'ملغي', items: 2, phone: '0561112223', address: 'مكة، حي الشوقية' },
-  { id: 'ORD-7238', customer: 'فهد إبراهيم', date: '2024-03-18', total: 310.00, status: 'قيد المعالجة', items: 4, phone: '0534445556', address: 'المدينة، حي العزيزية' },
-];
+import { useStore } from '../../store/useStore';
 
 export default function AdminOrders() {
-  const [orders, setOrders] = useState(initialOrders);
+  const { orders, fetchOrders, updateOrderStatus, isLoadingOrders } = useStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('الكل');
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
@@ -20,6 +13,10 @@ export default function AdminOrders() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -51,19 +48,21 @@ export default function AdminOrders() {
     }
   };
 
-  const updateOrderStatus = (orderId: string, newStatus: string) => {
-    setOrders(orders.map(order => 
-      order.id === orderId ? { ...order, status: newStatus } : order
-    ));
-    setActiveDropdown(null);
-    if (selectedOrder?.id === orderId) {
-      setSelectedOrder({ ...selectedOrder, status: newStatus });
+  const handleUpdateStatus = async (orderId: string, newStatus: string) => {
+    try {
+      await updateOrderStatus(orderId, newStatus);
+      setActiveDropdown(null);
+      if (selectedOrder?.id === orderId) {
+        setSelectedOrder({ ...selectedOrder, status: newStatus });
+      }
+    } catch (error) {
+      console.error('Failed to update status:', error);
     }
   };
 
   const filteredOrders = orders.filter(order => {
-    const matchesSearch = order.customer.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          order.id.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = (order.customer_name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          order.id.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesStatus = statusFilter === 'الكل' || order.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -158,71 +157,90 @@ export default function AdminOrders() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {paginatedOrders.map((order, index) => (
-                <motion.tr 
-                  key={order.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  className="hover:bg-slate-50/50 transition-colors group"
-                >
-                  <td className="px-8 py-5 font-black text-slate-800 text-sm">{order.id}</td>
-                  <td className="px-8 py-5">
-                    <p className="font-black text-slate-800 text-sm">{order.customer}</p>
-                    <p className="text-[10px] text-slate-400 font-black mt-0.5">{order.phone}</p>
-                  </td>
-                  <td className="px-8 py-5 text-sm font-bold text-slate-500">{order.date}</td>
-                  <td className="px-8 py-5 font-black text-brand-primary text-sm">{order.total.toFixed(2)} ر.س</td>
-                  <td className="px-8 py-5">
-                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black ${getStatusColor(order.status)}`}>
-                      {getStatusIcon(order.status)}
-                      {order.status}
-                    </span>
-                  </td>
-                  <td className="px-8 py-5">
-                    <div className="flex items-center justify-center gap-2 relative" ref={activeDropdown === order.id ? dropdownRef : null}>
-                      <button 
-                        onClick={() => { setSelectedOrder(order); setIsViewing(true); }}
-                        className="p-2.5 text-slate-400 hover:text-brand-primary hover:bg-brand-bg rounded-xl transition-all"
-                      >
-                        <Eye className="w-5 h-5" />
-                      </button>
-                      <div className="relative">
-                        <button 
-                          onClick={() => setActiveDropdown(activeDropdown === order.id ? null : order.id)}
-                          className={`p-2.5 rounded-xl transition-all ${activeDropdown === order.id ? 'bg-slate-100 text-slate-800' : 'text-slate-400 hover:text-slate-800 hover:bg-slate-100'}`}
-                        >
-                          <MoreVertical className="w-5 h-5" />
-                        </button>
-                        
-                        <AnimatePresence>
-                          {activeDropdown === order.id && (
-                            <motion.div 
-                              initial={{ opacity: 0, scale: 0.9, y: 10 }}
-                              animate={{ opacity: 1, scale: 1, y: 0 }}
-                              exit={{ opacity: 0, scale: 0.9, y: 10 }}
-                              className="absolute left-0 bottom-full mb-2 w-48 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-50"
-                            >
-                              <div className="p-2">
-                                <p className="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50">تغيير الحالة</p>
-                                {['قيد المعالجة', 'تم الشحن', 'تم التوصيل', 'ملغي'].map((status) => (
-                                  <button 
-                                    key={status}
-                                    onClick={() => updateOrderStatus(order.id, status)}
-                                    className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all font-bold text-xs ${order.status === status ? 'bg-brand-bg text-brand-primary' : 'text-slate-600 hover:bg-slate-50'}`}
-                                  >
-                                    <span>{status}</span>
-                                  </button>
-                                ))}
-                              </div>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </div>
+              {isLoadingOrders ? (
+                <tr>
+                  <td colSpan={6} className="px-8 py-20 text-center">
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="w-12 h-12 border-4 border-brand-primary border-t-transparent rounded-full animate-spin"></div>
+                      <p className="text-slate-400 font-black">جاري تحميل الطلبات...</p>
                     </div>
                   </td>
-                </motion.tr>
-              ))}
+                </tr>
+              ) : paginatedOrders.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-8 py-20 text-center">
+                    <p className="text-slate-400 font-black">لا توجد طلبات حالياً.</p>
+                  </td>
+                </tr>
+              ) : (
+                paginatedOrders.map((order, index) => (
+                  <motion.tr 
+                    key={order.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="hover:bg-slate-50/50 transition-colors group"
+                  >
+                    <td className="px-8 py-5 font-black text-slate-800 text-sm">{order.id}</td>
+                    <td className="px-8 py-5">
+                      <p className="font-black text-slate-800 text-sm">{order.customer_name}</p>
+                      <p className="text-[10px] text-slate-400 font-black mt-0.5">{order.customer_phone}</p>
+                    </td>
+                    <td className="px-8 py-5 text-sm font-bold text-slate-500">
+                      {new Date(order.created_at).toLocaleDateString('ar-SA')}
+                    </td>
+                    <td className="px-8 py-5 font-black text-brand-primary text-sm">{order.total_amount.toFixed(2)} ر.س</td>
+                    <td className="px-8 py-5">
+                      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black ${getStatusColor(order.status)}`}>
+                        {getStatusIcon(order.status)}
+                        {order.status}
+                      </span>
+                    </td>
+                    <td className="px-8 py-5">
+                      <div className="flex items-center justify-center gap-2 relative" ref={activeDropdown === order.id ? dropdownRef : null}>
+                        <button 
+                          onClick={() => { setSelectedOrder(order); setIsViewing(true); }}
+                          className="p-2.5 text-slate-400 hover:text-brand-primary hover:bg-brand-bg rounded-xl transition-all"
+                        >
+                          <Eye className="w-5 h-5" />
+                        </button>
+                        <div className="relative">
+                          <button 
+                            onClick={() => setActiveDropdown(activeDropdown === order.id ? null : order.id)}
+                            className={`p-2.5 rounded-xl transition-all ${activeDropdown === order.id ? 'bg-slate-100 text-slate-800' : 'text-slate-400 hover:text-slate-800 hover:bg-slate-100'}`}
+                          >
+                            <MoreVertical className="w-5 h-5" />
+                          </button>
+                          
+                          <AnimatePresence>
+                            {activeDropdown === order.id && (
+                              <motion.div 
+                                initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.9, y: 10 }}
+                                className="absolute left-0 bottom-full mb-2 w-48 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-50"
+                              >
+                                <div className="p-2">
+                                  <p className="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50">تغيير الحالة</p>
+                                  {['قيد المعالجة', 'تم الشحن', 'تم التوصيل', 'ملغي'].map((status) => (
+                                    <button 
+                                      key={status}
+                                      onClick={() => handleUpdateStatus(order.id, status)}
+                                      className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all font-bold text-xs ${order.status === status ? 'bg-brand-bg text-brand-primary' : 'text-slate-600 hover:bg-slate-50'}`}
+                                    >
+                                      <span>{status}</span>
+                                    </button>
+                                  ))}
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      </div>
+                    </td>
+                  </motion.tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
@@ -269,7 +287,9 @@ export default function AdminOrders() {
               <div className="p-8 border-b border-slate-100 flex justify-between items-center shrink-0">
                 <div>
                   <h2 className="text-2xl font-black text-slate-800">تفاصيل الطلب {selectedOrder.id}</h2>
-                  <p className="text-slate-400 font-bold text-sm mt-1">{selectedOrder.date}</p>
+                  <p className="text-slate-400 font-bold text-sm mt-1">
+                    {new Date(selectedOrder.created_at).toLocaleDateString('ar-SA')}
+                  </p>
                 </div>
                 <button onClick={() => setIsViewing(false)} className="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all">
                   <X className="w-7 h-7" />
@@ -299,17 +319,17 @@ export default function AdminOrders() {
                   <div className="space-y-4">
                     <h4 className="text-sm font-black text-slate-400 uppercase tracking-widest">معلومات العميل</h4>
                     <div className="bg-slate-50 p-6 rounded-[1.5rem] border border-slate-100 space-y-3">
-                      <p className="font-black text-slate-800">{selectedOrder.customer}</p>
-                      <p className="text-sm font-bold text-slate-600">{selectedOrder.phone}</p>
-                      <p className="text-sm font-bold text-slate-600 leading-relaxed">{selectedOrder.address}</p>
+                      <p className="font-black text-slate-800">{selectedOrder.customer_name}</p>
+                      <p className="text-sm font-bold text-slate-600">{selectedOrder.customer_phone}</p>
+                      <p className="text-sm font-bold text-slate-600 leading-relaxed">{selectedOrder.customer_address}</p>
                     </div>
                   </div>
                   <div className="space-y-4">
                     <h4 className="text-sm font-black text-slate-400 uppercase tracking-widest">ملخص الدفع</h4>
                     <div className="bg-slate-50 p-6 rounded-[1.5rem] border border-slate-100 space-y-4">
                       <div className="flex justify-between text-sm font-bold text-slate-600">
-                        <span>قيمة المنتجات ({selectedOrder.items})</span>
-                        <span>{(selectedOrder.total - 25).toFixed(2)} ر.س</span>
+                        <span>قيمة المنتجات ({selectedOrder.items_count})</span>
+                        <span>{(selectedOrder.total_amount - 25).toFixed(2)} ر.س</span>
                       </div>
                       <div className="flex justify-between text-sm font-bold text-slate-600">
                         <span>الشحن</span>
@@ -317,7 +337,7 @@ export default function AdminOrders() {
                       </div>
                       <div className="pt-4 border-t border-slate-200 flex justify-between items-center">
                         <span className="font-black text-slate-800">الإجمالي</span>
-                        <span className="text-xl font-black text-brand-primary">{selectedOrder.total.toFixed(2)} ر.س</span>
+                        <span className="text-xl font-black text-brand-primary">{selectedOrder.total_amount.toFixed(2)} ر.س</span>
                       </div>
                     </div>
                   </div>
