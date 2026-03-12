@@ -166,6 +166,13 @@ export default function AdminSettings() {
 
         {/* Content Area */}
         <div className="flex-1">
+          <input 
+            type="file" 
+            ref={fileInputRef} 
+            className="hidden" 
+            accept="image/*"
+            onChange={(e) => currentUploadField && handleFileUpload(e, currentUploadField)}
+          />
           <motion.div 
             key={activeTab}
             initial={{ opacity: 0, y: 10 }}
@@ -363,14 +370,6 @@ export default function AdminSettings() {
                   <p className="text-sm text-gray-500 font-medium mb-6">تغيير الصور الثابتة في الموقع (رفع مباشر أو روابط).</p>
                 </div>
                 
-                <input 
-                  type="file" 
-                  ref={fileInputRef} 
-                  className="hidden" 
-                  accept="image/*"
-                  onChange={(e) => currentUploadField && handleFileUpload(e, currentUploadField)}
-                />
-
                 <div className="space-y-8">
                   {[
                     { id: 'heroImage', label: 'صورة القسم الرئيسي (Hero)' },
