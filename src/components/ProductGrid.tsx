@@ -159,6 +159,12 @@ export default function ProductGrid() {
                       <span className="text-sm md:text-lg font-bold text-brand-secondary/60">ر.س</span>
                     </span>
                   </div>
+                  <Link 
+                    to={`/product/${product.id}`}
+                    className="px-4 py-2 rounded-xl bg-brand-primary/10 text-brand-primary hover:bg-brand-primary hover:text-white transition-all font-bold text-sm"
+                  >
+                    التفاصيل
+                  </Link>
                 </div>
               </div>
             </motion.div>

@@ -80,7 +80,8 @@ export default function Shop() {
               placeholder="ابحث عن لعبة..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-4 pr-12 py-3 md:py-4 bg-white border-2 border-brand-bg rounded-full focus:outline-none focus:border-brand-primary/50 focus:ring-4 focus:ring-brand-primary/10 transition-all font-bold text-brand-secondary placeholder:text-brand-muted/50 shadow-inner"
+              dir="rtl"
+              className="w-full pl-4 pr-12 py-3 md:py-4 bg-white border-2 border-brand-bg rounded-full focus:outline-none focus:border-brand-primary/50 focus:ring-4 focus:ring-brand-primary/10 transition-all font-bold text-brand-secondary placeholder:text-brand-muted/50 shadow-inner text-right"
             />
           </div>
 
@@ -186,6 +187,12 @@ export default function Shop() {
                       <span className="text-sm md:text-base font-bold text-brand-secondary/60">ر.س</span>
                     </span>
                   </div>
+                  <Link 
+                    to={`/product/${product.id}`}
+                    className="px-4 py-2 rounded-xl bg-brand-primary/10 text-brand-primary hover:bg-brand-primary hover:text-white transition-all font-bold text-sm"
+                  >
+                    التفاصيل
+                  </Link>
                 </div>
               </div>
             </motion.div>

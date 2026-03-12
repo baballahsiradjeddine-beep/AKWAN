@@ -78,7 +78,7 @@ export default function Footer() {
           </div>
 
           {/* Quick Links */}
-          <div className="flex flex-col items-center md:items-start text-center md:text-right">
+          <div className="hidden md:flex flex-col items-center md:items-start text-center md:text-right">
             <h4 className="text-xl font-bold mb-6 text-white relative inline-block">
               روابط سريعة
               <span className="absolute -bottom-2 right-1/2 translate-x-1/2 md:right-0 md:translate-x-0 w-1/2 h-1 bg-brand-accent rounded-full"></span>

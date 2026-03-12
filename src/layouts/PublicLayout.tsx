@@ -1,6 +1,7 @@
 import { Outlet, useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import CartPopup from '../components/CartPopup';
 
 export default function PublicLayout() {
   const location = useLocation();
@@ -13,6 +14,7 @@ export default function PublicLayout() {
         <Outlet />
       </main>
       <Footer />
+      <CartPopup />
     </div>
   );
 }
