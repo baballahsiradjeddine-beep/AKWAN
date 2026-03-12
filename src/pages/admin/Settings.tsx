@@ -210,29 +210,30 @@ export default function AdminSettings() {
                       {formData.logoType === 'image' && (
                         <div className="p-4 bg-white rounded-xl border border-gray-100">
                           <label className="block text-sm font-bold text-gray-700 mb-3">صورة الشعار</label>
-                          <div className="flex items-center gap-4">
-                            <div className="flex-1">
-                              <input 
-                                type="text" 
-                                name="logoImage" 
-                                value={formData.logoImage || ''} 
-                                onChange={handleChange} 
-                                placeholder="رابط الشعار..."
-                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary text-left mb-2" 
-                                dir="ltr" 
-                              />
-                              <button 
-                                onClick={() => triggerUpload('logoImage')}
-                                disabled={uploadingField === 'logoImage'}
-                                className="flex items-center gap-2 text-sm font-bold text-brand-primary hover:text-brand-secondary"
-                              >
-                                {uploadingField === 'logoImage' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-                                <span>رفع شعار</span>
-                              </button>
-                            </div>
-                            {formData.logoImage && (
-                              <div className="w-20 h-20 rounded-lg border border-gray-100 p-2 flex items-center justify-center bg-gray-50">
-                                <img src={formData.logoImage} alt="Logo Preview" className="max-w-full max-h-full object-contain" />
+                          <div 
+                            onClick={() => triggerUpload('logoImage')}
+                            className={`relative group cursor-pointer border-2 border-dashed rounded-2xl p-4 transition-all flex flex-col items-center justify-center min-h-[120px] ${formData.logoImage ? 'border-brand-primary/30 bg-brand-primary/5' : 'border-gray-200 hover:border-brand-primary/50 bg-gray-50'}`}
+                          >
+                            {uploadingField === 'logoImage' ? (
+                              <div className="flex flex-col items-center gap-2">
+                                <Loader2 className="w-8 h-8 text-brand-primary animate-spin" />
+                                <span className="text-sm font-bold text-brand-primary">جاري الرفع...</span>
+                              </div>
+                            ) : formData.logoImage ? (
+                              <div className="relative w-full flex flex-col items-center gap-3">
+                                <img src={formData.logoImage} alt="Logo" className="max-h-24 object-contain rounded-lg" />
+                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
+                                  <span className="text-white text-xs font-bold bg-brand-primary px-3 py-1 rounded-full">تغيير الصورة</span>
+                                </div>
+                                <p className="text-[10px] text-gray-400 truncate max-w-full">{formData.logoImage}</p>
+                              </div>
+                            ) : (
+                              <div className="flex flex-col items-center gap-2 text-gray-400">
+                                <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm">
+                                  <Upload className="w-6 h-6" />
+                                </div>
+                                <span className="text-sm font-bold">اضغط لرفع الشعار</span>
+                                <span className="text-[10px]">يفضل خلفية شفافة PNG</span>
                               </div>
                             )}
                           </div>
@@ -241,29 +242,21 @@ export default function AdminSettings() {
 
                       <div className="p-4 bg-white rounded-xl border border-gray-100">
                         <label className="block text-sm font-bold text-gray-700 mb-3">أيقونة المتصفح (Favicon)</label>
-                        <div className="flex items-center gap-4">
-                          <div className="flex-1">
-                            <input 
-                              type="text" 
-                              name="favicon" 
-                              value={formData.favicon || ''} 
-                              onChange={handleChange} 
-                              placeholder="رابط الأيقونة..."
-                              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary text-left mb-2" 
-                              dir="ltr" 
-                            />
-                            <button 
-                              onClick={() => triggerUpload('favicon')}
-                              disabled={uploadingField === 'favicon'}
-                              className="flex items-center gap-2 text-sm font-bold text-brand-primary hover:text-brand-secondary"
-                            >
-                              {uploadingField === 'favicon' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-                              <span>رفع أيقونة</span>
-                            </button>
-                          </div>
-                          {formData.favicon && (
-                            <div className="w-12 h-12 rounded-lg border border-gray-100 p-2 flex items-center justify-center bg-gray-50">
-                              <img src={formData.favicon} alt="Favicon Preview" className="w-full h-full object-contain" />
+                        <div 
+                          onClick={() => triggerUpload('favicon')}
+                          className={`relative group cursor-pointer border-2 border-dashed rounded-2xl p-4 transition-all flex flex-col items-center justify-center min-h-[100px] ${formData.favicon ? 'border-brand-primary/30 bg-brand-primary/5' : 'border-gray-200 hover:border-brand-primary/50 bg-gray-50'}`}
+                        >
+                          {uploadingField === 'favicon' ? (
+                            <Loader2 className="w-6 h-6 text-brand-primary animate-spin" />
+                          ) : formData.favicon ? (
+                            <div className="flex flex-col items-center gap-2">
+                              <img src={formData.favicon} alt="Favicon" className="w-10 h-10 object-contain" />
+                              <span className="text-[10px] text-gray-400">اضغط للتغيير</span>
+                            </div>
+                          ) : (
+                            <div className="flex flex-col items-center gap-2 text-gray-400">
+                              <Upload className="w-5 h-5" />
+                              <span className="text-xs font-bold">رفع أيقونة</span>
                             </div>
                           )}
                         </div>
@@ -386,33 +379,32 @@ export default function AdminSettings() {
                   ].map((field) => (
                     <div key={field.id} className="bg-gray-50 p-6 rounded-2xl border border-gray-100">
                       <label className="block text-sm font-bold text-gray-700 mb-3">{field.label}</label>
-                      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-                        <div className="flex-1 w-full">
-                          <input 
-                            type="text" 
-                            name={field.id} 
-                            value={(formData as any)[field.id]} 
-                            onChange={handleChange} 
-                            placeholder="رابط الصورة المباشر..."
-                            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary text-left mb-2" 
-                            dir="ltr" 
-                          />
-                          <button 
-                            onClick={() => triggerUpload(field.id)}
-                            disabled={uploadingField === field.id}
-                            className="flex items-center gap-2 text-sm font-bold text-brand-primary hover:text-brand-secondary transition-colors"
-                          >
-                            {uploadingField === field.id ? (
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                            ) : (
-                              <Upload className="w-4 h-4" />
-                            )}
-                            <span>رفع صورة من الجهاز</span>
-                          </button>
-                        </div>
-                        {(formData as any)[field.id] && (
-                          <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-xl overflow-hidden shrink-0 border-2 border-white shadow-md">
-                            <img src={(formData as any)[field.id]} alt="Preview" className="w-full h-full object-cover" />
+                      <div 
+                        onClick={() => triggerUpload(field.id)}
+                        className={`relative group cursor-pointer border-2 border-dashed rounded-2xl p-6 transition-all flex flex-col items-center justify-center min-h-[160px] ${(formData as any)[field.id] ? 'border-brand-primary/30 bg-white' : 'border-gray-200 hover:border-brand-primary/50 bg-gray-50'}`}
+                      >
+                        {uploadingField === field.id ? (
+                          <div className="flex flex-col items-center gap-2">
+                            <Loader2 className="w-10 h-10 text-brand-primary animate-spin" />
+                            <span className="text-sm font-bold text-brand-primary">جاري الرفع...</span>
+                          </div>
+                        ) : (formData as any)[field.id] ? (
+                          <div className="relative w-full flex flex-col items-center gap-4">
+                            <img src={(formData as any)[field.id]} alt="Preview" className="max-h-40 w-auto object-contain rounded-xl shadow-sm" />
+                            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-xl">
+                              <span className="bg-white text-brand-primary px-4 py-2 rounded-xl font-bold shadow-lg transform scale-90 group-hover:scale-100 transition-transform">تغيير الصورة</span>
+                            </div>
+                            <p className="text-[10px] text-gray-400 truncate max-w-xs">{(formData as any)[field.id]}</p>
+                          </div>
+                        ) : (
+                          <div className="flex flex-col items-center gap-3 text-gray-400">
+                            <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-sm">
+                              <Upload className="w-8 h-8" />
+                            </div>
+                            <div className="text-center">
+                              <p className="text-sm font-bold text-gray-600">اضغط لرفع الصورة</p>
+                              <p className="text-xs">أو اسحب الملف هنا</p>
+                            </div>
                           </div>
                         )}
                       </div>
