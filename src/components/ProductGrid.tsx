@@ -1,4 +1,4 @@
-import { Star, ShoppingCart, Sparkles, Heart } from 'lucide-react';
+import { Star, ShoppingCart, Sparkles } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { useStore } from '../store/useStore';
@@ -58,7 +58,7 @@ export default function ProductGrid() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-8 md:gap-10">
           {displayProducts.map((product, index) => (
             <motion.div 
               key={product.id}
@@ -66,17 +66,17 @@ export default function ProductGrid() {
               whileInView={{ opacity: 1, y: 0, scale: 1 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ type: "spring", bounce: 0.5, duration: 0.8, delay: index * 0.1 }}
-              whileHover={{ y: -10, scale: 1.02, rotate: index % 2 === 0 ? 1 : -1 }}
-              className="group flex flex-col bg-white rounded-[2rem] md:rounded-[2.5rem] overflow-hidden border-4 border-brand-bg shadow-[0_10px_30px_rgba(92,67,106,0.05)] hover:shadow-[0_30px_50px_rgba(141,105,159,0.2)] hover:border-brand-primary/30 transition-all duration-300 relative"
+              whileHover={{ y: -10, scale: 1.02, rotate: index % 2 === 0 ? 0.5 : -0.5 }}
+              className="group flex flex-col bg-white rounded-[2.5rem] md:rounded-[3rem] overflow-hidden border-4 border-brand-bg shadow-[0_10px_30px_rgba(92,67,106,0.05)] hover:shadow-[0_40px_60px_rgba(141,105,159,0.15)] hover:border-brand-primary/20 transition-all duration-500 relative"
             >
               {/* Decorative corner shape */}
               <div className="absolute -top-10 -right-10 w-20 h-20 bg-brand-accent/20 rounded-full blur-xl group-hover:bg-brand-accent/40 transition-colors duration-500 z-0"></div>
 
               {/* Product Image */}
-              <div className="relative aspect-square overflow-hidden bg-brand-bg/30 p-4 md:p-5 z-10">
+              <div className="relative aspect-[4/3] overflow-hidden bg-brand-bg/30 p-3 md:p-4 z-10">
                 <Link to={`/product/${product.id}`} className="block w-full h-full">
                   <motion.div 
-                    className="w-full h-full rounded-[1.5rem] md:rounded-[2rem] overflow-hidden relative shadow-inner"
+                    className="w-full h-full rounded-[1.2rem] md:rounded-[1.5rem] overflow-hidden relative shadow-inner"
                     whileHover={{ scale: 1.05 }}
                     transition={{ type: "spring", bounce: 0.4 }}
                   >
@@ -88,16 +88,6 @@ export default function ProductGrid() {
                     />
                     {/* Overlay gradient */}
                     <div className="absolute inset-0 bg-gradient-to-t from-brand-secondary/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    
-                    {/* Favorite Button */}
-                    <motion.button 
-                      whileHover={{ scale: 1.2, rotate: 10 }}
-                      whileTap={{ scale: 0.9 }}
-                      onClick={(e) => e.preventDefault()}
-                      className="absolute top-3 left-3 md:top-4 md:left-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-brand-muted hover:text-red-500 shadow-sm opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-x-4 group-hover:translate-x-0"
-                    >
-                      <Heart className="w-5 h-5" />
-                    </motion.button>
                   </motion.div>
                 </Link>
                 
@@ -141,28 +131,23 @@ export default function ProductGrid() {
 
               {/* Product Info */}
               <div className="p-6 md:p-8 flex flex-col flex-grow bg-white relative z-10">
-                <div className="flex items-center space-x-4 space-x-reverse mb-6 bg-brand-bg/80 w-fit px-5 py-2 md:px-6 md:py-2.5 rounded-full border border-brand-primary/10">
-                  <Star className="w-4 h-4 md:w-5 md:h-5 fill-brand-accent text-brand-accent" />
-                  <span className="text-sm md:text-base font-black text-brand-secondary">{product.rating}</span>
-                  <span className="text-xs md:text-sm font-bold text-brand-muted">({product.reviews})</span>
+                <div className="flex items-center space-x-2 space-x-reverse mb-4 bg-amber-50 w-fit px-4 py-1.5 rounded-full border border-amber-200 shadow-sm">
+                  <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                  <span className="text-sm font-black text-amber-700">{product.rating}</span>
                 </div>
                 
-                <h3 className="text-xl md:text-3xl font-black text-brand-secondary mb-6 line-clamp-2 flex-grow group-hover:text-brand-primary transition-colors leading-snug">
+                <h3 className="text-xl md:text-2xl xl:text-3xl font-black text-brand-secondary mb-4 line-clamp-2 flex-grow group-hover:text-brand-primary transition-colors leading-snug">
                   <Link to={`/product/${product.id}`}>
                     {product.name}
                   </Link>
                 </h3>
                 
-                <div className="flex items-center justify-between mt-3 pt-3 md:mt-4 md:pt-4 border-t-2 border-brand-bg border-dashed">
-                  <span className="text-xl md:text-2xl font-black text-brand-primary flex items-baseline gap-1">
-                    {product.price.toFixed(2)} <span className="text-xs md:text-sm font-bold text-brand-muted">ر.س</span>
-                  </span>
-                  
-                  {/* Small decorative icon */}
-                  <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-brand-bg flex items-center justify-center text-brand-primary opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-4 group-hover:translate-x-0 duration-300">
-                    <motion.div animate={{ rotate: 360 }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }}>
-                      <Sparkles className="w-3 h-3 md:w-4 md:h-4" />
-                    </motion.div>
+                <div className="flex items-center justify-between mt-auto pt-4 border-t-2 border-brand-bg border-dashed">
+                  <div className="bg-brand-surface px-4 py-2 rounded-2xl border-2 border-brand-bg shadow-sm">
+                    <span className="text-3xl md:text-4xl font-black text-brand-primary flex items-baseline gap-1 drop-shadow-sm">
+                      {product.price.toFixed(2)} 
+                      <span className="text-sm md:text-lg font-bold text-brand-secondary/60">ر.س</span>
+                    </span>
                   </div>
                 </div>
               </div>

@@ -1,9 +1,11 @@
 import { motion } from 'motion/react';
-import { Users, ShoppingBag, DollarSign, Package, ArrowUpRight, ArrowDownRight, MoreHorizontal, ExternalLink } from 'lucide-react';
+import { Users, ShoppingBag, DollarSign, Package, ArrowUpRight, ArrowDownRight, MoreHorizontal, ExternalLink, Download, Printer } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useStore } from '../../store/useStore';
+import { exportToCSV } from '../../utils/export';
 
 const salesData = [
   { name: 'السبت', sales: 4200, orders: 45 },
@@ -13,12 +15,6 @@ const salesData = [
   { name: 'الأربعاء', sales: 6200, orders: 65 },
   { name: 'الخميس', sales: 7500, orders: 82 },
   { name: 'الجمعة', sales: 8900, orders: 95 },
-];
-
-const topProducts = [
-  { id: 1, name: 'طقم دلة خشبي', sales: 124, price: 224.25, image: 'https://images.unsplash.com/photo-1596464716127-f2a82984de30?w=100&q=80' },
-  { id: 2, name: 'بطاقات كتابة الحروف', sales: 98, price: 75.00, image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=100&q=80' },
-  { id: 3, name: 'تكوين الكلمات الطويلة', sales: 76, price: 570.00, image: 'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=100&q=80' },
 ];
 
 export default function Dashboard() {
@@ -34,6 +30,17 @@ export default function Dashboard() {
   const totalSales = orders
     .filter(o => o.status === 'تم التوصيل')
     .reduce((acc, curr) => acc + curr.total_amount, 0);
+
+  const topProducts = [...products]
+    .sort((a, b) => (b.reviews || 0) - (a.reviews || 0))
+    .slice(0, 3)
+    .map((product) => ({
+      id: product.id,
+      name: product.name,
+      sales: product.reviews || 0,
+      price: product.price,
+      image: product.image
+    }));
 
   const stats = [
     { 
@@ -82,16 +89,44 @@ export default function Dashboard() {
           <h1 className="text-3xl font-black text-slate-800 tracking-tight">لوحة التحكم</h1>
           <p className="text-slate-400 font-bold mt-1">نظرة شاملة على أداء متجرك اليوم.</p>
         </div>
-        <div className="flex items-center gap-3 bg-white p-1.5 rounded-2xl shadow-sm border border-slate-200">
-          {['اليوم', '7 أيام', '30 يوم'].map((range) => (
-            <button
-              key={range}
-              onClick={() => setTimeRange(range)}
-              className={`px-5 py-2 rounded-xl text-sm font-black transition-all ${timeRange === range ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20' : 'text-slate-400 hover:text-slate-600'}`}
-            >
-              {range}
-            </button>
-          ))}
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-1 bg-white p-1.5 rounded-2xl shadow-sm border border-slate-200">
+            {['اليوم', '7 أيام', '30 يوم'].map((range) => (
+              <button
+                key={range}
+                onClick={() => setTimeRange(range)}
+                className={`px-4 py-2 rounded-xl text-sm font-black transition-all ${timeRange === range ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20' : 'text-slate-400 hover:text-slate-600'}`}
+              >
+                {range}
+              </button>
+            ))}
+          </div>
+          <button 
+            onClick={() => exportToCSV(orders.map(o => ({ 
+              'رقم الطلب': o.id, 
+              'العميل': o.customer_name, 
+              'المبلغ': o.total_amount, 
+              'الحالة': o.status, 
+              'التاريخ': new Date(o.created_at).toLocaleDateString('ar-SA') 
+            })), 'الطلبات')}
+            className="bg-white text-slate-600 px-4 py-2.5 rounded-xl font-black border border-slate-200 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm"
+          >
+            <Download className="w-4 h-4" />
+            <span className="hidden sm:inline text-sm">تصدير</span>
+          </button>
+          <button 
+            onClick={() => {
+              try {
+                window.print();
+              } catch (e) {
+                toast.error('عذراً، ميزة الطباعة قد لا تعمل داخل نافذة المعاينة. يرجى فتح التطبيق في نافذة جديدة.');
+              }
+            }}
+            className="bg-brand-primary text-white px-4 py-2.5 rounded-xl font-black hover:bg-brand-secondary transition-all shadow-lg shadow-brand-primary/20 flex items-center gap-2"
+          >
+            <Printer className="w-4 h-4" />
+            <span className="hidden sm:inline text-sm">طباعة</span>
+          </button>
         </div>
       </div>
 
@@ -186,30 +221,46 @@ export default function Dashboard() {
             <Link to="/admin/products" className="text-xs font-black text-brand-primary hover:underline">عرض الكل</Link>
           </div>
           <div className="space-y-6 flex-1">
-            {topProducts.map((product) => (
-              <div key={product.id} className="flex items-center gap-4 p-4 rounded-3xl hover:bg-slate-50 transition-all group cursor-pointer border border-transparent hover:border-slate-100">
-                <div className="w-16 h-16 rounded-2xl overflow-hidden bg-slate-100 shrink-0 border border-slate-100 group-hover:scale-105 transition-transform">
-                  <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="font-black text-slate-800 text-sm truncate">{product.name}</h4>
-                  <p className="text-[11px] text-slate-400 font-bold mt-0.5">{product.sales} مبيعة</p>
-                </div>
-                <div className="text-left">
-                  <p className="font-black text-brand-primary text-sm">{product.price} ر.س</p>
-                  <div className="w-full bg-slate-100 h-1.5 rounded-full mt-2 overflow-hidden">
-                    <motion.div 
-                      initial={{ width: 0 }}
-                      animate={{ width: `${(product.sales / 150) * 100}%` }}
-                      transition={{ duration: 1.5, delay: 0.5 }}
-                      className="bg-brand-primary h-full rounded-full"
-                    />
+            {topProducts.length > 0 ? (
+              topProducts.map((product) => (
+                <div key={product.id} className="flex items-center gap-4 p-4 rounded-3xl hover:bg-slate-50 transition-all group cursor-pointer border border-transparent hover:border-slate-100">
+                  <div className="w-16 h-16 rounded-2xl overflow-hidden bg-slate-100 shrink-0 border border-slate-100 group-hover:scale-105 transition-transform">
+                    <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-black text-slate-800 text-sm truncate">{product.name}</h4>
+                    <p className="text-[11px] text-slate-400 font-bold mt-0.5">{product.sales} مبيعة</p>
+                  </div>
+                  <div className="text-left">
+                    <p className="font-black text-brand-primary text-sm">{product.price} ر.س</p>
+                    <div className="w-full bg-slate-100 h-1.5 rounded-full mt-2 overflow-hidden">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${(product.sales / 150) * 100}%` }}
+                        transition={{ duration: 1.5, delay: 0.5 }}
+                        className="bg-brand-primary h-full rounded-full"
+                      />
+                    </div>
                   </div>
                 </div>
+              ))
+            ) : (
+              <div className="flex flex-col items-center justify-center h-full text-slate-400 space-y-2 py-10">
+                <Package className="w-8 h-8 opacity-50" />
+                <p className="text-sm font-bold">لا توجد منتجات بعد</p>
               </div>
-            ))}
+            )}
           </div>
-          <button className="w-full mt-8 py-4 bg-slate-50 text-slate-600 rounded-2xl font-black text-sm hover:bg-slate-100 transition-all flex items-center justify-center gap-2">
+          <button 
+            onClick={() => exportToCSV(orders.map(o => ({ 
+              'رقم الطلب': o.id, 
+              'العميل': o.customer_name, 
+              'المبلغ': o.total_amount, 
+              'الحالة': o.status, 
+              'التاريخ': new Date(o.created_at).toLocaleDateString('ar-SA') 
+            })), 'التقرير_الكامل_للطلبات')}
+            className="w-full mt-8 py-4 bg-slate-50 text-slate-600 rounded-2xl font-black text-sm hover:bg-slate-100 transition-all flex items-center justify-center gap-2"
+          >
             <span>تحميل التقرير الكامل</span>
             <ExternalLink className="w-4 h-4" />
           </button>

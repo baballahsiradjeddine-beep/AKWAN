@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
 import { useStore } from '../store/useStore';
-import { Star, ShoppingCart, Sparkles, Heart, Search } from 'lucide-react';
+import { Star, ShoppingCart, Sparkles, Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function Shop() {
@@ -103,7 +103,7 @@ export default function Shop() {
         </div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 md:gap-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8 md:gap-10">
           {filteredProducts.map((product, index) => (
             <motion.div 
               key={product.id}
@@ -111,15 +111,15 @@ export default function Shop() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ type: "spring", bounce: 0.4, duration: 0.8, delay: index * 0.05 }}
               whileHover={{ y: -12, scale: 1.02 }}
-              className="group flex flex-col bg-white rounded-[2rem] overflow-hidden border-4 border-brand-bg shadow-[0_8px_20px_rgba(92,67,106,0.04)] hover:shadow-[0_20px_40px_rgba(141,105,159,0.15)] hover:border-brand-primary/20 transition-all duration-300 relative"
+              className="group flex flex-col bg-white rounded-[2.5rem] overflow-hidden border-4 border-brand-bg shadow-[0_8px_20px_rgba(92,67,106,0.04)] hover:shadow-[0_30px_50px_rgba(141,105,159,0.15)] hover:border-brand-primary/20 transition-all duration-500 relative"
             >
               {/* Decorative corner */}
               <div className="absolute -top-12 -right-12 w-24 h-24 bg-brand-accent/10 rounded-full blur-xl group-hover:bg-brand-accent/30 transition-colors duration-500 z-0"></div>
 
-              <div className="relative aspect-square overflow-hidden bg-brand-bg/30 p-4 z-10">
+              <div className="relative aspect-[4/3] overflow-hidden bg-brand-bg/30 p-3 z-10">
                 <Link to={`/product/${product.id}`} className="block w-full h-full">
                   <motion.div 
-                    className="w-full h-full rounded-[1.5rem] overflow-hidden relative shadow-inner"
+                    className="w-full h-full rounded-[1.2rem] overflow-hidden relative shadow-inner"
                     whileHover={{ scale: 1.05 }}
                     transition={{ type: "spring", bounce: 0.4 }}
                   >
@@ -130,14 +130,6 @@ export default function Shop() {
                       referrerPolicy="no-referrer"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-brand-secondary/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    
-                    {/* Favorite Button */}
-                    <button 
-                      onClick={(e) => { e.preventDefault(); /* Add to wishlist logic */ }}
-                      className="absolute top-3 left-3 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-brand-muted hover:text-red-500 shadow-sm opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-x-4 group-hover:translate-x-0"
-                    >
-                      <Heart className="w-5 h-5" />
-                    </button>
                   </motion.div>
                 </Link>
                 
@@ -177,24 +169,22 @@ export default function Shop() {
                 </div>
               </div>
 
-              <div className="p-5 flex flex-col flex-grow bg-white relative z-10">
-                <div className="flex items-center space-x-1 space-x-reverse mb-3 bg-brand-bg/80 w-fit px-3 py-1 rounded-full border border-brand-primary/10">
-                  <Star className="w-3 h-3 fill-brand-accent text-brand-accent" />
-                  <span className="text-xs font-black text-brand-secondary">{product.rating}</span>
+              <div className="p-6 flex flex-col flex-grow bg-white relative z-10">
+                <div className="flex items-center space-x-2 space-x-reverse mb-3 bg-amber-50 w-fit px-3 py-1 rounded-full border border-amber-200 shadow-sm">
+                  <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                  <span className="text-xs font-black text-amber-700">{product.rating}</span>
                 </div>
                 
-                <h3 className="text-lg font-black text-brand-secondary mb-2 line-clamp-2 flex-grow group-hover:text-brand-primary transition-colors leading-snug">
+                <h3 className="text-xl md:text-2xl font-black text-brand-secondary mb-4 line-clamp-2 flex-grow group-hover:text-brand-primary transition-colors leading-snug">
                   <Link to={`/product/${product.id}`}>{product.name}</Link>
                 </h3>
                 
-                <div className="flex items-center justify-between mt-3 pt-3 border-t-2 border-brand-bg border-dashed">
-                  <span className="text-xl font-black text-brand-primary flex items-baseline gap-1">
-                    {product.price.toFixed(2)} <span className="text-xs font-bold text-brand-muted">ر.س</span>
-                  </span>
-                  
-                  {/* Small decorative icon */}
-                  <div className="w-8 h-8 rounded-full bg-brand-bg flex items-center justify-center text-brand-primary opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-2 group-hover:translate-x-0 duration-300">
-                    <Sparkles className="w-4 h-4 animate-pulse" />
+                <div className="flex items-center justify-between mt-auto pt-4 border-t-2 border-brand-bg border-dashed">
+                  <div className="bg-brand-surface px-4 py-2 rounded-2xl border-2 border-brand-bg shadow-sm">
+                    <span className="relative text-2xl md:text-3xl font-black text-brand-primary flex items-baseline gap-1 drop-shadow-sm">
+                      {product.price.toFixed(2)} 
+                      <span className="text-sm md:text-base font-bold text-brand-secondary/60">ر.س</span>
+                    </span>
                   </div>
                 </div>
               </div>

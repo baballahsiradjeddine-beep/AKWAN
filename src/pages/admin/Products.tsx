@@ -1,8 +1,9 @@
 import { motion, AnimatePresence } from 'motion/react';
-import { Plus, Search, Edit, Trash2, MoreVertical, X, Upload, Loader2, Eye, ExternalLink, Filter, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, MoreVertical, X, Upload, Loader2, Eye, ExternalLink, Filter, ChevronRight, ChevronLeft, Star } from 'lucide-react';
 import { useStore, Product } from '../../store/useStore';
 import React, { useState, useRef, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
+import toast from 'react-hot-toast';
 
 export default function AdminProducts() {
   const products = useStore((state) => state.products);
@@ -38,7 +39,6 @@ export default function AdminProducts() {
     additionalImages: [] as string[],
     description: '',
     rating: 5,
-    reviews: 0,
     soldOut: false
   });
 
@@ -65,7 +65,7 @@ export default function AdminProducts() {
       setProductForm({ ...productForm, image: data.publicUrl });
     } catch (error) {
       console.error('Error uploading image:', error);
-      alert('حدث خطأ أثناء رفع الصورة');
+      toast.error('حدث خطأ أثناء رفع الصورة');
     } finally {
       setIsUploading(false);
     }
@@ -104,7 +104,7 @@ export default function AdminProducts() {
       }));
     } catch (error) {
       console.error('Error uploading additional images:', error);
-      alert('حدث خطأ أثناء رفع الصور الإضافية');
+      toast.error('حدث خطأ أثناء رفع الصور الإضافية');
     } finally {
       setIsUploading(false);
     }
@@ -151,7 +151,6 @@ export default function AdminProducts() {
       additionalImages: product.additionalImages || [],
       description: product.description,
       rating: product.rating,
-      reviews: product.reviews,
       soldOut: product.soldOut || false
     });
     setEditingId(product.id);
@@ -166,7 +165,7 @@ export default function AdminProducts() {
   };
 
   const resetForm = () => {
-    setProductForm({ name: '', price: 0, category: '', image: '', additionalImages: [], description: '', rating: 5, reviews: 0, soldOut: false });
+    setProductForm({ name: '', price: 0, category: '', image: '', additionalImages: [], description: '', rating: 5, soldOut: false });
   };
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -278,6 +277,20 @@ export default function AdminProducts() {
                             onChange={(e) => setProductForm({...productForm, category: e.target.value})}
                             className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/5 transition-all font-bold"
                             placeholder="مثال: أواني"
+                          />
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 gap-4">
+                        <div>
+                          <label className="block text-sm font-black text-slate-700 mb-2">التقييم (1-5)</label>
+                          <input 
+                            type="number" 
+                            min="1"
+                            max="5"
+                            step="0.1"
+                            value={productForm.rating}
+                            onChange={(e) => setProductForm({...productForm, rating: parseFloat(e.target.value) || 5})}
+                            className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/5 transition-all font-bold"
                           />
                         </div>
                       </div>
@@ -444,7 +457,7 @@ export default function AdminProducts() {
                       </div>
                       <div className="p-6 bg-slate-50 rounded-[1.5rem] border border-slate-100">
                         <p className="text-xs font-black text-slate-400 mb-1">التقييم</p>
-                        <span className="text-sm font-black text-amber-500">⭐ {selectedProduct.rating} ({selectedProduct.reviews} مراجعة)</span>
+                        <span className="text-sm font-black text-amber-500">⭐ {selectedProduct.rating}</span>
                       </div>
                     </div>
 
@@ -511,6 +524,7 @@ export default function AdminProducts() {
                 <th className="px-8 py-6 text-xs font-black text-slate-400 uppercase tracking-widest">المنتج</th>
                 <th className="px-8 py-6 text-xs font-black text-slate-400 uppercase tracking-widest">التصنيف</th>
                 <th className="px-8 py-6 text-xs font-black text-slate-400 uppercase tracking-widest">السعر</th>
+                <th className="px-8 py-6 text-xs font-black text-slate-400 uppercase tracking-widest">التقييم</th>
                 <th className="px-8 py-6 text-xs font-black text-slate-400 uppercase tracking-widest">الحالة</th>
                 <th className="px-8 py-6 text-xs font-black text-slate-400 uppercase tracking-widest text-center">الإجراءات</th>
               </tr>
@@ -542,6 +556,12 @@ export default function AdminProducts() {
                   </td>
                   <td className="px-8 py-5 font-black text-brand-primary text-sm">
                     {product.price.toFixed(2)} ر.س
+                  </td>
+                  <td className="px-8 py-5">
+                    <div className="flex items-center gap-1.5">
+                      <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                      <span className="text-sm font-black text-slate-700">{product.rating}</span>
+                    </div>
                   </td>
                   <td className="px-8 py-5">
                     <span className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black ${

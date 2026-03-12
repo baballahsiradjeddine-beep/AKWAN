@@ -1,8 +1,10 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { Search, Eye, MoreVertical, X, Package, Truck, CheckCircle, Clock, Filter, ChevronRight, ChevronLeft, Download, Printer } from 'lucide-react';
 import React, { useState, useRef, useEffect } from 'react';
+import toast from 'react-hot-toast';
 
 import { useStore } from '../../store/useStore';
+import { exportToCSV } from '../../utils/export';
 
 export default function AdminOrders() {
   const { orders, fetchOrders, updateOrderStatus, isLoadingOrders } = useStore();
@@ -81,13 +83,31 @@ export default function AdminOrders() {
           <p className="text-slate-400 font-bold mt-1">تتبع وحالة طلبات عملائك في مكان واحد.</p>
         </div>
         <div className="flex gap-3">
-          <button className="bg-white text-slate-600 px-6 py-4 rounded-[1.5rem] font-black border border-slate-200 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
+          <button 
+            onClick={() => exportToCSV(filteredOrders.map(o => ({ 
+              'رقم الطلب': o.id, 
+              'العميل': o.customer_name, 
+              'المبلغ': o.total_amount, 
+              'الحالة': o.status, 
+              'التاريخ': new Date(o.created_at).toLocaleDateString('ar-SA') 
+            })), 'الطلبات')}
+            className="bg-white text-slate-600 px-4 py-2.5 sm:px-6 sm:py-4 rounded-xl sm:rounded-[1.5rem] font-black border border-slate-200 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm"
+          >
             <Download className="w-5 h-5" />
-            <span>تصدير</span>
+            <span className="hidden sm:inline">تصدير</span>
           </button>
-          <button className="bg-brand-primary text-white px-6 py-4 rounded-[1.5rem] font-black hover:bg-brand-secondary transition-all shadow-lg shadow-brand-primary/20 flex items-center gap-2">
+          <button 
+            onClick={() => {
+              try {
+                window.print();
+              } catch (e) {
+                toast.error('عذراً، ميزة الطباعة قد لا تعمل داخل نافذة المعاينة. يرجى فتح التطبيق في نافذة جديدة.');
+              }
+            }}
+            className="bg-brand-primary text-white px-4 py-2.5 sm:px-6 sm:py-4 rounded-xl sm:rounded-[1.5rem] font-black hover:bg-brand-secondary transition-all shadow-lg shadow-brand-primary/20 flex items-center gap-2"
+          >
             <Printer className="w-5 h-5" />
-            <span>طباعة التقارير</span>
+            <span className="hidden sm:inline">طباعة التقارير</span>
           </button>
         </div>
       </div>

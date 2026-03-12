@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ShoppingCart, Trash2, ArrowLeft, Sparkles, Gift, User, Phone, MapPin, CheckCircle2, Loader2 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
+import toast from 'react-hot-toast';
 
 export default function Cart() {
   const cartItems = useStore((state) => state.cart);
@@ -40,7 +41,7 @@ export default function Cart() {
       setOrderSuccess(true);
     } catch (error) {
       console.error('Checkout error:', error);
-      alert('حدث خطأ أثناء إتمام الطلب. يرجى المحاولة مرة أخرى.');
+      toast.error('حدث خطأ أثناء إتمام الطلب. يرجى المحاولة مرة أخرى.');
     } finally {
       setIsSubmitting(false);
     }

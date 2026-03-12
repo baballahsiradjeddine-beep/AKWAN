@@ -1,13 +1,15 @@
 import { useParams, Link } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { motion } from 'motion/react';
-import { Star, ShoppingCart, Heart, Share2, ChevronRight, Check, Sparkles } from 'lucide-react';
+import { Star, ShoppingCart, Share2, ChevronRight, Check, Sparkles, MessageCircle } from 'lucide-react';
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 
 export default function ProductDetails() {
   const { id } = useParams();
   const products = useStore((state) => state.products);
   const addToCart = useStore((state) => state.addToCart);
+  const settings = useStore((state) => state.settings);
   
   const product = products.find(p => p.id === Number(id));
   const [quantity, setQuantity] = useState(1);
@@ -51,6 +53,36 @@ export default function ProductDetails() {
       setAdded(true);
       setTimeout(() => setAdded(false), 2000);
     }
+  };
+
+  const handleShare = async () => {
+    if (!product) return;
+    
+    const shareData = {
+      title: product.name,
+      text: product.description,
+      url: window.location.href,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        // Fallback: Copy to clipboard
+        await navigator.clipboard.writeText(window.location.href);
+        toast.success('تم نسخ رابط المنتج بنجاح!');
+      }
+    } catch (err) {
+      console.error('Error sharing:', err);
+    }
+  };
+
+  const handleWhatsAppContact = () => {
+    if (!product) return;
+    const message = `مرحباً، أود الاستفسار عن منتج: ${product.name}\nالرابط: ${window.location.href}`;
+    const encodedMessage = encodeURIComponent(message);
+    const phone = settings.contactPhone.replace(/\s+/g, '');
+    window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
   };
 
   return (
@@ -153,9 +185,6 @@ export default function ProductDetails() {
                   <Star className="w-6 h-6 fill-brand-accent text-brand-accent ml-3" />
                   <span className="text-lg font-black text-brand-secondary">{product.rating}</span>
                 </div>
-                <span className="text-base font-bold text-brand-muted hover:text-brand-primary transition-colors cursor-pointer border-b-2 border-transparent hover:border-brand-primary pb-1">
-                  {product.reviews} تقييم
-                </span>
               </div>
 
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-brand-secondary mb-6 leading-tight relative inline-block">
@@ -225,19 +254,26 @@ export default function ProductDetails() {
               </div>
 
               {/* Secondary Actions */}
-              <div className="flex items-center gap-12 border-t-4 border-brand-bg border-dashed pt-12">
-                <button className="flex items-center gap-4 text-brand-muted hover:text-red-500 font-bold transition-colors group">
-                  <div className="p-4 bg-brand-surface rounded-xl group-hover:bg-red-50 transition-colors">
-                    <Heart className="w-7 h-7 group-hover:fill-red-500" />
-                  </div>
-                  <span className="text-xl">إضافة للمفضلة</span>
-                </button>
-                <button className="flex items-center gap-4 text-brand-muted hover:text-brand-primary font-bold transition-colors group">
-                  <div className="p-4 bg-brand-surface rounded-xl group-hover:bg-brand-primary/10 transition-colors">
-                    <Share2 className="w-7 h-7" />
-                  </div>
-                  <span className="text-xl">مشاركة</span>
-                </button>
+              <div className="flex flex-col sm:flex-row items-center gap-6 border-t-4 border-brand-bg border-dashed pt-12">
+                <motion.button 
+                  whileHover={{ scale: 1.03, y: -2 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={handleWhatsAppContact}
+                  className="w-full sm:w-auto flex-1 flex items-center justify-center gap-4 bg-green-500 text-white px-8 py-4 rounded-2xl font-black text-xl shadow-[0_10px_25px_rgba(34,197,94,0.3)] hover:bg-green-600 transition-all border-0"
+                >
+                  <MessageCircle className="w-7 h-7" />
+                  <span>تواصل عبر واتساب</span>
+                </motion.button>
+                
+                <motion.button 
+                  whileHover={{ scale: 1.03, y: -2 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={handleShare}
+                  className="w-full sm:w-auto flex-1 flex items-center justify-center gap-4 bg-blue-500 text-white px-8 py-4 rounded-2xl font-black text-xl shadow-[0_10px_25px_rgba(59,130,246,0.3)] hover:bg-blue-600 transition-all border-none border-0"
+                >
+                  <Share2 className="w-7 h-7" />
+                  <span>مشاركة المنتج</span>
+                </motion.button>
               </div>
 
             </motion.div>
