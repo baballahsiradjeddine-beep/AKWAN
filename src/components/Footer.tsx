@@ -30,72 +30,96 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-20 mb-20">
           
           {/* Brand Info */}
-          <div className="flex flex-col items-start">
+          <div className="flex flex-col items-center md:items-start text-center md:text-right">
             <Link to="/" className="text-4xl font-black text-brand-accent tracking-tight mb-6 inline-block">
               {settings.siteName}
             </Link>
-            <p className="text-gray-300 mb-8 text-sm leading-loose">
+            <p className="text-gray-300 mb-8 text-sm leading-loose max-w-sm">
               {settings.footerDescription}
             </p>
-            <div className="flex flex-wrap gap-4 space-x-reverse">
-              <a href={settings.socialLinks.instagram} className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-gray-300 hover:bg-brand-accent hover:text-brand-secondary transition-all duration-300 hover:scale-110" title="انستغرام">
+            <div className="flex flex-wrap justify-center md:justify-start gap-4 space-x-reverse">
+              <a 
+                href={settings.socialLinks.instagram} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-gray-300 hover:bg-brand-accent hover:text-brand-secondary transition-all duration-300 hover:scale-110" 
+                title="انستغرام"
+              >
                 <Instagram className="w-5 h-5" />
               </a>
-              <a href={settings.socialLinks.snapchat} className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-gray-300 hover:bg-brand-accent hover:text-brand-secondary transition-all duration-300 hover:scale-110" title="سناب شات">
+              <a 
+                href={settings.socialLinks.snapchat} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-gray-300 hover:bg-brand-accent hover:text-brand-secondary transition-all duration-300 hover:scale-110" 
+                title="سناب شات"
+              >
                 <Ghost className="w-5 h-5" />
               </a>
-              <a href={settings.socialLinks.tiktok} className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-gray-300 hover:bg-brand-accent hover:text-brand-secondary transition-all duration-300 hover:scale-110" title="تيك توك">
+              <a 
+                href={settings.socialLinks.tiktok} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-gray-300 hover:bg-brand-accent hover:text-brand-secondary transition-all duration-300 hover:scale-110" 
+                title="تيك توك"
+              >
                 <TikTokIcon className="w-5 h-5" />
               </a>
-              <a href={settings.socialLinks.facebook} className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-gray-300 hover:bg-brand-accent hover:text-brand-secondary transition-all duration-300 hover:scale-110" title="فيسبوك">
+              <a 
+                href={settings.socialLinks.facebook} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-gray-300 hover:bg-brand-accent hover:text-brand-secondary transition-all duration-300 hover:scale-110" 
+                title="فيسبوك"
+              >
                 <Facebook className="w-5 h-5" />
               </a>
             </div>
           </div>
 
           {/* Quick Links */}
-          <div className="flex flex-col items-start">
+          <div className="flex flex-col items-center md:items-start text-center md:text-right">
             <h4 className="text-xl font-bold mb-6 text-white relative inline-block">
               روابط سريعة
-              <span className="absolute -bottom-2 right-0 w-1/2 h-1 bg-brand-accent rounded-full"></span>
+              <span className="absolute -bottom-2 right-1/2 translate-x-1/2 md:right-0 md:translate-x-0 w-1/2 h-1 bg-brand-accent rounded-full"></span>
             </h4>
             <ul className="space-y-4 text-base text-gray-300 w-full">
-              <li><Link to="/" className="flex items-center hover:text-brand-accent transition-all duration-300 hover:translate-x-1 group"><span className="w-2 h-2 rounded-full bg-brand-primary ml-3 group-hover:bg-brand-accent transition-colors"></span>الرئيسية</Link></li>
-              <li><Link to="/shop" className="flex items-center hover:text-brand-accent transition-all duration-300 hover:translate-x-1 group"><span className="w-2 h-2 rounded-full bg-brand-primary ml-3 group-hover:bg-brand-accent transition-colors"></span>المتجر</Link></li>
-              <li><Link to="/about" className="flex items-center hover:text-brand-accent transition-all duration-300 hover:translate-x-1 group"><span className="w-2 h-2 rounded-full bg-brand-primary ml-3 group-hover:bg-brand-accent transition-colors"></span>من نحن</Link></li>
-              <li><Link to="/cart" className="flex items-center hover:text-brand-accent transition-all duration-300 hover:translate-x-1 group"><span className="w-2 h-2 rounded-full bg-brand-primary ml-3 group-hover:bg-brand-accent transition-colors"></span>سلة المشتريات</Link></li>
+              <li><Link to="/" className="flex items-center justify-center md:justify-start hover:text-brand-accent transition-all duration-300 hover:translate-x-[-4px] md:hover:translate-x-1 group"><span className="w-2 h-2 rounded-full bg-brand-primary ml-3 group-hover:bg-brand-accent transition-colors"></span>الرئيسية</Link></li>
+              <li><Link to="/shop" className="flex items-center justify-center md:justify-start hover:text-brand-accent transition-all duration-300 hover:translate-x-[-4px] md:hover:translate-x-1 group"><span className="w-2 h-2 rounded-full bg-brand-primary ml-3 group-hover:bg-brand-accent transition-colors"></span>المتجر</Link></li>
+              <li><Link to="/about" className="flex items-center justify-center md:justify-start hover:text-brand-accent transition-all duration-300 hover:translate-x-[-4px] md:hover:translate-x-1 group"><span className="w-2 h-2 rounded-full bg-brand-primary ml-3 group-hover:bg-brand-accent transition-colors"></span>من نحن</Link></li>
+              <li><Link to="/cart" className="flex items-center justify-center md:justify-start hover:text-brand-accent transition-all duration-300 hover:translate-x-[-4px] md:hover:translate-x-1 group"><span className="w-2 h-2 rounded-full bg-brand-primary ml-3 group-hover:bg-brand-accent transition-colors"></span>سلة المشتريات</Link></li>
             </ul>
           </div>
 
           {/* Support & Contact */}
-          <div className="flex flex-col items-start">
+          <div className="flex flex-col items-center md:items-start text-center md:text-right">
             <h4 className="text-xl font-bold mb-6 text-white relative inline-block">
               تواصل معنا
-              <span className="absolute -bottom-2 right-0 w-1/2 h-1 bg-brand-accent rounded-full"></span>
+              <span className="absolute -bottom-2 right-1/2 translate-x-1/2 md:right-0 md:translate-x-0 w-1/2 h-1 bg-brand-accent rounded-full"></span>
             </h4>
             <ul className="space-y-4 text-base text-gray-300">
-              <li className="flex items-start">
-                <MapPin className="w-6 h-6 ml-3 text-brand-accent shrink-0" />
+              <li className="flex flex-col md:flex-row items-center md:items-start gap-2 md:gap-0">
+                <MapPin className="w-6 h-6 md:ml-3 text-brand-accent shrink-0" />
                 <span>{settings.contactAddress}</span>
               </li>
-              <li className="flex items-center">
-                <Phone className="w-6 h-6 ml-3 text-brand-accent shrink-0" />
+              <li className="flex flex-col md:flex-row items-center gap-2 md:gap-0">
+                <Phone className="w-6 h-6 md:ml-3 text-brand-accent shrink-0" />
                 <span dir="ltr">{settings.contactPhone}</span>
               </li>
-              <li className="flex items-center">
-                <Mail className="w-6 h-6 ml-3 text-brand-accent shrink-0" />
+              <li className="flex flex-col md:flex-row items-center gap-2 md:gap-0">
+                <Mail className="w-6 h-6 md:ml-3 text-brand-accent shrink-0" />
                 <span>{settings.contactEmail}</span>
               </li>
             </ul>
           </div>
 
           {/* Newsletter */}
-          <div className="flex flex-col items-start">
+          <div className="flex flex-col items-center md:items-start text-center md:text-right">
             <h4 className="text-xl font-bold mb-6 text-white relative inline-block">
               النشرة البريدية
-              <span className="absolute -bottom-2 right-0 w-1/2 h-1 bg-brand-accent rounded-full"></span>
+              <span className="absolute -bottom-2 right-1/2 translate-x-1/2 md:right-0 md:translate-x-0 w-1/2 h-1 bg-brand-accent rounded-full"></span>
             </h4>
-            <p className="text-gray-300 mb-6 text-base leading-relaxed">
+            <p className="text-gray-300 mb-6 text-base leading-relaxed max-w-xs">
               اشترك في نشرتنا البريدية للحصول على أحدث العروض والمنتجات الجديدة.
             </p>
             <form className="w-full relative" onSubmit={(e) => e.preventDefault()}>
