@@ -1,12 +1,13 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { motion } from 'motion/react';
-import { Star, ShoppingCart, Share2, ChevronRight, Check, Sparkles, MessageCircle } from 'lucide-react';
+import { Star, ShoppingCart, Share2, ChevronRight, Check, Sparkles, MessageCircle, ShoppingBag } from 'lucide-react';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 
 export default function ProductDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const products = useStore((state) => state.products);
   const addToCart = useStore((state) => state.addToCart);
   const settings = useStore((state) => state.settings);
@@ -77,6 +78,15 @@ export default function ProductDetails() {
     }
   };
 
+  const handleOrderNow = () => {
+    if (product) {
+      for (let i = 0; i < quantity; i++) {
+        addToCart(product);
+      }
+      navigate('/cart');
+    }
+  };
+
   const handleWhatsAppContact = () => {
     if (!product) return;
     const message = `مرحباً، أود الاستفسار عن منتج: ${product.name}\nالرابط: ${window.location.href}`;
@@ -114,73 +124,100 @@ export default function ProductDetails() {
           <span className="text-brand-secondary">{product.name}</span>
         </nav>
 
-        <div className="bg-white rounded-[3rem] p-6 md:p-10 shadow-[0_20px_50px_rgba(92,67,106,0.08)] border-8 border-brand-bg flex flex-col lg:flex-row gap-16 lg:gap-24 relative overflow-hidden">
+          <div className="bg-white rounded-[3rem] p-6 md:p-10 shadow-[0_20px_50px_rgba(92,67,106,0.08)] border-8 border-brand-bg flex flex-col lg:flex-row gap-16 lg:gap-24 relative overflow-hidden">
           
           {/* Decorative corner */}
           <div className="absolute -top-20 -left-20 w-40 h-40 bg-brand-accent/10 rounded-full blur-2xl pointer-events-none"></div>
 
-          {/* Product Image */}
-          <div className="w-full lg:w-1/2 flex flex-col gap-4">
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.9, rotate: -5 }}
-              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              transition={{ type: "spring", bounce: 0.5 }}
-              className="relative aspect-square rounded-[2.5rem] overflow-hidden border-8 border-brand-surface shadow-inner bg-brand-bg/30 group"
-            >
-              <img 
-                src={selectedImage} 
-                alt={product.name} 
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-brand-secondary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              
-              {product.badge && (
-                <motion.div 
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ type: "spring", delay: 0.3 }}
-                  className="absolute top-6 right-6 bg-brand-accent text-brand-secondary text-sm md:text-base font-black px-5 py-2.5 rounded-full shadow-lg transform rotate-3 border-4 border-white z-10"
-                >
-                  {product.badge}
-                </motion.div>
-              )}
-            </motion.div>
+          {/* Product Image & Desktop Social Buttons */}
+          <div className="w-full lg:w-1/2 flex flex-col gap-8">
+            <div className="flex flex-col gap-4">
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9, rotate: -5 }}
+                animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                transition={{ type: "spring", bounce: 0.5 }}
+                className="relative aspect-square rounded-[2.5rem] overflow-hidden border-8 border-brand-surface shadow-inner bg-brand-bg/30 group"
+              >
+                <img 
+                  src={selectedImage} 
+                  alt={product.name} 
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  referrerPolicy="no-referrer"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-brand-secondary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                
+                {product.badge && (
+                  <motion.div 
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", delay: 0.3 }}
+                    className="absolute top-6 right-6 bg-brand-accent text-brand-secondary text-sm md:text-base font-black px-5 py-2.5 rounded-full shadow-lg transform rotate-3 border-4 border-white z-10"
+                  >
+                    {product.badge}
+                  </motion.div>
+                )}
+              </motion.div>
 
-            {/* Additional Images Gallery */}
-            {product.additionalImages && product.additionalImages.length > 0 && (
-              <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
-                <button
-                  onClick={() => setSelectedImage(product.image)}
-                  className={`relative w-24 h-24 shrink-0 rounded-2xl overflow-hidden border-4 transition-all ${
-                    selectedImage === product.image ? 'border-brand-primary shadow-md scale-105' : 'border-transparent hover:border-brand-primary/50'
-                  }`}
-                >
-                  <img src={product.image} alt="Main" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                </button>
-                {product.additionalImages.map((img, idx) => (
+              {/* Additional Images Gallery */}
+              {product.additionalImages && product.additionalImages.length > 0 && (
+                <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
                   <button
-                    key={idx}
-                    onClick={() => setSelectedImage(img)}
+                    onClick={() => setSelectedImage(product.image)}
                     className={`relative w-24 h-24 shrink-0 rounded-2xl overflow-hidden border-4 transition-all ${
-                      selectedImage === img ? 'border-brand-primary shadow-md scale-105' : 'border-transparent hover:border-brand-primary/50'
+                      selectedImage === product.image ? 'border-brand-primary shadow-md scale-105' : 'border-transparent hover:border-brand-primary/50'
                     }`}
                   >
-                    <img src={img} alt={`Gallery ${idx + 1}`} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                    <img src={product.image} alt="Main" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                   </button>
-                ))}
+                  {product.additionalImages.map((img, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setSelectedImage(img)}
+                      className={`relative w-24 h-24 shrink-0 rounded-2xl overflow-hidden border-4 transition-all ${
+                        selectedImage === img ? 'border-brand-primary shadow-md scale-105' : 'border-transparent hover:border-brand-primary/50'
+                      }`}
+                    >
+                      <img src={img} alt={`Gallery ${idx + 1}`} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Desktop Social Buttons - Hidden on Mobile */}
+            <div className="hidden lg:flex flex-col gap-4 border-t-4 border-brand-bg border-dashed pt-8">
+              <div className="flex gap-4">
+                <motion.button 
+                  whileHover={{ scale: 1.03, y: -2 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={handleWhatsAppContact}
+                  className="flex-1 flex items-center justify-center gap-3 bg-green-500 text-white px-6 py-4 rounded-2xl font-black text-lg shadow-[0_10px_25px_rgba(34,197,94,0.3)] hover:bg-green-600 transition-all"
+                >
+                  <MessageCircle className="w-6 h-6" />
+                  <span>واتساب</span>
+                </motion.button>
+                
+                <motion.button 
+                  whileHover={{ scale: 1.03, y: -2 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={handleShare}
+                  className="flex-1 flex items-center justify-center gap-3 bg-blue-500 text-white px-6 py-4 rounded-2xl font-black text-lg shadow-[0_10px_25px_rgba(59,130,246,0.3)] hover:bg-blue-600 transition-all"
+                >
+                  <Share2 className="w-6 h-6" />
+                  <span>مشاركة</span>
+                </motion.button>
               </div>
-            )}
+            </div>
           </div>
 
           {/* Product Info */}
-          <div className="w-full lg:w-1/2 flex flex-col justify-center">
+          <div className="w-full lg:w-1/2 flex flex-col">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, type: "spring", bounce: 0.4 }}
             >
-              <div className="flex items-center space-x-6 space-x-reverse mb-8">
+              <div className="flex items-center space-x-6 space-x-reverse mb-6">
                 <div className="flex items-center bg-brand-surface px-6 py-3 rounded-full border-2 border-brand-bg shadow-sm">
                   <Star className="w-6 h-6 fill-brand-accent text-brand-accent ml-3" />
                   <span className="text-lg font-black text-brand-secondary">{product.rating}</span>
@@ -192,74 +229,79 @@ export default function ProductDetails() {
                 <Sparkles className="absolute -top-6 -right-6 w-8 h-8 text-brand-accent animate-pulse-soft opacity-70" />
               </h1>
 
-              <div className="text-4xl font-black text-brand-primary mb-10 flex items-baseline gap-3 bg-brand-surface w-fit px-8 py-4 rounded-2xl border-4 border-brand-bg shadow-sm">
+              <div className="text-4xl font-black text-brand-primary mb-8 flex items-baseline gap-3 bg-brand-surface w-fit px-8 py-4 rounded-2xl border-4 border-brand-bg shadow-sm">
                 {product.price.toFixed(2)} <span className="text-xl font-bold text-brand-muted">ر.س</span>
               </div>
 
-              <p className="text-lg md:text-xl text-brand-secondary/80 font-bold mb-12 leading-relaxed max-w-2xl">
-                {product.description}
-              </p>
-
               {/* Actions */}
-              <div className="flex flex-col sm:flex-row gap-8 mb-12">
-                {/* Quantity */}
-              <div className="flex items-center justify-between bg-brand-surface rounded-2xl px-4 py-3 border-4 border-brand-bg w-full sm:w-48 shadow-inner">
-                <button 
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="w-14 h-14 flex items-center justify-center bg-white rounded-xl text-brand-secondary font-black text-2xl hover:text-brand-primary hover:shadow-md transition-all"
-                >
-                  -
-                </button>
-                <span className="font-black text-3xl text-brand-secondary">{quantity}</span>
-                <button 
-                  onClick={() => setQuantity(quantity + 1)}
-                  className="w-14 h-14 flex items-center justify-center bg-white rounded-xl text-brand-secondary font-black text-2xl hover:text-brand-primary hover:shadow-md transition-all"
-                >
-                  +
-                </button>
+              <div className="flex flex-col gap-6 mb-8">
+                <div className="flex flex-wrap items-center gap-4">
+                  {/* Quantity */}
+                  <div className="flex items-center justify-between bg-brand-surface rounded-2xl px-4 py-2 border-4 border-brand-bg w-40 shadow-inner">
+                    <button 
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      className="w-10 h-10 flex items-center justify-center bg-white rounded-xl text-brand-secondary font-black text-xl hover:text-brand-primary hover:shadow-md transition-all"
+                    >
+                      -
+                    </button>
+                    <span className="font-black text-2xl text-brand-secondary">{quantity}</span>
+                    <button 
+                      onClick={() => setQuantity(quantity + 1)}
+                      className="w-10 h-10 flex items-center justify-center bg-white rounded-xl text-brand-secondary font-black text-xl hover:text-brand-primary hover:shadow-md transition-all"
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  {/* Add to Cart Button */}
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={handleAddToCart}
+                    disabled={product.soldOut}
+                    className={`px-6 h-16 rounded-2xl flex items-center justify-center gap-3 border-4 transition-all font-black text-lg ${
+                      added 
+                        ? 'bg-green-500 border-green-400 text-white' 
+                        : 'bg-brand-surface border-brand-bg text-brand-primary hover:border-brand-primary/30'
+                    }`}
+                  >
+                    {added ? <Check className="w-6 h-6" /> : <ShoppingCart className="w-6 h-6" />}
+                    <span>{added ? 'تمت الإضافة' : 'أضف للسلة'}</span>
+                  </motion.button>
                 </div>
 
-                {/* Add to Cart */}
+                {/* Order Now Button */}
                 <motion.button 
-                  whileHover={{ scale: 1.03, y: -2 }}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={handleAddToCart}
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleOrderNow}
                   disabled={product.soldOut}
-                  className={`flex-1 py-4 md:py-0 rounded-[1.5rem] font-black text-xl flex items-center justify-center space-x-3 space-x-reverse shadow-[0_10px_30px_rgba(141,105,159,0.3)] border-4 border-transparent transition-all ${
+                  className={`w-full py-5 rounded-[2rem] font-black text-2xl flex items-center justify-center space-x-4 space-x-reverse shadow-[0_15px_35px_rgba(141,105,159,0.3)] border-4 border-transparent transition-all ${
                     product.soldOut 
                       ? 'bg-gray-200 text-gray-500 cursor-not-allowed border-gray-300 shadow-none' 
-                      : added 
-                        ? 'bg-green-500 text-white border-green-400 shadow-[0_10px_30px_rgba(34,197,94,0.4)]' 
-                        : 'bg-brand-primary text-white hover:bg-brand-secondary hover:border-brand-accent/50'
+                      : 'bg-brand-primary text-white hover:bg-brand-secondary hover:border-brand-accent/50'
                   }`}
                 >
-                  {added ? (
-                    <>
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ type: "spring" }}
-                      >
-                        <Check className="w-7 h-7" />
-                      </motion.div>
-                      <span>تمت الإضافة بنجاح!</span>
-                    </>
-                  ) : (
-                    <>
-                      <ShoppingCart className="w-7 h-7" />
-                      <span>{product.soldOut ? 'نفدت الكمية' : 'أضف للسلة'}</span>
-                    </>
-                  )}
+                  <ShoppingBag className="w-8 h-8" />
+                  <span>{product.soldOut ? 'نفدت الكمية' : 'اطلب الآن'}</span>
                 </motion.button>
               </div>
 
-              {/* Secondary Actions */}
-              <div className="flex flex-col sm:flex-row items-center gap-6 border-t-4 border-brand-bg border-dashed pt-12">
+              {/* Description - Now below buttons */}
+              <div className="bg-brand-surface/50 rounded-3xl p-6 border-2 border-brand-bg mb-8">
+                <h3 className="text-xl font-black text-brand-secondary mb-3">وصف المنتج</h3>
+                <p className="text-lg text-brand-secondary/80 font-bold leading-relaxed">
+                  {product.description}
+                </p>
+              </div>
+
+              {/* Mobile Social Buttons - Hidden on Desktop */}
+              <div className="lg:hidden flex flex-col sm:flex-row items-center gap-4 border-t-4 border-brand-bg border-dashed pt-8">
                 <motion.button 
                   whileHover={{ scale: 1.03, y: -2 }}
                   whileTap={{ scale: 0.97 }}
                   onClick={handleWhatsAppContact}
-                  className="w-full sm:w-auto flex-1 flex items-center justify-center gap-4 bg-green-500 text-white px-8 py-4 rounded-2xl font-black text-xl shadow-[0_10px_25px_rgba(34,197,94,0.3)] hover:bg-green-600 transition-all border-0"
+                  className="w-full flex items-center justify-center gap-4 bg-green-500 text-white px-8 py-4 rounded-2xl font-black text-xl shadow-[0_10px_25px_rgba(34,197,94,0.3)] hover:bg-green-600 transition-all"
                 >
                   <MessageCircle className="w-7 h-7" />
                   <span>تواصل عبر واتساب</span>
@@ -269,7 +311,7 @@ export default function ProductDetails() {
                   whileHover={{ scale: 1.03, y: -2 }}
                   whileTap={{ scale: 0.97 }}
                   onClick={handleShare}
-                  className="w-full sm:w-auto flex-1 flex items-center justify-center gap-4 bg-blue-500 text-white px-8 py-4 rounded-2xl font-black text-xl shadow-[0_10px_25px_rgba(59,130,246,0.3)] hover:bg-blue-600 transition-all border-none border-0"
+                  className="w-full flex items-center justify-center gap-4 bg-blue-500 text-white px-8 py-4 rounded-2xl font-black text-xl shadow-[0_10px_25px_rgba(59,130,246,0.3)] hover:bg-blue-600 transition-all"
                 >
                   <Share2 className="w-7 h-7" />
                   <span>مشاركة المنتج</span>

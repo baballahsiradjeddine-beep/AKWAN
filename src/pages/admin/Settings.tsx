@@ -43,8 +43,9 @@ export default function AdminSettings() {
     try {
       await updateSettings(formData);
       setSaveMessage('تم حفظ الإعدادات بنجاح!');
-    } catch (error) {
-      setSaveMessage('حدث خطأ أثناء الحفظ. يرجى المحاولة مرة أخرى.');
+    } catch (error: any) {
+      console.error('Error saving settings:', error);
+      setSaveMessage(`حدث خطأ: ${error.message || 'يرجى المحاولة مرة أخرى'}`);
     } finally {
       setIsSaving(false);
       setTimeout(() => setSaveMessage(''), 3000);

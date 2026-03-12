@@ -27,6 +27,17 @@ body {
   line-height: 1.8;
 }
 
+/* Hide scrollbar for Chrome, Safari and Opera */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+* {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
 /* Custom playful animations */
 @keyframes float {
   0%, 100% { transform: translateY(0) rotate(0deg); }

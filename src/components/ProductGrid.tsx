@@ -62,11 +62,21 @@ export default function ProductGrid() {
           {displayProducts.map((product, index) => (
             <motion.div 
               key={product.id}
-              initial={{ opacity: 0, y: 50, scale: 0.8 }}
-              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              initial={{ opacity: 0, scale: 0.8, y: 50, rotate: index % 2 === 0 ? -2 : 2 }}
+              whileInView={{ opacity: 1, scale: 1, y: 0, rotate: 0 }}
               viewport={{ once: true, margin: "-50px" }}
-              transition={{ type: "spring", bounce: 0.5, duration: 0.8, delay: index * 0.1 }}
-              whileHover={{ y: -10, scale: 1.02, rotate: index % 2 === 0 ? 0.5 : -0.5 }}
+              transition={{ 
+                type: "spring", 
+                bounce: 0.5, 
+                duration: 0.8, 
+                delay: index * 0.1 
+              }}
+              whileHover={{ 
+                y: -15, 
+                scale: 1.03,
+                rotate: index % 2 === 0 ? 1 : -1,
+                transition: { type: "spring", stiffness: 400, damping: 10 }
+              }}
               className="group flex flex-col bg-white rounded-[2.5rem] md:rounded-[3rem] overflow-hidden border-4 border-brand-bg shadow-[0_10px_30px_rgba(92,67,106,0.05)] hover:shadow-[0_40px_60px_rgba(141,105,159,0.15)] hover:border-brand-primary/20 transition-all duration-500 relative"
             >
               {/* Decorative corner shape */}

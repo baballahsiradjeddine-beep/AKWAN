@@ -303,24 +303,45 @@ export const useStore = create<StoreState>((set, get) => ({
   fetchSettings: async () => {
     try {
       set({ isLoadingSettings: true });
-      const { data, error } = await supabase
+      
+      // First try to get record with ID 1
+      let { data, error } = await supabase
         .from('site_settings')
         .select('*')
-        .single();
+        .eq('id', 1)
+        .maybeSingle();
 
-      if (error && error.code !== 'PGRST116') {
+      // If not found by ID 1, just get the first record available
+      if (!data) {
+        const { data: firstData, error: firstError } = await supabase
+          .from('site_settings')
+          .select('*')
+          .limit(1)
+          .maybeSingle();
+        
+        data = firstData;
+        error = firstError;
+      }
+
+      if (error) {
         console.error('Error fetching settings:', error);
         set({ isLoadingSettings: false });
         return;
       }
 
       if (data) {
-        // Parse socialLinks if it's stored as JSON string, otherwise use as is
+        console.log('Settings fetched successfully:', data);
+        
+        // Parse socialLinks if it's stored as JSON string
         let parsedSocialLinks = defaultSettings.socialLinks;
         if (data.socialLinks) {
-          parsedSocialLinks = typeof data.socialLinks === 'string' 
-            ? JSON.parse(data.socialLinks) 
-            : data.socialLinks;
+          try {
+            parsedSocialLinks = typeof data.socialLinks === 'string' 
+              ? JSON.parse(data.socialLinks) 
+              : data.socialLinks;
+          } catch (e) {
+            console.error('Error parsing socialLinks:', e);
+          }
         }
 
         const parsedSettings = {
@@ -330,10 +351,11 @@ export const useStore = create<StoreState>((set, get) => ({
         };
         set({ settings: parsedSettings, isLoadingSettings: false });
       } else {
+        console.log('No settings records found in database');
         set({ isLoadingSettings: false });
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Unexpected error fetching settings:', error);
       set({ isLoadingSettings: false });
     }
   },
@@ -343,19 +365,26 @@ export const useStore = create<StoreState>((set, get) => ({
       const currentSettings = get().settings;
       const updated = { ...currentSettings, ...newSettings };
 
-      // Optimistic update
-      set({ settings: updated });
+      // Prepare data for Supabase
+      const dataToSave = {
+        ...updated,
+        id: 1,
+        // Stringify socialLinks to ensure it can be stored in both text and jsonb columns
+        socialLinks: JSON.stringify(updated.socialLinks)
+      };
 
       // Upsert to Supabase
       const { error } = await supabase
         .from('site_settings')
-        .upsert({ id: 1, ...updated });
+        .upsert(dataToSave, { onConflict: 'id' });
 
       if (error) {
-        // Revert on error
-        set({ settings: currentSettings });
+        console.error('Supabase error updating settings:', error);
         throw error;
       }
+
+      // Update local state only after successful DB update or keep optimistic
+      set({ settings: updated });
     } catch (error) {
       console.error('Error updating settings:', error);
       throw error;
