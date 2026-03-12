@@ -501,7 +501,7 @@ export default function AdminSettings() {
                 <div className="w-20 h-20 bg-brand-bg rounded-full flex items-center justify-center mb-4">
                   <Store className="w-10 h-10 text-brand-primary opacity-50" />
                 </div>
-                <h3 className="text-lg font-black text-gray-800 mb-2">قريباً جدا</h3>
+                <h3 className="text-lg font-black text-gray-800 mb-2">قريباً </h3>
                 <p className="text-gray-500 font-medium max-w-sm">
                   هذا القسم قيد التطوير حالياً. سيتم إضافة إعدادات {tabs.find(t => t.id === activeTab)?.label} قريباً.
                 </p>
