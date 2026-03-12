@@ -1,6 +1,21 @@
-import { Instagram, Twitter, Facebook, Heart, Mail, Phone, MapPin, Send } from 'lucide-react';
+import { Instagram, Facebook, Heart, Mail, Phone, MapPin, Send, Ghost } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useStore } from '../store/useStore';
+
+// Simple TikTok icon as it's not in standard lucide
+const TikTokIcon = ({ className }: { className?: string }) => (
+  <svg 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className}
+  >
+    <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+  </svg>
+);
 
 export default function Footer() {
   const settings = useStore((state) => state.settings);
@@ -22,15 +37,18 @@ export default function Footer() {
             <p className="text-gray-300 mb-8 text-sm leading-loose">
               {settings.footerDescription}
             </p>
-            <div className="flex gap-6 space-x-reverse">
-              <a href={settings.socialLinks.instagram} className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-gray-300 hover:bg-brand-accent hover:text-brand-secondary transition-all duration-300 hover:scale-110">
-                <Instagram className="w-6 h-6" />
+            <div className="flex flex-wrap gap-4 space-x-reverse">
+              <a href={settings.socialLinks.instagram} className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-gray-300 hover:bg-brand-accent hover:text-brand-secondary transition-all duration-300 hover:scale-110" title="انستغرام">
+                <Instagram className="w-5 h-5" />
               </a>
-              <a href={settings.socialLinks.twitter} className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-gray-300 hover:bg-brand-accent hover:text-brand-secondary transition-all duration-300 hover:scale-110">
-                <Twitter className="w-6 h-6" />
+              <a href={settings.socialLinks.snapchat} className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-gray-300 hover:bg-brand-accent hover:text-brand-secondary transition-all duration-300 hover:scale-110" title="سناب شات">
+                <Ghost className="w-5 h-5" />
               </a>
-              <a href={settings.socialLinks.facebook} className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-gray-300 hover:bg-brand-accent hover:text-brand-secondary transition-all duration-300 hover:scale-110">
-                <Facebook className="w-6 h-6" />
+              <a href={settings.socialLinks.tiktok} className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-gray-300 hover:bg-brand-accent hover:text-brand-secondary transition-all duration-300 hover:scale-110" title="تيك توك">
+                <TikTokIcon className="w-5 h-5" />
+              </a>
+              <a href={settings.socialLinks.facebook} className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-gray-300 hover:bg-brand-accent hover:text-brand-secondary transition-all duration-300 hover:scale-110" title="فيسبوك">
+                <Facebook className="w-5 h-5" />
               </a>
             </div>
           </div>

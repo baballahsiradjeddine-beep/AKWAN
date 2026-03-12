@@ -43,6 +43,24 @@ export default function App() {
     fetchCustomers();
   }, [fetchSettings, fetchProducts, fetchOrders, fetchCustomers]);
 
+  // Update favicon dynamically
+  const settings = useStore(state => state.settings);
+  useEffect(() => {
+    if (settings.favicon) {
+      let link: HTMLLinkElement | null = document.querySelector("link[rel~='icon']");
+      if (!link) {
+        link = document.createElement('link');
+        link.rel = 'icon';
+        document.getElementsByTagName('head')[0].appendChild(link);
+      }
+      link.href = settings.favicon;
+    }
+    
+    if (settings.siteName) {
+      document.title = settings.siteName;
+    }
+  }, [settings.favicon, settings.siteName]);
+
   const handleSplashComplete = () => {
     setShowSplash(false);
     sessionStorage.setItem('hasShownSplash', 'true');

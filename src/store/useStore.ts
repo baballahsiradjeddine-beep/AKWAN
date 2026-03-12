@@ -70,33 +70,41 @@ export interface SiteSettings {
   footerDescription: string;
   socialLinks: {
     facebook: string;
-    twitter: string;
+    snapchat: string;
     instagram: string;
+    tiktok: string;
   };
+  logoImage?: string;
+  logoType: 'text' | 'image';
+  favicon?: string;
 }
 
 const defaultSettings: SiteSettings = {
-  siteName: 'اسم متجرك',
-  contactEmail: 'admin@example.com',
+  siteName: 'أكوان',
+  contactEmail: 'support@akwan.me',
   contactPhone: '+966 50 000 0000',
-  contactAddress: 'العنوان هنا',
+  contactAddress: 'المملكة العربية السعودية',
   commercialRegister: '0000000000',
   taxNumber: '000000000000000',
-  announcementText: 'أهلاً بك في متجرنا الجديد!',
-  heroTitle: 'عنوان جذاب لمتجرك هنا',
-  heroSubtitle: 'وصف قصير وجذاب لمتجرك ومنتجاتك هنا لجذب الزوار.',
+  announcementText: 'أهلاً بك في متجر أكوان الجديد! ✨',
+  heroTitle: 'عالم من الخيال والمرح! 🎈',
+  heroSubtitle: 'اكتشف مجموعتنا المميزة من الألعاب التعليمية المصممة بعناية لتنمية مهارات طفلك.',
   heroButtonText: 'تسوق الآن',
   heroImage: 'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=1200&q=80',
   aboutTitle: 'من نحن',
-  aboutSubtitle: 'اكتب قصة متجرك ورؤيتك هنا.',
+  aboutSubtitle: 'نحن في أكوان نؤمن بأن اللعب هو أفضل وسيلة للتعلم.',
   aboutImage1: 'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=800&q=80',
   aboutImage2: 'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=800&q=80',
-  footerDescription: 'وصف قصير للمتجر يظهر في أسفل الصفحة.',
+  footerDescription: 'متجر أكوان للألعاب التعليمية والقصص الهادفة.',
   socialLinks: {
     facebook: '#',
-    twitter: '#',
+    snapchat: '#',
     instagram: '#',
-  }
+    tiktok: '#',
+  },
+  logoType: 'text',
+  logoImage: '',
+  favicon: ''
 };
 
 interface StoreState {

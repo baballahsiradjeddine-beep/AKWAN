@@ -1,7 +1,9 @@
 import { motion } from 'motion/react';
-import { Save, Globe, CreditCard, Truck, Bell, Shield, Store, Image as ImageIcon, Type, Link as LinkIcon } from 'lucide-react';
-import { useState, useEffect, ChangeEvent } from 'react';
+import { Save, Globe, CreditCard, Truck, Bell, Shield, Store, Image as ImageIcon, Type, Link as LinkIcon, Upload, Loader2 } from 'lucide-react';
+import { useState, useEffect, ChangeEvent, useRef } from 'react';
 import { useStore, SiteSettings } from '../../store/useStore';
+import { supabase } from '../../lib/supabase';
+import toast from 'react-hot-toast';
 
 export default function AdminSettings() {
   const [activeTab, setActiveTab] = useState('general');
@@ -11,11 +13,65 @@ export default function AdminSettings() {
   const [formData, setFormData] = useState<SiteSettings>(settings);
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
+  const [uploadingField, setUploadingField] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [currentUploadField, setCurrentUploadField] = useState<string | null>(null);
 
   // Update local state if global settings change
   useEffect(() => {
     setFormData(settings);
   }, [settings]);
+
+  const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>, fieldName: string) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('يرجى اختيار ملف صورة فقط');
+      return;
+    }
+
+    // Validate file size (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error('حجم الصورة يجب أن يكون أقل من 2 ميجابايت');
+      return;
+    }
+
+    setUploadingField(fieldName);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random().toString(36).substring(2)}_${Date.now()}.${fileExt}`;
+      const filePath = `settings/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('images')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('images')
+        .getPublicUrl(filePath);
+
+      setFormData(prev => ({
+        ...prev,
+        [fieldName]: publicUrl
+      }));
+      
+      toast.success('تم رفع الصورة بنجاح');
+    } catch (error: any) {
+      console.error('Upload error:', error);
+      toast.error(`فشل الرفع: ${error.message || 'تأكد من وجود Bucket باسم site-assets في Supabase'}`);
+    } finally {
+      setUploadingField(null);
+    }
+  };
+
+  const triggerUpload = (fieldName: string) => {
+    setCurrentUploadField(fieldName);
+    fileInputRef.current?.click();
+  };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -121,10 +177,100 @@ export default function AdminSettings() {
               <div className="space-y-6">
                 <div>
                   <h2 className="text-xl font-black text-gray-800 mb-1">إعدادات المتجر العامة</h2>
-                  <p className="text-sm text-gray-500 font-medium mb-6">قم بتحديث معلومات متجرك الأساسية.</p>
+                  <p className="text-sm text-gray-500 font-medium mb-6">قم بتحديث معلومات متجرك الأساسية والهوية البصرية.</p>
                 </div>
                 
-                <div className="space-y-4">
+                <div className="space-y-6">
+                  {/* Logo & Favicon Section */}
+                  <div className="bg-brand-primary/5 p-6 rounded-2xl border border-brand-primary/10">
+                    <h3 className="text-lg font-bold text-brand-primary mb-4 flex items-center gap-2">
+                      <ImageIcon className="w-5 h-5" />
+                      هوية المتجر (الشعار والـ Favicon)
+                    </h3>
+                    
+                    <div className="space-y-6">
+                      <div>
+                        <label className="block text-sm font-bold text-gray-700 mb-2">نوع الشعار</label>
+                        <div className="flex gap-4">
+                          <button
+                            onClick={() => setFormData(prev => ({ ...prev, logoType: 'text' }))}
+                            className={`flex-1 py-2 px-4 rounded-xl font-bold transition-all border-2 ${formData.logoType === 'text' ? 'bg-brand-primary text-white border-brand-primary' : 'bg-white text-gray-500 border-gray-100 hover:border-brand-primary/30'}`}
+                          >
+                            نص (اسم المتجر)
+                          </button>
+                          <button
+                            onClick={() => setFormData(prev => ({ ...prev, logoType: 'image' }))}
+                            className={`flex-1 py-2 px-4 rounded-xl font-bold transition-all border-2 ${formData.logoType === 'image' ? 'bg-brand-primary text-white border-brand-primary' : 'bg-white text-gray-500 border-gray-100 hover:border-brand-primary/30'}`}
+                          >
+                            صورة (Logo)
+                          </button>
+                        </div>
+                      </div>
+
+                      {formData.logoType === 'image' && (
+                        <div className="p-4 bg-white rounded-xl border border-gray-100">
+                          <label className="block text-sm font-bold text-gray-700 mb-3">صورة الشعار</label>
+                          <div className="flex items-center gap-4">
+                            <div className="flex-1">
+                              <input 
+                                type="text" 
+                                name="logoImage" 
+                                value={formData.logoImage || ''} 
+                                onChange={handleChange} 
+                                placeholder="رابط الشعار..."
+                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary text-left mb-2" 
+                                dir="ltr" 
+                              />
+                              <button 
+                                onClick={() => triggerUpload('logoImage')}
+                                disabled={uploadingField === 'logoImage'}
+                                className="flex items-center gap-2 text-sm font-bold text-brand-primary hover:text-brand-secondary"
+                              >
+                                {uploadingField === 'logoImage' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                                <span>رفع شعار</span>
+                              </button>
+                            </div>
+                            {formData.logoImage && (
+                              <div className="w-20 h-20 rounded-lg border border-gray-100 p-2 flex items-center justify-center bg-gray-50">
+                                <img src={formData.logoImage} alt="Logo Preview" className="max-w-full max-h-full object-contain" />
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="p-4 bg-white rounded-xl border border-gray-100">
+                        <label className="block text-sm font-bold text-gray-700 mb-3">أيقونة المتصفح (Favicon)</label>
+                        <div className="flex items-center gap-4">
+                          <div className="flex-1">
+                            <input 
+                              type="text" 
+                              name="favicon" 
+                              value={formData.favicon || ''} 
+                              onChange={handleChange} 
+                              placeholder="رابط الأيقونة..."
+                              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary text-left mb-2" 
+                              dir="ltr" 
+                            />
+                            <button 
+                              onClick={() => triggerUpload('favicon')}
+                              disabled={uploadingField === 'favicon'}
+                              className="flex items-center gap-2 text-sm font-bold text-brand-primary hover:text-brand-secondary"
+                            >
+                              {uploadingField === 'favicon' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                              <span>رفع أيقونة</span>
+                            </button>
+                          </div>
+                          {formData.favicon && (
+                            <div className="w-12 h-12 rounded-lg border border-gray-100 p-2 flex items-center justify-center bg-gray-50">
+                              <img src={formData.favicon} alt="Favicon Preview" className="w-full h-full object-contain" />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                   <div>
                     <label className="block text-sm font-bold text-gray-700 mb-1">اسم المتجر</label>
                     <input type="text" name="siteName" value={formData.siteName} onChange={handleChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary" />
@@ -221,45 +367,57 @@ export default function AdminSettings() {
               <div className="space-y-6">
                 <div>
                   <h2 className="text-xl font-black text-gray-800 mb-1">صور الموقع</h2>
-                  <p className="text-sm text-gray-500 font-medium mb-6">تغيير الصور الثابتة في الموقع (ضع روابط الصور).</p>
+                  <p className="text-sm text-gray-500 font-medium mb-6">تغيير الصور الثابتة في الموقع (رفع مباشر أو روابط).</p>
                 </div>
                 
-                <div className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">صورة القسم الرئيسي (Hero)</label>
-                    <div className="flex gap-4 items-start">
-                      <input type="text" name="heroImage" value={formData.heroImage} onChange={handleChange} className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary text-left" dir="ltr" />
-                      {formData.heroImage && (
-                        <div className="w-16 h-16 rounded-lg overflow-hidden shrink-0 border border-gray-200">
-                          <img src={formData.heroImage} alt="Preview" className="w-full h-full object-cover" />
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  className="hidden" 
+                  accept="image/*"
+                  onChange={(e) => currentUploadField && handleFileUpload(e, currentUploadField)}
+                />
 
-                  <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">صورة من نحن 1</label>
-                    <div className="flex gap-4 items-start">
-                      <input type="text" name="aboutImage1" value={formData.aboutImage1} onChange={handleChange} className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary text-left" dir="ltr" />
-                      {formData.aboutImage1 && (
-                        <div className="w-16 h-16 rounded-lg overflow-hidden shrink-0 border border-gray-200">
-                          <img src={formData.aboutImage1} alt="Preview" className="w-full h-full object-cover" />
+                <div className="space-y-8">
+                  {[
+                    { id: 'heroImage', label: 'صورة القسم الرئيسي (Hero)' },
+                    { id: 'aboutImage1', label: 'صورة من نحن 1' },
+                    { id: 'aboutImage2', label: 'صورة من نحن 2' }
+                  ].map((field) => (
+                    <div key={field.id} className="bg-gray-50 p-6 rounded-2xl border border-gray-100">
+                      <label className="block text-sm font-bold text-gray-700 mb-3">{field.label}</label>
+                      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+                        <div className="flex-1 w-full">
+                          <input 
+                            type="text" 
+                            name={field.id} 
+                            value={(formData as any)[field.id]} 
+                            onChange={handleChange} 
+                            placeholder="رابط الصورة المباشر..."
+                            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary text-left mb-2" 
+                            dir="ltr" 
+                          />
+                          <button 
+                            onClick={() => triggerUpload(field.id)}
+                            disabled={uploadingField === field.id}
+                            className="flex items-center gap-2 text-sm font-bold text-brand-primary hover:text-brand-secondary transition-colors"
+                          >
+                            {uploadingField === field.id ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <Upload className="w-4 h-4" />
+                            )}
+                            <span>رفع صورة من الجهاز</span>
+                          </button>
                         </div>
-                      )}
+                        {(formData as any)[field.id] && (
+                          <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-xl overflow-hidden shrink-0 border-2 border-white shadow-md">
+                            <img src={(formData as any)[field.id]} alt="Preview" className="w-full h-full object-cover" />
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">صورة من نحن 2</label>
-                    <div className="flex gap-4 items-start">
-                      <input type="text" name="aboutImage2" value={formData.aboutImage2} onChange={handleChange} className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary text-left" dir="ltr" />
-                      {formData.aboutImage2 && (
-                        <div className="w-16 h-16 rounded-lg overflow-hidden shrink-0 border border-gray-200">
-                          <img src={formData.aboutImage2} alt="Preview" className="w-full h-full object-cover" />
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             )}
@@ -277,8 +435,12 @@ export default function AdminSettings() {
                     <input type="url" name="social_instagram" value={formData.socialLinks.instagram} onChange={handleChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary text-left" dir="ltr" />
                   </div>
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">تويتر (X)</label>
-                    <input type="url" name="social_twitter" value={formData.socialLinks.twitter} onChange={handleChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary text-left" dir="ltr" />
+                    <label className="block text-sm font-bold text-gray-700 mb-1">سناب شات</label>
+                    <input type="url" name="social_snapchat" value={formData.socialLinks.snapchat} onChange={handleChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary text-left" dir="ltr" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-1">تيك توك</label>
+                    <input type="url" name="social_tiktok" value={formData.socialLinks.tiktok} onChange={handleChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary text-left" dir="ltr" />
                   </div>
                   <div>
                     <label className="block text-sm font-bold text-gray-700 mb-1">فيسبوك</label>

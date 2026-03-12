@@ -43,8 +43,14 @@ export default function Navbar() {
             </div>
 
             {/* Logo */}
-            <Link to="/" className="flex-shrink-0 flex items-center text-3xl font-black text-brand-primary tracking-tight ml-16">
-              {settings.siteName}
+            <Link to="/" className="flex-shrink-0 flex items-center ml-16">
+              {settings.logoType === 'image' && settings.logoImage ? (
+                <img src={settings.logoImage} alt={settings.siteName} className="h-12 w-auto object-contain" />
+              ) : (
+                <span className="text-3xl font-black text-brand-primary tracking-tight">
+                  {settings.siteName}
+                </span>
+              )}
             </Link>
 
             {/* Desktop Navigation */}
