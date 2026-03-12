@@ -1,13 +1,15 @@
-import { motion, AnimatePresence } from 'motion/react';
-import { Save, Globe, CreditCard, Truck, Bell, Shield, Store, Image as ImageIcon, Type, Link as LinkIcon, Upload, Loader2, Handshake, Plus, Trash2 } from 'lucide-react';
+import { motion } from 'motion/react';
+import { Save, Globe, CreditCard, Truck, Bell, Shield, Store, Image as ImageIcon, Type, Link as LinkIcon, Upload, Loader2, Handshake, Plus, Trash2, MessageSquareQuote } from 'lucide-react';
 import { useState, useEffect, ChangeEvent, useRef } from 'react';
 import { useStore, SiteSettings } from '../../store/useStore';
 import { supabase } from '../../lib/supabase';
 import toast from 'react-hot-toast';
+import AdminTestimonials from './Testimonials';
 
 export default function AdminSettings() {
   const [activeTab, setActiveTab] = useState('general');
-  const { settings, updateSettings } = useStore();
+  const settings = useStore((state) => state.settings);
+  const updateSettings = useStore((state) => state.updateSettings);
   
   const [formData, setFormData] = useState<SiteSettings>(settings);
   const [isSaving, setIsSaving] = useState(false);
@@ -120,6 +122,7 @@ export default function AdminSettings() {
     { id: 'images', label: 'الصور', icon: ImageIcon },
     { id: 'social', label: 'التواصل الاجتماعي', icon: LinkIcon },
     { id: 'partners', label: 'الشركاء', icon: Handshake },
+    { id: 'testimonials', label: 'آراء العملاء', icon: MessageSquareQuote },
     { id: 'payment', label: 'الدفع', icon: CreditCard },
     { id: 'shipping', label: 'الشحن', icon: Truck },
   ];
@@ -487,6 +490,10 @@ export default function AdminSettings() {
                   </button>
                 </div>
               </div>
+            )}
+
+            {activeTab === 'testimonials' && (
+              <AdminTestimonials />
             )}
 
             {['payment', 'shipping'].includes(activeTab) && (
