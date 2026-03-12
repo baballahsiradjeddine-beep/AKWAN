@@ -80,8 +80,11 @@ export default function ProductDetails() {
 
   const handleOrderNow = () => {
     if (product) {
-      for (let i = 0; i < quantity; i++) {
-        addToCart(product);
+      const isInCart = useStore.getState().cart.some(item => item.id === product.id);
+      if (!isInCart) {
+        for (let i = 0; i < quantity; i++) {
+          addToCart(product);
+        }
       }
       navigate('/cart');
     }
@@ -201,7 +204,7 @@ export default function ProductDetails() {
                   whileHover={{ scale: 1.03, y: -2 }}
                   whileTap={{ scale: 0.97 }}
                   onClick={handleShare}
-                  className="flex-1 flex items-center justify-center gap-3 bg-blue-500 text-white px-6 py-4 rounded-2xl font-black text-lg shadow-[0_10px_25px_rgba(59,130,246,0.3)] hover:bg-blue-600 transition-all"
+                  className="flex-1 flex items-center justify-center gap-3 bg-[#f5ae0b] text-white px-6 py-4 rounded-2xl font-black text-lg shadow-[0_10px_25px_rgba(245,174,11,0.2)] hover:bg-[#e09e0a] transition-all"
                 >
                   <Share2 className="w-6 h-6" />
                   <span>مشاركة</span>
@@ -311,7 +314,7 @@ export default function ProductDetails() {
                   whileHover={{ scale: 1.03, y: -2 }}
                   whileTap={{ scale: 0.97 }}
                   onClick={handleShare}
-                  className="w-full flex items-center justify-center gap-4 bg-blue-500 text-white px-8 py-4 rounded-2xl font-black text-xl shadow-[0_10px_25px_rgba(59,130,246,0.3)] hover:bg-blue-600 transition-all"
+                  className="w-full flex items-center justify-center gap-4 bg-[#f5ae0b] text-white px-8 py-4 rounded-2xl font-black text-xl shadow-[0_10px_25px_rgba(245,174,11,0.2)] hover:bg-[#e09e0a] transition-all"
                 >
                   <Share2 className="w-7 h-7" />
                   <span>مشاركة المنتج</span>

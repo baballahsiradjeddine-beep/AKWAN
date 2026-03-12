@@ -58,113 +58,69 @@ export default function ProductGrid() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-8 md:gap-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 md:gap-10">
           {displayProducts.map((product, index) => (
             <motion.div 
               key={product.id}
-              initial={{ opacity: 0, scale: 0.8, y: 50, rotate: index % 2 === 0 ? -2 : 2 }}
-              whileInView={{ opacity: 1, scale: 1, y: 0, rotate: 0 }}
+              initial={{ opacity: 0, y: 30, scale: 0.9 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
               viewport={{ once: true, margin: "-50px" }}
-              transition={{ 
-                type: "spring", 
-                bounce: 0.5, 
-                duration: 0.8, 
-                delay: index * 0.1 
-              }}
-              whileHover={{ 
-                y: -15, 
-                scale: 1.03,
-                rotate: index % 2 === 0 ? 1 : -1,
-                transition: { type: "spring", stiffness: 400, damping: 10 }
-              }}
-              className="group flex flex-col bg-white rounded-[2.5rem] md:rounded-[3rem] overflow-hidden border-4 border-brand-bg shadow-[0_10px_30px_rgba(92,67,106,0.05)] hover:shadow-[0_40px_60px_rgba(141,105,159,0.15)] hover:border-brand-primary/20 transition-all duration-500 relative"
+              transition={{ type: "spring", bounce: 0.4, duration: 0.8, delay: index * 0.1 }}
+              whileHover={{ y: -12, scale: 1.02 }}
+              className="group relative bg-white rounded-[2.5rem] overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border-4 border-brand-bg"
             >
-              {/* Decorative corner shape */}
-              <div className="absolute -top-10 -right-10 w-20 h-20 bg-brand-accent/20 rounded-full blur-xl group-hover:bg-brand-accent/40 transition-colors duration-500 z-0"></div>
-
-              {/* Product Image */}
-              <div className="relative aspect-[4/3] overflow-hidden bg-brand-bg/30 p-3 md:p-4 z-10">
-                <Link to={`/product/${product.id}`} className="block w-full h-full">
-                  <motion.div 
-                    className="w-full h-full rounded-[1.2rem] md:rounded-[1.5rem] overflow-hidden relative shadow-inner"
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ type: "spring", bounce: 0.4 }}
-                  >
-                    <img 
-                      src={product.image} 
-                      alt={product.name} 
-                      className="w-full h-full object-cover"
-                      referrerPolicy="no-referrer"
-                    />
-                    {/* Overlay gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-brand-secondary/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  </motion.div>
-                </Link>
+              <Link to={`/product/${product.id}`} className="block relative aspect-square overflow-hidden bg-brand-bg/20">
+                <img 
+                  src={product.image} 
+                  alt={product.name} 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  referrerPolicy="no-referrer"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-brand-secondary/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
+                  <span className="text-white text-sm font-black bg-brand-primary/80 self-start px-3 py-1 rounded-full backdrop-blur-sm">
+                    عرض التفاصيل
+                  </span>
+                </div>
                 
                 {product.badge && (
-                  <motion.div 
-                    initial={{ scale: 0, rotate: -10 }}
-                    animate={{ scale: 1, rotate: 3 }}
-                    transition={{ type: "spring", delay: 0.5 + (index * 0.1) }}
-                    className="absolute top-6 right-6 md:top-8 md:right-8 bg-brand-accent text-brand-secondary text-xs md:text-sm font-black px-3 py-1.5 md:px-4 md:py-2 rounded-full shadow-lg border-2 border-white pointer-events-none"
-                  >
+                  <div className="absolute top-4 right-4 bg-brand-accent text-brand-secondary text-xs font-black px-4 py-1.5 rounded-full shadow-lg border-2 border-white transform rotate-3">
                     {product.badge}
-                  </motion.div>
-                )}
-                {product.soldOut && (
-                  <div className="absolute top-6 right-6 md:top-8 md:right-8 bg-brand-secondary text-white text-xs md:text-sm font-black px-3 py-1.5 md:px-4 md:py-2 rounded-full shadow-lg transform -rotate-3 border-2 border-white pointer-events-none">
-                    نفدت الكمية
                   </div>
                 )}
+              </Link>
+
+              <div className="p-6">
+                <div className="flex justify-between items-start mb-3">
+                  <h3 className="text-xl font-black text-brand-secondary line-clamp-2 flex-grow leading-tight">
+                    <Link to={`/product/${product.id}`}>{product.name}</Link>
+                  </h3>
+                </div>
                 
-                {/* Quick Add Button (Hover) */}
-                <div className="absolute inset-x-0 bottom-0 p-4 md:p-8 opacity-0 group-hover:opacity-100 translate-y-8 group-hover:translate-y-0 transition-all duration-300 ease-out z-20">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-lg border border-amber-100">
+                    <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                    <span className="text-xs font-black text-amber-700">{product.rating}</span>
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-between mt-6">
+                  <div className="flex flex-col">
+                    <span className="text-2xl md:text-3xl font-black text-brand-primary">
+                      {product.price.toFixed(2)}
+                    </span>
+                    <span className="text-xs font-bold text-brand-muted -mt-1">ر.س</span>
+                  </div>
                   <motion.button 
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    disabled={product.soldOut}
+                    whileHover={{ scale: 1.1, rotate: -5 }}
+                    whileTap={{ scale: 0.9 }}
                     onClick={(e) => {
                       e.preventDefault();
                       addToCart(product);
                     }}
-                    className={`w-full py-3 md:py-4 rounded-xl md:rounded-[1.5rem] font-black text-base md:text-lg flex items-center justify-center space-x-2 space-x-reverse shadow-2xl border-2 border-white ${
-                      product.soldOut 
-                        ? 'bg-gray-200 text-gray-500 cursor-not-allowed border-gray-300' 
-                        : 'bg-brand-primary text-white hover:bg-brand-secondary'
-                    }`}
+                    className="p-4 rounded-2xl bg-brand-accent text-brand-secondary hover:bg-brand-primary hover:text-white transition-all duration-300 shadow-md border-2 border-white"
                   >
-                    <ShoppingCart className="w-5 h-5 md:w-6 md:h-6" />
-                    <span>{product.soldOut ? 'نفدت الكمية' : 'أضف للسلة'}</span>
+                    <ShoppingCart className="w-6 h-6" />
                   </motion.button>
-                </div>
-              </div>
-
-              {/* Product Info */}
-              <div className="p-6 md:p-8 flex flex-col flex-grow bg-white relative z-10">
-                <div className="flex items-center space-x-2 space-x-reverse mb-4 bg-amber-50 w-fit px-4 py-1.5 rounded-full border border-amber-200 shadow-sm">
-                  <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                  <span className="text-sm font-black text-amber-700">{product.rating}</span>
-                </div>
-                
-                <h3 className="text-xl md:text-2xl xl:text-3xl font-black text-brand-secondary mb-4 line-clamp-2 flex-grow group-hover:text-brand-primary transition-colors leading-snug">
-                  <Link to={`/product/${product.id}`}>
-                    {product.name}
-                  </Link>
-                </h3>
-                
-                <div className="flex items-center justify-between mt-auto pt-4 border-t-2 border-brand-bg border-dashed">
-                  <div className="bg-brand-surface px-4 py-2 rounded-2xl border-2 border-brand-bg shadow-sm">
-                    <span className="text-3xl md:text-4xl font-black text-brand-primary flex items-baseline gap-1 drop-shadow-sm">
-                      {product.price.toFixed(2)} 
-                      <span className="text-sm md:text-lg font-bold text-brand-secondary/60">ر.س</span>
-                    </span>
-                  </div>
-                  <Link 
-                    to={`/product/${product.id}`}
-                    className="px-4 py-2 rounded-xl bg-brand-primary/10 text-brand-primary hover:bg-brand-primary hover:text-white transition-all font-bold text-sm"
-                  >
-                    التفاصيل
-                  </Link>
                 </div>
               </div>
             </motion.div>
@@ -177,6 +133,20 @@ export default function ProductGrid() {
           viewport={{ once: true }}
           className="mt-16 md:mt-24 text-center"
         >
+          {/* Simplified Vision Text */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ delay: 0.2, duration: 1 }}
+            className="mb-10 max-w-2xl mx-auto px-6"
+          >
+            <p className="text-lg md:text-xl font-bold text-[#8d699f] leading-relaxed">
+              <span className="text-brand-accent/40 mx-2">•</span>
+              نصمم ألعابًا تحتضن التجربة والإبداع وتغرس حب الثقافة واللغة العربية في القلوب الصغيرة.
+              <span className="text-brand-accent/40 mx-2">•</span>
+            </p>
+          </motion.div>
+
           <Link 
             to="/shop" 
             className="inline-flex items-center justify-center px-8 py-4 md:px-12 md:py-6 text-xl md:text-2xl font-black text-brand-secondary bg-brand-bg border-[4px] md:border-[6px] border-white shadow-[0_15px_40px_rgba(92,67,106,0.15)] rounded-full hover:border-brand-primary/30 hover:text-brand-primary transition-all group"

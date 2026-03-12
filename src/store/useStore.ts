@@ -77,6 +77,7 @@ export interface SiteSettings {
   logoImage?: string;
   logoType: 'text' | 'image';
   favicon?: string;
+  partners: string[];
 }
 
 const defaultSettings: SiteSettings = {
@@ -104,7 +105,14 @@ const defaultSettings: SiteSettings = {
   },
   logoType: 'text',
   logoImage: '',
-  favicon: ''
+  favicon: '',
+  partners: [
+    'https://images.unsplash.com/photo-1599305090598-fe179d501227?w=200&q=80',
+    'https://images.unsplash.com/photo-1599305090598-fe179d501227?w=200&q=80',
+    'https://images.unsplash.com/photo-1599305090598-fe179d501227?w=200&q=80',
+    'https://images.unsplash.com/photo-1599305090598-fe179d501227?w=200&q=80',
+    'https://images.unsplash.com/photo-1599305090598-fe179d501227?w=200&q=80',
+  ]
 };
 
 interface StoreState {
@@ -340,7 +348,7 @@ export const useStore = create<StoreState>((set, get) => ({
       if (data) {
         console.log('Settings fetched successfully:', data);
         
-        // Parse socialLinks if it's stored as JSON string
+        // Parse socialLinks and partners if they're stored as JSON strings
         let parsedSocialLinks = defaultSettings.socialLinks;
         if (data.socialLinks) {
           try {
@@ -352,10 +360,22 @@ export const useStore = create<StoreState>((set, get) => ({
           }
         }
 
+        let parsedPartners = defaultSettings.partners;
+        if (data.partners) {
+          try {
+            parsedPartners = typeof data.partners === 'string'
+              ? JSON.parse(data.partners)
+              : data.partners;
+          } catch (e) {
+            console.error('Error parsing partners:', e);
+          }
+        }
+
         const parsedSettings = {
           ...defaultSettings,
           ...data,
-          socialLinks: parsedSocialLinks
+          socialLinks: parsedSocialLinks,
+          partners: parsedPartners
         };
         set({ settings: parsedSettings, isLoadingSettings: false });
       } else {
@@ -377,8 +397,9 @@ export const useStore = create<StoreState>((set, get) => ({
       const dataToSave = {
         ...updated,
         id: 1,
-        // Stringify socialLinks to ensure it can be stored in both text and jsonb columns
-        socialLinks: JSON.stringify(updated.socialLinks)
+        // Stringify socialLinks and partners to ensure it can be stored in both text and jsonb columns
+        socialLinks: JSON.stringify(updated.socialLinks),
+        partners: JSON.stringify(updated.partners)
       };
 
       // Upsert to Supabase

@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { Save, Globe, CreditCard, Truck, Bell, Shield, Store, Image as ImageIcon, Type, Link as LinkIcon, Upload, Loader2 } from 'lucide-react';
+import { Save, Globe, CreditCard, Truck, Bell, Shield, Store, Image as ImageIcon, Type, Link as LinkIcon, Upload, Loader2, Handshake, Plus, Trash2 } from 'lucide-react';
 import { useState, useEffect, ChangeEvent, useRef } from 'react';
 import { useStore, SiteSettings } from '../../store/useStore';
 import { supabase } from '../../lib/supabase';
@@ -54,10 +54,17 @@ export default function AdminSettings() {
         .from('images')
         .getPublicUrl(filePath);
 
-      setFormData(prev => ({
-        ...prev,
-        [fieldName]: publicUrl
-      }));
+      if (fieldName === 'add_partner') {
+        setFormData(prev => ({
+          ...prev,
+          partners: [...prev.partners, publicUrl]
+        }));
+      } else {
+        setFormData(prev => ({
+          ...prev,
+          [fieldName]: publicUrl
+        }));
+      }
       
       toast.success('تم رفع الصورة بنجاح');
     } catch (error: any) {
@@ -113,6 +120,7 @@ export default function AdminSettings() {
     { id: 'content', label: 'محتوى الموقع', icon: Type },
     { id: 'images', label: 'الصور', icon: ImageIcon },
     { id: 'social', label: 'التواصل الاجتماعي', icon: LinkIcon },
+    { id: 'partners', label: 'الشركاء', icon: Handshake },
     { id: 'payment', label: 'الدفع', icon: CreditCard },
     { id: 'shipping', label: 'الشحن', icon: Truck },
   ];
@@ -437,6 +445,47 @@ export default function AdminSettings() {
                     <label className="block text-sm font-bold text-gray-700 mb-1">فيسبوك</label>
                     <input type="url" name="social_facebook" value={formData.socialLinks.facebook} onChange={handleChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary text-left" dir="ltr" />
                   </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'partners' && (
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-xl font-black text-gray-800 mb-1">شركاؤنا</h2>
+                  <p className="text-sm text-gray-500 font-medium mb-6">إدارة شعارات الشركاء التي تظهر في الصفحة الرئيسية.</p>
+                </div>
+                
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                  {formData.partners.map((logo, index) => (
+                    <div key={index} className="relative group bg-gray-50 rounded-2xl p-4 border border-gray-100 flex flex-col items-center justify-center min-h-[120px]">
+                      <img src={logo} alt={`Partner ${index + 1}`} className="max-h-16 w-auto object-contain mb-2" />
+                      <button 
+                        onClick={() => {
+                          const newPartners = [...formData.partners];
+                          newPartners.splice(index, 1);
+                          setFormData(prev => ({ ...prev, partners: newPartners }));
+                        }}
+                        className="absolute -top-2 -left-2 bg-red-500 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg z-10"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                  
+                  <button 
+                    onClick={() => triggerUpload('add_partner')}
+                    className="border-2 border-dashed border-gray-200 rounded-2xl p-4 hover:border-brand-primary/50 hover:bg-brand-bg/20 transition-all flex flex-col items-center justify-center min-h-[120px] text-gray-400 hover:text-brand-primary"
+                  >
+                    {uploadingField === 'add_partner' ? (
+                      <Loader2 className="w-8 h-8 animate-spin" />
+                    ) : (
+                      <>
+                        <Plus className="w-8 h-8 mb-2" />
+                        <span className="text-sm font-bold">إضافة شريك</span>
+                      </>
+                    )}
+                  </button>
                 </div>
               </div>
             )}
