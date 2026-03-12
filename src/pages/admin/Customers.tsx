@@ -1,15 +1,76 @@
 import { motion } from 'motion/react';
-import { Search, Mail, Phone, MoreVertical, Shield } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { Search, Mail, Phone, MoreVertical, Shield, Camera, Loader2 } from 'lucide-react';
+import { useEffect, useState, useRef } from 'react';
 import { useStore } from '../../store/useStore';
+import { supabase } from '../../lib/supabase';
+import toast from 'react-hot-toast';
 
 export default function AdminCustomers() {
   const { customers, fetchCustomers, isLoadingCustomers } = useStore();
   const [searchQuery, setSearchQuery] = useState('');
+  const [uploadingAvatarId, setUploadingAvatarId] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchCustomers();
   }, [fetchCustomers]);
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !selectedCustomerId) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('الرجاء اختيار صورة صالحة');
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error('حجم الصورة يجب أن لا يتجاوز 2 ميجابايت');
+      return;
+    }
+
+    setUploadingAvatarId(selectedCustomerId);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+      const filePath = `avatars/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('images')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('images')
+        .getPublicUrl(filePath);
+
+      const { error: updateError } = await supabase
+        .from('customers')
+        .update({ avatar: publicUrl })
+        .eq('id', selectedCustomerId);
+
+      if (updateError) throw updateError;
+
+      toast.success('تم تحديث صورة العميل بنجاح');
+      fetchCustomers(); // Refresh the list
+    } catch (error) {
+      console.error('Error uploading avatar:', error);
+      toast.error('حدث خطأ أثناء رفع الصورة');
+    } finally {
+      setUploadingAvatarId(null);
+      setSelectedCustomerId(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const triggerAvatarUpload = (customerId: string) => {
+    setSelectedCustomerId(customerId);
+    fileInputRef.current?.click();
+  };
 
   const filteredCustomers = customers.filter(customer => 
     customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -89,8 +150,28 @@ export default function AdminCustomers() {
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-bold">
-                          {customer.name.charAt(0)}
+                        <div 
+                          className="relative group cursor-pointer"
+                          onClick={() => triggerAvatarUpload(customer.id)}
+                        >
+                          {uploadingAvatarId === customer.id ? (
+                            <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
+                              <Loader2 className="w-5 h-5 text-brand-primary animate-spin" />
+                            </div>
+                          ) : customer.avatar ? (
+                            <img 
+                              src={customer.avatar} 
+                              alt={customer.name} 
+                              className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm group-hover:opacity-75 transition-opacity"
+                            />
+                          ) : (
+                            <div className="w-12 h-12 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center font-bold text-lg group-hover:bg-brand-primary/20 transition-colors">
+                              {customer.name.charAt(0)}
+                            </div>
+                          )}
+                          <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <Camera className="w-4 h-4 text-white" />
+                          </div>
                         </div>
                         <div>
                           <p className="font-bold text-gray-800">{customer.name}</p>
@@ -147,6 +228,15 @@ export default function AdminCustomers() {
           </div>
         </div>
       </div>
+      
+      {/* Hidden File Input for Avatar */}
+      <input 
+        type="file" 
+        ref={fileInputRef}
+        onChange={handleAvatarUpload}
+        accept="image/*"
+        className="hidden"
+      />
     </div>
   );
 }

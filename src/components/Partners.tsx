@@ -57,19 +57,19 @@ export default function Partners() {
                 repeat: Infinity, 
                 ease: "linear" 
               }}
-              className="flex whitespace-nowrap gap-12 md:gap-24 items-center py-4 w-max"
+              className="flex whitespace-nowrap gap-16 md:gap-32 items-center py-8 w-max"
             >
               {/* Duplicate the array multiple times to ensure it covers more than the screen width */}
               {[...partners, ...partners, ...partners, ...partners, ...partners, ...partners].map((logo, index) => (
                 <motion.div 
                   key={index} 
-                  whileHover={{ scale: 1.15 }}
-                  className="flex-shrink-0 bg-white p-4 md:p-6 rounded-3xl shadow-sm border-2 border-brand-bg hover:border-brand-primary/30 transition-colors duration-300"
+                  whileHover={{ scale: 1.1 }}
+                  className="flex-shrink-0 bg-white p-6 md:p-10 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 hover:border-brand-primary/20 transition-all duration-300"
                 >
                   <img 
                     src={logo} 
                     alt="Partner" 
-                    className="h-12 md:h-16 w-auto object-contain"
+                    className="h-20 md:h-28 w-auto object-contain opacity-80 hover:opacity-100 transition-opacity"
                     referrerPolicy="no-referrer"
                   />
                 </motion.div>

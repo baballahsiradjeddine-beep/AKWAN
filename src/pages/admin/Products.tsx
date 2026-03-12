@@ -120,25 +120,35 @@ export default function AdminProducts() {
   const handleAddSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (productForm.name && productForm.price > 0) {
-      await addProduct({
-        ...productForm,
-        image: productForm.image || 'https://images.unsplash.com/photo-1596464716127-f2a82984de30?w=800&q=80'
-      });
-      setIsAdding(false);
-      resetForm();
+      try {
+        await addProduct({
+          ...productForm,
+          image: productForm.image || 'https://images.unsplash.com/photo-1596464716127-f2a82984de30?w=800&q=80'
+        });
+        setIsAdding(false);
+        resetForm();
+        toast.success('تمت إضافة المنتج بنجاح');
+      } catch (error: any) {
+        toast.error('حدث خطأ أثناء إضافة المنتج');
+      }
     }
   };
 
   const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (editingId && productForm.name && productForm.price > 0) {
-      await updateProduct(editingId, {
-        ...productForm,
-        image: productForm.image || 'https://images.unsplash.com/photo-1596464716127-f2a82984de30?w=800&q=80'
-      });
-      setIsEditing(false);
-      setEditingId(null);
-      resetForm();
+      try {
+        await updateProduct(editingId, {
+          ...productForm,
+          image: productForm.image || 'https://images.unsplash.com/photo-1596464716127-f2a82984de30?w=800&q=80'
+        });
+        setIsEditing(false);
+        setEditingId(null);
+        resetForm();
+        toast.success('تم تحديث المنتج بنجاح');
+      } catch (error: any) {
+        toast.error('حدث خطأ أثناء تحديث المنتج');
+      }
     }
   };
 

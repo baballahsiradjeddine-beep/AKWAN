@@ -36,6 +36,7 @@ export interface Customer {
   name: string;
   email: string;
   phone: string;
+  avatar?: string;
   total_orders: number;
   total_spent: number;
   last_order_date: string;
@@ -315,7 +316,7 @@ export const useStore = create<StoreState>((set, get) => ({
       set({ isLoadingCustomers: false });
     }
   },
-  
+
   fetchSettings: async () => {
     try {
       set({ isLoadingSettings: true });

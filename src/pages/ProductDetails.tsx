@@ -325,6 +325,32 @@ export default function ProductDetails() {
           </div>
         </div>
       </div>
+
+      {/* View All Games Button */}
+      <motion.div 
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="pb-20 text-center relative z-10"
+      >
+        <Link to="/shop">
+          <motion.div 
+            whileHover={{ scale: 1.05, rotate: -2 }}
+            whileTap={{ scale: 0.95 }}
+            className="inline-flex items-center justify-center space-x-2 space-x-reverse px-8 py-4 md:px-12 md:py-6 text-xl md:text-2xl font-black text-brand-secondary bg-brand-bg border-[6px] border-white shadow-lg rounded-full cursor-pointer"
+          >
+            <Sparkles className="w-6 h-6 md:w-8 md:h-8 text-brand-accent animate-pulse-soft" />
+            <span>عرض جميع الألعاب</span>
+            <motion.span 
+              animate={{ y: [0, -10, 0] }}
+              transition={{ repeat: Infinity, duration: 1.5 }}
+              className="mr-2 md:mr-3 inline-block"
+            >
+              🎈
+            </motion.span>
+          </motion.div>
+        </Link>
+      </motion.div>
     </div>
   );
 }

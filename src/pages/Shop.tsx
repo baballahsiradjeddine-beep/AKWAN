@@ -111,61 +111,61 @@ export default function Shop() {
               initial={{ opacity: 0, y: 30, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ type: "spring", bounce: 0.4, duration: 0.8, delay: index * 0.05 }}
-              whileHover={{ y: -12, scale: 1.02 }}
-              className="group relative bg-white rounded-[2.5rem] overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border-4 border-brand-bg"
+              whileHover={{ y: -10 }}
+              className="group relative bg-white rounded-[2.5rem] overflow-hidden border-[6px] border-brand-bg shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.12)] transition-shadow duration-300 flex flex-col isolate"
             >
-              <Link to={`/product/${product.id}`} className="block relative aspect-square overflow-hidden bg-brand-bg/20">
+              <Link to={`/product/${product.id}`} className="block relative aspect-square overflow-hidden bg-slate-50/50 z-0">
                 <img 
                   src={product.image} 
                   alt={product.name} 
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                   referrerPolicy="no-referrer"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-brand-secondary/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
-                  <span className="text-white text-sm font-black bg-brand-primary/80 self-start px-3 py-1 rounded-full backdrop-blur-sm">
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
+                  <span className="text-white text-sm font-bold bg-white/20 backdrop-blur-md self-start px-4 py-1.5 rounded-full border border-white/30">
                     عرض التفاصيل
                   </span>
                 </div>
                 
                 {product.badge && (
-                  <div className="absolute top-4 right-4 bg-brand-accent text-brand-secondary text-xs font-black px-4 py-1.5 rounded-full shadow-lg border-2 border-white transform rotate-3">
+                  <div className="absolute top-4 right-4 bg-brand-accent text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-md backdrop-blur-sm border border-white/20">
                     {product.badge}
                   </div>
                 )}
               </Link>
 
-              <div className="p-6">
+              <div className="p-6 md:p-8 flex flex-col flex-grow">
                 <div className="flex justify-between items-start mb-3">
-                  <h3 className="text-xl font-black text-brand-secondary line-clamp-2 flex-grow leading-tight">
+                  <h3 className="text-xl font-bold text-slate-800 line-clamp-2 flex-grow leading-tight hover:text-brand-primary transition-colors">
                     <Link to={`/product/${product.id}`}>{product.name}</Link>
                   </h3>
                 </div>
                 
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-lg border border-amber-100">
-                    <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                    <span className="text-xs font-black text-amber-700">{product.rating}</span>
+                <div className="flex items-center gap-2 mb-6">
+                  <div className="flex items-center gap-1 bg-amber-50/50 px-2.5 py-1 rounded-md border border-amber-100/50">
+                    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                    <span className="text-xs font-bold text-amber-700">{product.rating}</span>
                   </div>
-                  <span className="text-xs font-bold text-brand-muted">{product.category}</span>
+                  <span className="text-xs font-medium text-slate-400">{product.category}</span>
                 </div>
                 
-                <div className="flex items-center justify-between mt-6">
+                <div className="flex items-center justify-between mt-auto pt-4 border-t border-slate-50">
                   <div className="flex flex-col">
-                    <span className="text-2xl md:text-3xl font-black text-brand-primary">
+                    <span className="text-2xl font-black text-brand-primary">
                       {product.price.toFixed(2)}
                     </span>
-                    <span className="text-xs font-bold text-brand-muted -mt-1">ر.س</span>
+                    <span className="text-xs font-medium text-slate-400 -mt-1">ر.س</span>
                   </div>
                   <motion.button 
-                    whileHover={{ scale: 1.1, rotate: -5 }}
-                    whileTap={{ scale: 0.9 }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={(e) => {
                       e.preventDefault();
                       addToCart(product);
                     }}
-                    className="p-4 rounded-2xl bg-brand-accent text-brand-secondary hover:bg-brand-primary hover:text-white transition-all duration-300 shadow-md border-2 border-white"
+                    className="p-3.5 rounded-xl bg-brand-accent text-white hover:bg-brand-primary transition-all duration-300 shadow-sm hover:shadow-md flex items-center justify-center"
                   >
-                    <ShoppingCart className="w-6 h-6" />
+                    <ShoppingCart className="w-5 h-5" />
                   </motion.button>
                 </div>
               </div>

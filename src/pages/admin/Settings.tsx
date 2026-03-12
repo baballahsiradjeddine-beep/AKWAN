@@ -1,4 +1,4 @@
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Save, Globe, CreditCard, Truck, Bell, Shield, Store, Image as ImageIcon, Type, Link as LinkIcon, Upload, Loader2, Handshake, Plus, Trash2 } from 'lucide-react';
 import { useState, useEffect, ChangeEvent, useRef } from 'react';
 import { useStore, SiteSettings } from '../../store/useStore';
@@ -7,8 +7,7 @@ import toast from 'react-hot-toast';
 
 export default function AdminSettings() {
   const [activeTab, setActiveTab] = useState('general');
-  const settings = useStore((state) => state.settings);
-  const updateSettings = useStore((state) => state.updateSettings);
+  const { settings, updateSettings } = useStore();
   
   const [formData, setFormData] = useState<SiteSettings>(settings);
   const [isSaving, setIsSaving] = useState(false);
