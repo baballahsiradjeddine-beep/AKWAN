@@ -4,7 +4,7 @@ import { useState, useEffect, ChangeEvent, useRef } from 'react';
 import { useStore, SiteSettings } from '../../store/useStore';
 import { supabase } from '../../lib/supabase';
 import toast from 'react-hot-toast';
-import AdminTestimonials from './Testimonials';
+import AdminTestimonials from './TestimonialsComponent';
 
 export default function AdminSettings() {
   const [activeTab, setActiveTab] = useState('general');
