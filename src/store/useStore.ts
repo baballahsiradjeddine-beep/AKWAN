@@ -43,6 +43,14 @@ export interface Customer {
   created_at: string;
 }
 
+export interface Testimonial {
+  id: number;
+  name: string;
+  text: string;
+  rating: number;
+  avatar: string;
+}
+
 export interface SiteSettings {
   // Global
   siteName: string;
@@ -121,6 +129,7 @@ interface StoreState {
   cart: CartItem[];
   orders: Order[];
   customers: Customer[];
+  testimonials: Testimonial[];
   settings: SiteSettings;
   isLoadingProducts: boolean;
   fetchProducts: () => Promise<void>;
@@ -136,6 +145,11 @@ interface StoreState {
   updateOrderStatus: (id: string, status: string) => Promise<void>;
   isLoadingCustomers: boolean;
   fetchCustomers: () => Promise<void>;
+  isLoadingTestimonials: boolean;
+  fetchTestimonials: () => Promise<void>;
+  addTestimonial: (testimonial: Omit<Testimonial, 'id'>) => Promise<void>;
+  updateTestimonial: (id: number, testimonial: Partial<Testimonial>) => Promise<void>;
+  deleteTestimonial: (id: number) => Promise<void>;
   isLoadingSettings: boolean;
   fetchSettings: () => Promise<void>;
   updateSettings: (settings: Partial<SiteSettings>) => Promise<void>;
@@ -153,11 +167,13 @@ export const useStore = create<StoreState>((set, get) => ({
   cart: [],
   orders: [],
   customers: [],
+  testimonials: [],
   settings: defaultSettings,
   isLoadingSettings: true,
   isLoadingProducts: true,
   isLoadingOrders: true,
   isLoadingCustomers: true,
+  isLoadingTestimonials: true,
   
   fetchProducts: async () => {
     try {
@@ -314,6 +330,83 @@ export const useStore = create<StoreState>((set, get) => ({
     } catch (error) {
       console.error('Error fetching customers:', error);
       set({ isLoadingCustomers: false });
+    }
+  },
+
+  fetchTestimonials: async () => {
+    try {
+      set({ isLoadingTestimonials: true });
+      const { data, error } = await supabase
+        .from('testimonials')
+        .select('*')
+        .order('id', { ascending: false });
+
+      if (error) throw error;
+      set({ testimonials: data || [], isLoadingTestimonials: false });
+    } catch (error) {
+      console.error('Error fetching testimonials:', error);
+      set({ isLoadingTestimonials: false });
+    }
+  },
+
+  addTestimonial: async (testimonial) => {
+    try {
+      const { data, error } = await supabase
+        .from('testimonials')
+        .insert([testimonial])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      if (data) {
+        set((state) => ({
+          testimonials: [data, ...state.testimonials]
+        }));
+      }
+    } catch (error) {
+      console.error('Error adding testimonial:', error);
+      throw error;
+    }
+  },
+
+  updateTestimonial: async (id, updatedTestimonial) => {
+    try {
+      const { data, error } = await supabase
+        .from('testimonials')
+        .update(updatedTestimonial)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      if (data) {
+        set((state) => ({
+          testimonials: state.testimonials.map(t => t.id === id ? data : t)
+        }));
+      }
+    } catch (error) {
+      console.error('Error updating testimonial:', error);
+      throw error;
+    }
+  },
+
+  deleteTestimonial: async (id) => {
+    try {
+      const { error } = await supabase
+        .from('testimonials')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      set((state) => ({
+        testimonials: state.testimonials.filter(t => t.id !== id)
+      }));
+    } catch (error) {
+      console.error('Error deleting testimonial:', error);
+      throw error;
     }
   },
 
