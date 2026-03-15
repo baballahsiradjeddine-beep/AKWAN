@@ -13,6 +13,7 @@ export interface Product {
   description: string;
   category: string;
   soldOut?: boolean;
+  video_reviews?: any[];
 }
 
 export interface CartItem extends Product {
@@ -184,7 +185,8 @@ export const useStore = create<StoreState>((set, get) => ({
         .order('id', { ascending: false });
 
       if (error) {
-        console.error('Error fetching products:', error);
+        console.error('Error fetching products from Supabase:', error);
+        console.error('Error details:', JSON.stringify(error, null, 2));
         set({ isLoadingProducts: false });
         return;
       }
@@ -344,7 +346,8 @@ export const useStore = create<StoreState>((set, get) => ({
       if (error) throw error;
       set({ testimonials: data || [], isLoadingTestimonials: false });
     } catch (error) {
-      console.error('Error fetching testimonials:', error);
+      console.error('Error fetching testimonials from Supabase:', error);
+      console.error('Error details:', JSON.stringify(error, null, 2));
       set({ isLoadingTestimonials: false });
     }
   },
@@ -441,6 +444,7 @@ export const useStore = create<StoreState>((set, get) => ({
 
       if (data) {
         console.log('Settings fetched successfully:', data);
+        console.log('Raw partners data:', data.partners);
         
         // Parse socialLinks and partners if they're stored as JSON strings
         let parsedSocialLinks = defaultSettings.socialLinks;
