@@ -40,18 +40,6 @@ export interface Order {
   items?: any[];
 }
 
-export interface Customer {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  avatar?: string;
-  total_orders: number;
-  total_spent: number;
-  last_order_date: string;
-  created_at: string;
-}
-
 export interface Testimonial {
   id: number;
   name: string;
@@ -96,6 +84,10 @@ export interface SiteSettings {
   logoType: 'text' | 'image';
   favicon?: string;
   partners: string[];
+  
+  // Shipping
+  shippingFee: number;
+  freeShippingThreshold: number;
 }
 
 const defaultSettings: SiteSettings = {
@@ -130,14 +122,15 @@ const defaultSettings: SiteSettings = {
     'https://images.unsplash.com/photo-1599305090598-fe179d501227?w=200&q=80',
     'https://images.unsplash.com/photo-1599305090598-fe179d501227?w=200&q=80',
     'https://images.unsplash.com/photo-1599305090598-fe179d501227?w=200&q=80',
-  ]
+  ],
+  shippingFee: 0,
+  freeShippingThreshold: 0
 };
 
 interface StoreState {
   products: Product[];
   cart: CartItem[];
   orders: Order[];
-  customers: Customer[];
   testimonials: Testimonial[];
   settings: SiteSettings;
   isLoadingProducts: boolean;
@@ -152,8 +145,6 @@ interface StoreState {
   isLoadingOrders: boolean;
   fetchOrders: () => Promise<void>;
   updateOrderStatus: (id: string, status: string) => Promise<void>;
-  isLoadingCustomers: boolean;
-  fetchCustomers: () => Promise<void>;
   isLoadingTestimonials: boolean;
   fetchTestimonials: () => Promise<void>;
   addTestimonial: (testimonial: Omit<Testimonial, 'id'>) => Promise<void>;
@@ -175,13 +166,11 @@ export const useStore = create<StoreState>((set, get) => ({
   products: [],
   cart: [],
   orders: [],
-  customers: [],
   testimonials: [],
   settings: defaultSettings,
   isLoadingSettings: true,
   isLoadingProducts: true,
   isLoadingOrders: true,
-  isLoadingCustomers: true,
   isLoadingTestimonials: true,
   
   fetchProducts: async () => {
@@ -324,22 +313,6 @@ export const useStore = create<StoreState>((set, get) => ({
     } catch (error) {
       console.error('Error updating order status:', error);
       throw error;
-    }
-  },
-
-  fetchCustomers: async () => {
-    try {
-      set({ isLoadingCustomers: true });
-      const { data, error } = await supabase
-        .from('customers')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      set({ customers: data || [], isLoadingCustomers: false });
-    } catch (error) {
-      console.error('Error fetching customers:', error);
-      set({ isLoadingCustomers: false });
     }
   },
 
@@ -528,47 +501,7 @@ export const useStore = create<StoreState>((set, get) => ({
 
   createOrder: async (orderData) => {
     try {
-      // 1. Create or update customer
-      const { data: customerData, error: customerError } = await supabase
-        .from('customers')
-        .select('*')
-        .eq('phone', orderData.customer_phone)
-        .single();
-
-      let customerId;
-
-      if (customerError && customerError.code === 'PGRST116') {
-        // Customer doesn't exist, create new
-        const { data: newCustomer, error: createError } = await supabase
-          .from('customers')
-          .insert([{
-            name: orderData.customer_name,
-            phone: orderData.customer_phone,
-            total_orders: 1,
-            total_spent: orderData.total_amount,
-            last_order_date: new Date().toISOString()
-          }])
-          .select()
-          .single();
-        
-        if (createError) throw createError;
-        customerId = newCustomer.id;
-      } else if (customerData) {
-        // Update existing customer
-        const { error: updateError } = await supabase
-          .from('customers')
-          .update({
-            total_orders: customerData.total_orders + 1,
-            total_spent: customerData.total_spent + orderData.total_amount,
-            last_order_date: new Date().toISOString()
-          })
-          .eq('id', customerData.id);
-        
-        if (updateError) throw updateError;
-        customerId = customerData.id;
-      }
-
-      // 2. Create the order
+      // Create the order
       const { data: newOrder, error: orderError } = await supabase
         .from('orders')
         .insert([{
@@ -583,10 +516,6 @@ export const useStore = create<StoreState>((set, get) => ({
         .single();
 
       if (orderError) throw orderError;
-
-      // 3. Create order items (if you have an order_items table)
-      // For now, we'll just store the count in the order table as per the schema
-      // But we could add a JSON column or a separate table if needed.
 
       // Update local state
       set((state) => ({

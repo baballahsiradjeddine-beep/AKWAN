@@ -496,14 +496,83 @@ export default function AdminSettings() {
               <AdminTestimonials />
             )}
 
-            {['payment', 'shipping'].includes(activeTab) && (
+            {activeTab === 'shipping' && (
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-xl font-black text-gray-800 mb-1">إعدادات الشحن</h2>
+                  <p className="text-sm text-gray-500 font-medium mb-6">تحكم في تكاليف الشحن وعروض الشحن المجاني.</p>
+                </div>
+                
+                <div className="space-y-6">
+                  <div className="bg-brand-bg/30 p-6 rounded-2xl border border-brand-primary/10">
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm">
+                        <Truck className="w-6 h-6 text-brand-primary" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold text-brand-secondary">تكاليف التوصيل</h3>
+                        <p className="text-xs text-brand-muted font-medium">حدد المبلغ الذي يدفعه العميل للشحن.</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="block text-sm font-bold text-gray-700">رسوم الشحن الثابتة (ر.س)</label>
+                        <div className="relative">
+                          <input 
+                            type="number" 
+                            name="shippingFee" 
+                            value={formData.shippingFee} 
+                            onChange={(e) => setFormData(prev => ({ ...prev, shippingFee: parseFloat(e.target.value) || 0 }))} 
+                            className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-brand-primary font-black text-brand-secondary" 
+                            placeholder="0.00"
+                            min="0"
+                          />
+                          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">ر.س</span>
+                        </div>
+                        <p className="text-[10px] text-gray-400 font-medium">سيتم إضافة هذا المبلغ تلقائياً لكل طلب.</p>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="block text-sm font-bold text-gray-700">حد الشحن المجاني (ر.س)</label>
+                        <div className="relative">
+                          <input 
+                            type="number" 
+                            name="freeShippingThreshold" 
+                            value={formData.freeShippingThreshold} 
+                            onChange={(e) => setFormData(prev => ({ ...prev, freeShippingThreshold: parseFloat(e.target.value) || 0 }))} 
+                            className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-brand-primary font-black text-brand-secondary" 
+                            placeholder="0.00"
+                            min="0"
+                          />
+                          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">ر.س</span>
+                        </div>
+                        <p className="text-[10px] text-gray-400 font-medium">اجعل الشحن مجانياً إذا تجاوز الطلب هذا المبلغ (0 تعني لا يوجد شحن مجاني).</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-amber-50 p-4 rounded-xl border border-amber-100 flex gap-3">
+                    <div className="shrink-0 w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm">
+                      <Shield className="w-5 h-5 text-amber-500" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-amber-800">ملاحظة هامة</p>
+                      <p className="text-xs text-amber-700 font-medium mt-0.5">إذا كنت تريد إلغاء رسوم الشحن تماماً، اجعل "رسوم الشحن الثابتة" تساوي 0.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'payment' && (
               <div className="flex flex-col items-center justify-center py-12 text-center">
                 <div className="w-20 h-20 bg-brand-bg rounded-full flex items-center justify-center mb-4">
-                  <Store className="w-10 h-10 text-brand-primary opacity-50" />
+                  <CreditCard className="w-10 h-10 text-brand-primary opacity-50" />
                 </div>
                 <h3 className="text-lg font-black text-gray-800 mb-2">قريباً </h3>
                 <p className="text-gray-500 font-medium max-w-sm">
-                  هذا القسم قيد التطوير حالياً. سيتم إضافة إعدادات {tabs.find(t => t.id === activeTab)?.label} قريباً.
+                  هذا القسم قيد التطوير حالياً. سيتم إضافة إعدادات الدفع قريباً.
                 </p>
               </div>
             )}

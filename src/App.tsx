@@ -11,7 +11,6 @@ import About from './pages/About';
 import Dashboard from './pages/admin/Dashboard';
 import Products from './pages/admin/Products';
 import Orders from './pages/admin/Orders';
-import Customers from './pages/admin/Customers';
 import Settings from './pages/admin/Settings';
 import Login from './pages/admin/Login';
 import ProtectedRoute from './components/admin/ProtectedRoute';
@@ -34,14 +33,12 @@ export default function App() {
   const fetchSettings = useStore(state => state.fetchSettings);
   const fetchProducts = useStore(state => state.fetchProducts);
   const fetchOrders = useStore(state => state.fetchOrders);
-  const fetchCustomers = useStore(state => state.fetchCustomers);
 
   useEffect(() => {
     fetchSettings();
     fetchProducts();
     fetchOrders();
-    fetchCustomers();
-  }, [fetchSettings, fetchProducts, fetchOrders, fetchCustomers]);
+  }, [fetchSettings, fetchProducts, fetchOrders]);
 
   // Update favicon dynamically
   const settings = useStore(state => state.settings);
@@ -90,7 +87,6 @@ export default function App() {
               <Route index element={<Dashboard />} />
               <Route path="products" element={<Products />} />
               <Route path="orders" element={<Orders />} />
-              <Route path="customers" element={<Customers />} />
               <Route path="settings" element={<Settings />} />
             </Route>
           </Route>

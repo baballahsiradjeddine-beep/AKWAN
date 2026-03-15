@@ -18,14 +18,13 @@ const salesData = [
 ];
 
 export default function Dashboard() {
-  const { products, fetchProducts, orders, fetchOrders, customers, fetchCustomers, isLoadingProducts, isLoadingOrders, isLoadingCustomers } = useStore();
+  const { products, fetchProducts, orders, fetchOrders, isLoadingProducts, isLoadingOrders } = useStore();
   const [timeRange, setTimeRange] = useState('7 أيام');
 
   useEffect(() => {
     fetchProducts();
     fetchOrders();
-    fetchCustomers();
-  }, [fetchProducts, fetchOrders, fetchCustomers]);
+  }, [fetchProducts, fetchOrders]);
 
   const totalSales = orders
     .filter(o => o.status === 'تم التوصيل')
@@ -60,15 +59,6 @@ export default function Dashboard() {
       isUp: true,
       color: 'from-brand-primary to-brand-secondary',
       bg: 'bg-brand-bg'
-    },
-    { 
-      name: 'العملاء النشطين', 
-      value: customers.length.toString(), 
-      icon: Users, 
-      change: '-2.4%', 
-      isUp: false,
-      color: 'from-blue-500 to-indigo-600',
-      bg: 'bg-blue-50'
     },
     { 
       name: 'المنتجات', 

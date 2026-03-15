@@ -21,44 +21,44 @@ export default function Testimonials() {
   if (testimonials.length === 0) return null;
 
   return (
-    <section className="py-20 bg-brand-bg/20 relative overflow-hidden">
+    <section className="py-12 md:py-20 bg-brand-bg/20 relative overflow-hidden">
       <div className="max-w-4xl mx-auto px-4 relative z-10">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-20"
+          className="text-center mb-8 md:mb-20"
         >
-          <h2 className="text-4xl md:text-5xl font-black text-brand-secondary relative inline-block">
+          <h2 className="text-xl md:text-5xl font-black text-brand-secondary relative inline-block">
             ماذا يقول أصدقاء أكوان؟
-            <div className="absolute -bottom-4 left-0 right-0 h-3 bg-brand-accent/40 -z-10 rounded-full" />
+            <div className="absolute -bottom-1.5 md:-bottom-4 left-0 right-0 h-1.5 md:h-3 bg-brand-accent/40 -z-10 rounded-full" />
           </h2>
         </motion.div>
 
-        <div className="relative px-4 md:px-24">
+        <div className="relative px-2 md:px-24">
           <Swiper
             onBeforeInit={(swiper) => {
               swiperRef.current = swiper;
             }}
             modules={[Navigation, Pagination, Autoplay]}
-            spaceBetween={30}
+            spaceBetween={20}
             slidesPerView={1}
             loop={true}
             pagination={{ clickable: true }}
             autoplay={{ delay: 6000, disableOnInteraction: false }}
             speed={1000}
             grabCursor={true}
-            className="pb-16"
+            className="pb-20 md:pb-24"
           >
             {testimonials.map((t) => (
               <SwiperSlide key={t.id}>
-                <div className="bg-white p-6 md:p-12 rounded-[2.5rem] md:rounded-[4rem] border-2 border-brand-primary/5 shadow-none flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-12">
+                <div className="bg-white p-6 md:p-12 rounded-[2rem] md:rounded-[4rem] border-2 border-brand-primary/5 shadow-none flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-12 mb-12">
                   {/* Mobile Header: Avatar + Name + Stars */}
                   <div className="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-12 w-full">
                     <div className="flex flex-row md:flex-col items-center gap-4 md:gap-6 w-full md:w-auto">
                       {/* Avatar */}
                       <div className="relative shrink-0">
-                        <div className="w-16 h-16 md:w-36 md:h-36 rounded-full p-1 md:p-2 border-4 border-brand-bg shadow-sm">
+                        <div className="w-16 h-16 md:w-36 md:h-36 rounded-full p-1.5 md:p-2 border-4 border-brand-bg shadow-sm">
                           <img 
                             src={t.avatar || 'https://ui-avatars.com/api/?name=' + t.name} 
                             alt={t.name} 
@@ -66,14 +66,14 @@ export default function Testimonials() {
                             referrerPolicy="no-referrer" 
                           />
                         </div>
-                        <div className="absolute -bottom-1 -right-1 md:bottom-3 md:right-3 bg-green-500 text-white p-1 md:p-2 rounded-full border-2 md:border-4 border-white shadow-md">
+                        <div className="absolute -bottom-0.5 -right-0.5 md:bottom-3 md:right-3 bg-green-500 text-white p-1 md:p-2 rounded-full border-2 md:border-4 border-white shadow-md">
                           <svg className="w-2 h-2 md:w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M5 13l4 4L19 7"></path></svg>
                         </div>
                       </div>
 
                       {/* Name and Stars Grouped on Mobile */}
                       <div className="flex flex-col items-start md:hidden gap-1">
-                        <p className="text-brand-primary font-bold text-base">— {t.name}</p>
+                        <p className="text-brand-primary font-bold text-sm md:text-base">— {t.name}</p>
                         <div className="flex text-brand-accent gap-0.5">
                           {[...Array(5)].map((_, i) => (
                             <Star key={i} className={`w-4 h-4 ${i < t.rating ? 'fill-current' : 'text-gray-200'}`} />
@@ -91,7 +91,7 @@ export default function Testimonials() {
                         ))}
                       </div>
                       
-                      <p className="text-brand-secondary font-black text-lg md:text-3xl leading-relaxed w-full">
+                      <p className="text-brand-secondary font-black text-base md:text-3xl leading-relaxed w-full">
                         "{t.text}"
                       </p>
                       

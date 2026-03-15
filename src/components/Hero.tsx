@@ -11,7 +11,7 @@ export default function Hero() {
   const settings = useStore((state) => state.settings);
 
   return (
-    <div className="relative bg-brand-bg min-h-[100svh] lg:min-h-[90vh] flex items-start lg:items-center pt-16 pb-20 lg:pt-16 lg:pb-16 px-4 lg:px-8">
+    <div className="relative bg-brand-bg min-h-[100svh] lg:min-h-[90vh] flex items-start lg:items-center pt-12 pb-16 lg:pt-16 lg:pb-16 px-4 lg:px-8">
       {/* Decorative background elements - Playful Shapes */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
         {/* Glowing Orbs */}
@@ -106,7 +106,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ type: "spring", stiffness: 100, damping: 12, delay: 0.2 }}
-              className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-brand-secondary leading-[1.5] md:leading-[1.5] mb-6 md:mb-10 drop-shadow-sm"
+              className="text-2xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-brand-secondary leading-[1.4] md:leading-[1.5] mb-4 md:mb-10 drop-shadow-sm"
             >
               {settings.heroTitle.includes('جذوري العربية!') ? (
                 <span dangerouslySetInnerHTML={{ 
@@ -121,7 +121,7 @@ export default function Hero() {
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.4, type: "spring", bounce: 0.4 }}
-              className="text-base sm:text-xl md:text-2xl text-brand-secondary/80 mb-8 md:mb-12 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-bold px-2 lg:px-0"
+              className="text-sm sm:text-xl md:text-2xl text-brand-secondary/80 mb-6 md:mb-12 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-bold px-2 lg:px-0"
             >
               {settings.heroSubtitle}
             </motion.p>
@@ -178,7 +178,7 @@ export default function Hero() {
               <motion.div 
                 whileHover={{ scale: 1.02, rotate: -2 }}
                 transition={{ type: "spring", bounce: 0.6 }}
-                className="relative rounded-[3rem] md:rounded-[4rem] overflow-hidden shadow-[0_20px_40px_rgba(92,67,106,0.2)] md:shadow-[0_30px_60px_rgba(92,67,106,0.25)] border-[8px] md:border-[12px] border-white bg-white aspect-square md:aspect-[4/3] lg:aspect-square"
+                className="relative rounded-[2rem] md:rounded-[4rem] overflow-hidden shadow-[0_20px_40px_rgba(92,67,106,0.2)] md:shadow-[0_30px_60px_rgba(92,67,106,0.25)] border-[6px] md:border-[12px] border-white bg-white aspect-square md:aspect-[4/3] lg:aspect-square"
               >
                 <img 
                   src={settings.heroImage} 

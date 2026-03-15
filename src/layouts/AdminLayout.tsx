@@ -8,14 +8,12 @@ const sidebarLinks = [
   { name: 'لوحة التحكم', path: '/admin', icon: LayoutDashboard },
   { name: 'المنتجات', path: '/admin/products', icon: Package },
   { name: 'الطلبات', path: '/admin/orders', icon: ShoppingCart },
-  { name: 'العملاء', path: '/admin/customers', icon: Users },
   { name: 'الإعدادات', path: '/admin/settings', icon: Settings },
 ];
 
 const mockNotifications = [
   { id: 1, title: 'طلب جديد #1005', time: 'منذ 5 دقائق', type: 'order', read: false },
   { id: 2, title: 'نفدت كمية "طقم دلة خشبي"', time: 'منذ ساعة', type: 'stock', read: false },
-  { id: 3, title: 'عميل جديد سجل في المتجر', time: 'منذ 3 ساعات', type: 'user', read: true },
 ];
 
 export default function AdminLayout() {

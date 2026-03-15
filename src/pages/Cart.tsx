@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 
 export default function Cart() {
   const cartItems = useStore((state) => state.cart);
+  const settings = useStore((state) => state.settings);
   const updateQuantity = useStore((state) => state.updateCartQuantity);
   const removeItem = useStore((state) => state.removeFromCart);
   const createOrder = useStore((state) => state.createOrder);
@@ -22,7 +23,15 @@ export default function Cart() {
   });
 
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const shipping = subtotal > 0 ? 25 : 0;
+  
+  // Shipping calculation logic
+  const getShippingFee = () => {
+    if (subtotal === 0) return 0;
+    if (settings.freeShippingThreshold > 0 && subtotal >= settings.freeShippingThreshold) return 0;
+    return settings.shippingFee || 0;
+  };
+
+  const shipping = getShippingFee();
   const total = subtotal + shipping;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -94,18 +103,18 @@ export default function Cart() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
-        <div className="flex items-center justify-center md:justify-start gap-4 mb-12">
+        <div className="flex items-center justify-center md:justify-start gap-3 mb-8 md:mb-12">
           <motion.div
             initial={{ rotate: -20, scale: 0 }}
             animate={{ rotate: 0, scale: 1 }}
             transition={{ type: "spring", bounce: 0.6 }}
-            className="w-16 h-16 bg-white rounded-2xl shadow-lg border-4 border-brand-bg flex items-center justify-center transform -rotate-6"
+            className="w-12 h-12 md:w-16 md:h-16 bg-white rounded-xl md:rounded-2xl shadow-lg border-2 md:border-4 border-brand-bg flex items-center justify-center transform -rotate-6"
           >
-            <ShoppingCart className="w-8 h-8 text-brand-primary" />
+            <ShoppingCart className="w-6 h-6 md:w-8 md:h-8 text-brand-primary" />
           </motion.div>
-          <h1 className="text-4xl md:text-5xl font-black text-brand-secondary tracking-tight">
+          <h1 className="text-2xl md:text-5xl font-black text-brand-secondary tracking-tight">
             {isCheckingOut ? 'إتمام الطلب' : 'سلة المشتريات'}
-            <Sparkles className="inline-block w-6 h-6 text-brand-accent ml-2 animate-pulse" />
+            <Sparkles className="inline-block w-5 h-5 md:w-6 md:h-6 text-brand-accent ml-2 animate-pulse" />
           </h1>
         </div>
 
@@ -158,47 +167,47 @@ export default function Cart() {
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, scale: 0.9, x: 50 }}
                         transition={{ type: "spring", bounce: 0.4, delay: index * 0.1 }}
-                        className="bg-white rounded-[2.5rem] p-6 sm:p-8 shadow-[0_10px_30px_rgba(92,67,106,0.05)] border-4 border-brand-bg flex flex-col sm:flex-row items-center gap-10 hover:shadow-[0_15px_40px_rgba(141,105,159,0.15)] hover:border-brand-primary/20 transition-all group relative overflow-hidden"
+                        className="bg-white rounded-[1.5rem] md:rounded-[2.5rem] p-4 md:p-8 shadow-[0_10px_30px_rgba(92,67,106,0.05)] border-2 md:border-4 border-brand-bg flex flex-col sm:flex-row items-center gap-6 md:gap-10 hover:shadow-[0_15px_40px_rgba(141,105,159,0.15)] hover:border-brand-primary/20 transition-all group relative overflow-hidden"
                       >
                         {/* Decorative side accent */}
-                        <div className="absolute top-0 right-0 w-2 h-full bg-brand-primary/10 group-hover:bg-brand-accent transition-colors"></div>
+                        <div className="absolute top-0 right-0 w-1.5 md:w-2 h-full bg-brand-primary/10 group-hover:bg-brand-accent transition-colors"></div>
 
-                        <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-[1.5rem] overflow-hidden bg-brand-surface shrink-0 shadow-inner border-4 border-white">
+                        <div className="w-24 h-24 sm:w-40 sm:h-40 rounded-[1rem] md:rounded-[1.5rem] overflow-hidden bg-brand-surface shrink-0 shadow-inner border-2 md:border-4 border-white">
                           <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" referrerPolicy="no-referrer" />
                         </div>
                         
-                        <div className="flex-grow text-center sm:text-right flex flex-col justify-between h-full py-2">
+                        <div className="flex-grow text-center sm:text-right flex flex-col justify-between h-full py-1">
                           <div>
-                            <h3 className="text-xl sm:text-2xl font-black text-brand-secondary mb-2 leading-snug">
+                            <h3 className="text-lg sm:text-2xl font-black text-brand-secondary mb-1 leading-snug">
                               <Link to={`/product/${item.id}`} className="hover:text-brand-primary transition-colors">{item.name}</Link>
                             </h3>
-                            <div className="text-brand-primary font-black text-xl mb-6">
-                              {item.price.toFixed(2)} <span className="text-sm font-bold text-brand-muted">ر.س</span>
+                            <div className="text-brand-primary font-black text-lg md:text-xl mb-4 md:mb-6">
+                              {item.price.toFixed(2)} <span className="text-xs md:text-sm font-bold text-brand-muted">ر.س</span>
                             </div>
                           </div>
                           
-                          <div className="flex items-center justify-center sm:justify-start gap-8">
-                            <div className="flex items-center bg-brand-surface rounded-2xl p-1 border-2 border-brand-bg shadow-inner">
+                          <div className="flex items-center justify-center sm:justify-start gap-6 md:gap-8">
+                            <div className="flex items-center bg-brand-surface rounded-xl md:rounded-2xl p-0.5 md:p-1 border-2 border-brand-bg shadow-inner">
                               <button 
                                 onClick={() => updateQuantity(item.id, item.quantity - 1)} 
-                                className="w-10 h-10 flex items-center justify-center bg-white rounded-xl text-brand-secondary font-black hover:text-brand-primary hover:shadow-md transition-all"
+                                className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center bg-white rounded-lg md:rounded-xl text-brand-secondary font-black hover:text-brand-primary hover:shadow-md transition-all"
                               >
                                 -
                               </button>
-                              <span className="w-12 text-center font-black text-xl text-brand-secondary">{item.quantity}</span>
+                              <span className="w-10 md:w-12 text-center font-black text-lg md:text-xl text-brand-secondary">{item.quantity}</span>
                               <button 
                                 onClick={() => updateQuantity(item.id, item.quantity + 1)} 
-                                className="w-10 h-10 flex items-center justify-center bg-white rounded-xl text-brand-secondary font-black hover:text-brand-primary hover:shadow-md transition-all"
+                                className="w-8 h-8 md:w-10 md:h-10 flex items-center justify-center bg-white rounded-lg md:rounded-xl text-brand-secondary font-black hover:text-brand-primary hover:shadow-md transition-all"
                               >
                                 +
                               </button>
                             </div>
                             <button 
                               onClick={() => removeItem(item.id)}
-                              className="text-red-400 hover:text-white hover:bg-red-500 p-3 bg-red-50 rounded-2xl transition-all shadow-sm hover:shadow-md"
+                              className="text-red-400 hover:text-white hover:bg-red-500 p-2 md:p-3 bg-red-50 rounded-xl md:rounded-2xl transition-all shadow-sm hover:shadow-md"
                               title="حذف"
                             >
-                              <Trash2 className="w-6 h-6" />
+                              <Trash2 className="w-5 h-5 md:w-6 md:h-6" />
                             </button>
                           </div>
                         </div>
@@ -312,33 +321,33 @@ export default function Cart() {
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ type: "spring", bounce: 0.4, delay: 0.3 }}
-                className="bg-white rounded-[3rem] p-8 sm:p-10 shadow-[0_20px_50px_rgba(92,67,106,0.1)] border-8 border-brand-bg sticky top-28 relative overflow-hidden"
+                className="bg-white rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 shadow-[0_20px_50px_rgba(92,67,106,0.1)] border-4 md:border-8 border-brand-bg sticky top-28 relative overflow-hidden"
               >
                 {/* Decorative background shape */}
                 <div className="absolute -top-10 -left-10 w-32 h-32 bg-brand-accent/10 rounded-full blur-2xl pointer-events-none"></div>
 
-                <h3 className="text-2xl md:text-3xl font-black text-brand-secondary mb-8 flex items-center">
+                <h3 className="text-xl md:text-3xl font-black text-brand-secondary mb-6 md:mb-8 flex items-center">
                   ملخص الطلب
-                  <span className="w-3 h-3 rounded-full bg-brand-primary mr-3"></span>
+                  <span className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-brand-primary mr-2 md:mr-3"></span>
                 </h3>
                 
-                <div className="space-y-5 mb-8 text-brand-secondary font-bold text-lg">
-                  <div className="flex justify-between items-center p-4 bg-brand-surface rounded-2xl">
+                <div className="space-y-4 md:space-y-5 mb-6 md:mb-8 text-brand-secondary font-bold text-base md:text-lg">
+                  <div className="flex justify-between items-center p-3 md:p-4 bg-brand-surface rounded-xl md:rounded-2xl">
                     <span className="text-brand-muted">المجموع الفرعي</span>
                     <span className="font-black">{subtotal.toFixed(2)} ر.س</span>
                   </div>
-                  <div className="flex justify-between items-center p-4 bg-brand-surface rounded-2xl">
+                  <div className="flex justify-between items-center p-3 md:p-4 bg-brand-surface rounded-xl md:rounded-2xl">
                     <span className="text-brand-muted">تكلفة الشحن</span>
                     <span className="font-black">{shipping === 0 ? 'مجاني' : `${shipping.toFixed(2)} ر.س`}</span>
                   </div>
                   
-                  <div className="relative pt-6 mt-6">
-                    <div className="absolute top-0 left-0 w-full border-t-4 border-brand-bg border-dashed"></div>
-                    <div className="flex justify-between items-end text-2xl md:text-3xl font-black">
+                  <div className="relative pt-4 md:pt-6 mt-4 md:mt-6">
+                    <div className="absolute top-0 left-0 w-full border-t-2 md:border-t-4 border-brand-bg border-dashed"></div>
+                    <div className="flex justify-between items-end text-xl md:text-3xl font-black">
                       <span>الإجمالي</span>
                       <span className="text-brand-primary">{total.toFixed(2)} ر.س</span>
                     </div>
-                    <p className="text-xs text-brand-muted mt-2 text-left">شامل ضريبة القيمة المضافة</p>
+                    <p className="text-[10px] md:text-xs text-brand-muted mt-1 md:mt-2 text-left">شامل ضريبة القيمة المضافة</p>
                   </div>
                 </div>
 
@@ -347,10 +356,10 @@ export default function Cart() {
                     whileHover={{ scale: 1.03, y: -2 }}
                     whileTap={{ scale: 0.97 }}
                     onClick={() => setIsCheckingOut(true)}
-                    className="w-full py-5 rounded-[2rem] font-black text-xl flex items-center justify-center space-x-2 space-x-reverse shadow-[0_10px_30px_rgba(141,105,159,0.4)] border-4 border-transparent hover:border-brand-accent/50 bg-brand-primary text-white hover:bg-brand-secondary transition-all mb-6 group"
+                    className="w-full py-4 md:py-5 rounded-2xl md:rounded-[2rem] font-black text-lg md:text-xl flex items-center justify-center space-x-2 space-x-reverse shadow-[0_10px_30px_rgba(141,105,159,0.4)] border-2 md:border-4 border-transparent hover:border-brand-accent/50 bg-brand-primary text-white hover:bg-brand-secondary transition-all mb-4 md:mb-6 group"
                   >
                     <span>إتمام الطلب بأمان</span>
-                    <ArrowLeft className="w-6 h-6 group-hover:-translate-x-2 transition-transform" />
+                    <ArrowLeft className="w-5 h-5 md:w-6 md:h-6 group-hover:-translate-x-2 transition-transform" />
                   </motion.button>
                 )}
                 
