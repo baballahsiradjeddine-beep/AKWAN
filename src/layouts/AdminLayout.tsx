@@ -3,6 +3,8 @@ import { LayoutDashboard, Package, ShoppingCart, Users, Settings, LogOut, Menu, 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { supabase } from '../lib/supabase';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 
 const sidebarLinks = [
   { name: 'لوحة التحكم', path: '/admin', icon: LayoutDashboard },
@@ -17,6 +19,15 @@ const mockNotifications = [
 ];
 
 export default function AdminLayout() {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
+
+  const sidebarLinks = [
+    { name: t('dashboard'), path: '/admin', icon: LayoutDashboard },
+    { name: t('products'), path: '/admin/products', icon: Package },
+    { name: t('orders'), path: '/admin/orders', icon: ShoppingCart },
+    { name: t('settings'), path: '/admin/settings', icon: Settings },
+  ];
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -45,7 +56,7 @@ export default function AdminLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col md:flex-row font-sans text-slate-900" dir="rtl">
+    <div className={`min-h-screen bg-[#F8FAFC] flex flex-col md:flex-row font-sans text-slate-900 ${isRTL ? '' : 'font-inter'}`} dir={isRTL ? 'rtl' : 'ltr'}>
       
       {/* Mobile Sidebar Overlay */}
       <AnimatePresence>
@@ -136,6 +147,7 @@ export default function AdminLayout() {
           </div>
 
           <div className="flex items-center gap-3 sm:gap-6">
+            <LanguageSwitcher />
             {/* Notifications */}
             <div className="relative" ref={notificationRef}>
               <button 

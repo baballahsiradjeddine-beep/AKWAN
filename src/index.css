@@ -1,7 +1,9 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&family=Inter:wght@100..900&display=swap');
 
 @theme {
   --font-sans: "Tajawal", ui-sans-serif, system-ui, sans-serif;
+  --font-inter: "Inter", sans-serif;
   
   --color-brand-primary: #8D699F; /* Purple from the image */
   --color-brand-secondary: #5C436A; /* Darker purple for text */

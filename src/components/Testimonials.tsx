@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import { useTranslation } from 'react-i18next';
 import { useStore } from '../store/useStore';
 import type { Swiper as SwiperType } from 'swiper';
 
@@ -11,6 +12,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
 export default function Testimonials() {
+  const { t } = useTranslation();
   const { testimonials, fetchTestimonials } = useStore();
   const swiperRef = useRef<SwiperType>(null);
 
@@ -30,7 +32,7 @@ export default function Testimonials() {
           className="text-center mb-8 md:mb-20"
         >
           <h2 className="text-xl md:text-5xl font-black text-brand-secondary relative inline-block">
-            ماذا يقول أصدقاء أكوان؟
+            {t('what_friends_say')}
             <div className="absolute -bottom-1.5 md:-bottom-4 left-0 right-0 h-1.5 md:h-3 bg-brand-accent/40 -z-10 rounded-full" />
           </h2>
         </motion.div>

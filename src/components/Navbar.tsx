@@ -2,17 +2,20 @@ import { ShoppingCart, User, Search, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useStore } from '../store/useStore';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from './LanguageSwitcher';
 
 export default function Navbar() {
+  const { t } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const cart = useStore((state) => state.cart);
   const settings = useStore((state) => state.settings);
   const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
 
   const navLinks = [
-    { name: 'الرئيسية', path: '/' },
-    { name: 'المتجر', path: '/shop' },
-    { name: 'من نحن', path: '/about' },
+    { name: t('home'), path: '/' },
+    { name: t('shop'), path: '/shop' },
+    { name: t('about'), path: '/about' },
   ];
 
   return (
@@ -43,7 +46,7 @@ export default function Navbar() {
             </div>
 
             {/* Logo */}
-            <Link to="/" className="flex-shrink-0 flex items-center ml-4 md:ml-16">
+            <Link to="/" className="flex-shrink-0 flex items-center ms-4 md:ms-16">
               {settings.logoType === 'image' && settings.logoImage ? (
                 <img src={settings.logoImage} alt={settings.siteName} className="h-8 md:h-12 w-auto object-contain" />
               ) : (
@@ -62,7 +65,7 @@ export default function Navbar() {
                   className="relative text-gray-600 hover:text-brand-primary font-bold transition-colors group py-2 px-6 whitespace-nowrap text-lg"
                 >
                   {link.name}
-                  <span className="absolute bottom-0 right-0 w-0 h-0.5 bg-brand-primary transition-all duration-300 group-hover:w-full rounded-full"></span>
+                  <span className="absolute bottom-0 end-0 w-0 h-0.5 bg-brand-primary transition-all duration-300 group-hover:w-full rounded-full"></span>
                 </Link>
               ))}
             </nav>
@@ -72,18 +75,21 @@ export default function Navbar() {
               <div className="relative w-full group">
                 <input 
                   type="text" 
-                  placeholder="ابحث عن ألعاب، قصص، والمزيد..." 
-                  className="w-full bg-gray-50/80 border border-gray-200 rounded-2xl py-2.5 px-5 pr-12 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all duration-300 shadow-sm group-hover:border-gray-300"
+                  placeholder={t('search_placeholder')} 
+                  className="w-full bg-gray-50/80 border border-gray-200 rounded-2xl py-2.5 px-5 pe-12 ps-20 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all duration-300 shadow-sm group-hover:border-gray-300"
                 />
-                <Search className="absolute right-4 top-3 h-5 w-5 text-gray-400 group-focus-within:text-brand-primary transition-colors" />
-                <button className="absolute left-2 top-1.5 bottom-1.5 bg-brand-primary text-white px-4 rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors shadow-sm">
-                  بحث
+                <Search className="absolute end-4 top-3 h-5 w-5 text-gray-400 group-focus-within:text-brand-primary transition-colors" />
+                <button className="absolute start-2 top-1.5 bottom-1.5 bg-brand-primary text-white px-4 rounded-xl text-sm font-medium hover:bg-brand-secondary transition-colors shadow-sm">
+                  {t('search_btn')}
                 </button>
               </div>
             </div>
 
             {/* Icons */}
-            <div className="flex items-center gap-x-6">
+            <div className="flex items-center gap-x-3 md:gap-x-6">
+              <div className="block">
+                <LanguageSwitcher />
+              </div>
               <button className="text-gray-500 hover:text-brand-primary hover:bg-brand-primary/5 transition-all lg:hidden p-2.5 rounded-full">
                 <Search className="h-5 w-5" />
               </button>
@@ -91,12 +97,12 @@ export default function Navbar() {
                 <div className="relative">
                   <ShoppingCart className="h-5 w-5" />
                   {cartCount > 0 && (
-                    <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold text-brand-secondary bg-brand-accent rounded-full border-2 border-white shadow-sm">
+                    <span className="absolute -top-1.5 -end-1.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold text-brand-secondary bg-brand-accent rounded-full border-2 border-white shadow-sm">
                       {cartCount}
                     </span>
                   )}
                 </div>
-                <span className="hidden md:block text-sm font-semibold text-gray-700">السلة</span>
+                <span className="hidden md:block text-sm font-semibold text-gray-700">{t('cart')}</span>
               </Link>
             </div>
           </div>
@@ -113,7 +119,7 @@ export default function Navbar() {
 
       {/* Mobile Menu Drawer */}
       <div 
-        className={`fixed inset-y-0 right-0 w-[85%] max-w-sm bg-white z-[9999] transform transition-transform duration-300 ease-in-out lg:hidden shadow-2xl flex flex-col ${
+        className={`fixed inset-y-0 end-0 w-[85%] max-w-sm bg-white z-[9999] transform transition-transform duration-300 ease-in-out lg:hidden shadow-2xl flex flex-col ${
           isMenuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
@@ -133,10 +139,10 @@ export default function Navbar() {
                 <div className="relative w-full group">
                   <input 
                     type="text" 
-                    placeholder="ابحث عن ألعاب..." 
-                    className="w-full bg-gray-50 border-2 border-brand-bg rounded-2xl py-2.5 px-4 pr-11 focus:outline-none focus:border-brand-primary/50 focus:ring-4 focus:ring-brand-primary/10 text-sm transition-all font-bold text-brand-secondary shadow-inner"
+                    placeholder={t('search_placeholder')} 
+                    className="w-full bg-gray-50 border-2 border-brand-bg rounded-2xl py-2.5 px-4 pe-11 focus:outline-none focus:border-brand-primary/50 focus:ring-4 focus:ring-brand-primary/10 text-sm transition-all font-bold text-brand-secondary shadow-inner"
                   />
-                  <Search className="absolute right-4 top-3 h-4 w-4 text-brand-muted" />
+                  <Search className="absolute end-4 top-3 h-4 w-4 text-brand-muted" />
                 </div>
               </div>
 
@@ -155,7 +161,7 @@ export default function Navbar() {
             </div>
 
         {/* Footer of Drawer */}
-        <div className="p-6 border-t border-gray-100 bg-gray-50 shrink-0">
+        <div className="p-6 border-t border-gray-100 bg-gray-50 shrink-0 space-y-4">
           <p className="text-xs text-center text-brand-muted font-black">
             © {new Date().getFullYear()} {settings.siteName}
           </p>

@@ -3,17 +3,19 @@ import { motion } from 'motion/react';
 import { useStore } from '../store/useStore';
 import { Star, ShoppingCart, Sparkles, Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function Shop() {
+  const { t } = useTranslation();
   const products = useStore((state) => state.products);
   const addToCart = useStore((state) => state.addToCart);
   
-  const [filter, setFilter] = useState('الكل');
+  const [filter, setFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const categories = ['الكل', ...Array.from(new Set(products.map(p => p.category)))];
+  const categories = ['all', ...Array.from(new Set(products.map(p => p.category)))];
 
   const filteredProducts = products.filter(p => {
-    const matchesCategory = filter === 'الكل' || p.category === filter;
+    const matchesCategory = filter === 'all' || p.category === filter;
     const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
@@ -56,15 +58,15 @@ export default function Shop() {
             animate={{ opacity: 1, y: 0 }}
             className="text-4xl md:text-6xl font-black text-brand-secondary mb-6 tracking-tight"
           >
-            متجر <span className="text-brand-primary relative inline-block">
-              أكوان
+            {t('shop')} <span className="text-brand-primary relative inline-block">
+              {t('akwan')}
               <svg className="absolute w-full h-3 -bottom-1 left-0 text-brand-accent opacity-70" viewBox="0 0 100 20" preserveAspectRatio="none">
                 <path d="M0 10 Q 25 20 50 10 T 100 10" stroke="currentColor" strokeWidth="8" strokeLinecap="round" fill="none" />
               </svg>
             </span>
           </motion.h1>
           <p className="text-brand-muted text-lg md:text-xl font-bold max-w-2xl mx-auto">
-            اكتشف عالمنا المليء بالألعاب التعليمية الممتعة التي تنمي مهارات طفلك وتطلق العنان لخياله ✨
+            {t('latest_releases_desc')}
           </p>
         </div>
 
@@ -72,16 +74,15 @@ export default function Shop() {
         <div className="flex flex-col md:flex-row items-center justify-between gap-10 mb-16 bg-white/50 backdrop-blur-md p-6 md:p-8 rounded-[2rem] border-2 border-white shadow-sm">
           {/* Search Bar */}
           <div className="relative w-full md:w-96">
-            <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+            <div className="absolute inset-y-0 end-0 pe-4 flex items-center pointer-events-none">
               <Search className="h-5 w-5 text-brand-muted" />
             </div>
             <input
               type="text"
-              placeholder="ابحث عن لعبة..."
+              placeholder={t('search_placeholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              dir="rtl"
-              className="w-full pl-4 pr-12 py-3 md:py-4 bg-white border-2 border-brand-bg rounded-full focus:outline-none focus:border-brand-primary/50 focus:ring-4 focus:ring-brand-primary/10 transition-all font-bold text-brand-secondary placeholder:text-brand-muted/50 shadow-inner text-right"
+              className="w-full ps-4 pe-12 py-3 md:py-4 bg-white border-2 border-brand-bg rounded-full focus:outline-none focus:border-brand-primary/50 focus:ring-4 focus:ring-brand-primary/10 transition-all font-bold text-brand-secondary placeholder:text-brand-muted/50 shadow-inner"
             />
           </div>
 
@@ -97,7 +98,7 @@ export default function Shop() {
                     : 'bg-white text-brand-secondary hover:bg-brand-bg border-2 border-white shadow-sm hover:shadow-md'
                 }`}
               >
-                {cat}
+                {cat === 'all' ? t('all') : cat}
               </button>
             ))}
           </div>
@@ -123,7 +124,7 @@ export default function Shop() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-3 md:p-6">
                   <span className="text-white text-[10px] md:text-sm font-bold bg-white/20 backdrop-blur-md self-start px-3 py-1 md:px-4 md:py-1.5 rounded-full border border-white/30">
-                    عرض التفاصيل
+                    {t('view_details')}
                   </span>
                 </div>
                 
@@ -154,7 +155,7 @@ export default function Shop() {
                     <span className="text-lg md:text-2xl font-black text-brand-primary">
                       {product.price.toFixed(2)}
                     </span>
-                    <span className="text-[10px] md:text-xs font-medium text-slate-400 -mt-1">ر.س</span>
+                    <span className="text-[10px] md:text-xs font-medium text-slate-400 -mt-1">{t('sar')}</span>
                   </div>
                   <motion.button 
                     whileHover={{ scale: 1.05 }}
@@ -180,13 +181,13 @@ export default function Shop() {
             className="text-center py-24 bg-white rounded-[3rem] border-4 border-brand-bg shadow-sm mt-8"
           >
             <div className="text-6xl mb-6">🔍</div>
-            <h3 className="text-2xl font-black text-brand-secondary mb-2">لم نجد ما تبحث عنه!</h3>
-            <p className="text-lg font-bold text-brand-muted">حاول استخدام كلمات بحث مختلفة أو تصفح تصنيف آخر.</p>
+            <h3 className="text-2xl font-black text-brand-secondary mb-2">{t('no_products_found')}</h3>
+            <p className="text-lg font-bold text-brand-muted">{t('try_different_search')}</p>
             <button 
-              onClick={() => { setFilter('الكل'); setSearchQuery(''); }}
+              onClick={() => { setFilter('all'); setSearchQuery(''); }}
               className="mt-8 px-8 py-3 bg-brand-primary text-white rounded-full font-bold hover:bg-brand-secondary transition-colors shadow-lg"
             >
-              عرض جميع الألعاب
+              {t('view_all_games')}
             </button>
           </motion.div>
         )}

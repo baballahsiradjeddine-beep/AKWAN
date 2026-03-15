@@ -2,8 +2,10 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ShoppingBag, Trash2, ArrowRight } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function CartPopup() {
+  const { t } = useTranslation();
   const cart = useStore((state) => state.cart);
   const clearCart = useStore((state) => state.clearCart);
   
@@ -29,9 +31,9 @@ export default function CartPopup() {
               </span>
             </div>
             <div className="text-right">
-              <p className="text-[10px] md:text-xs font-bold text-brand-muted mb-0.5">لديك {totalItems} منتجات في السلة</p>
+              <p className="text-[10px] md:text-xs font-bold text-brand-muted mb-0.5">{t('cart_items_count', { count: totalItems })}</p>
               <p className="text-base md:text-lg font-black text-brand-secondary">
-                {totalPrice.toFixed(2)} <span className="text-[10px] md:text-xs font-bold opacity-60">ر.س</span>
+                {totalPrice.toFixed(2)} <span className="text-[10px] md:text-xs font-bold opacity-60">{t('sar')}</span>
               </p>
             </div>
           </div>
@@ -42,14 +44,14 @@ export default function CartPopup() {
               className="flex-1 md:flex-none flex items-center justify-center gap-1.5 md:gap-2 px-3 py-2.5 md:px-4 md:py-3 rounded-xl md:rounded-2xl text-red-500 hover:bg-red-50 transition-colors font-bold text-xs md:text-sm"
             >
               <Trash2 className="w-3.5 h-3.5 md:w-4 md:h-4" />
-              <span>حذف الكل</span>
+              <span>{t('delete_all')}</span>
             </button>
             
             <Link
               to="/cart"
               className="flex-1 md:flex-none flex items-center justify-center gap-1.5 md:gap-2 px-4 py-2.5 md:px-6 md:py-3 rounded-xl md:rounded-2xl bg-brand-primary text-white hover:bg-brand-secondary transition-all font-black text-xs md:text-sm shadow-lg shadow-brand-primary/20 group"
             >
-              <span>إكمال الطلب</span>
+              <span>{t('complete_order')}</span>
               <ArrowRight className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:translate-x-[-4px] transition-transform" />
             </Link>
           </div>

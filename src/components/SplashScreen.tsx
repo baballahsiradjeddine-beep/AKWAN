@@ -2,7 +2,10 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Sparkles, Star } from 'lucide-react';
 
+import { useTranslation } from 'react-i18next';
+
 export default function SplashScreen({ onComplete }: { onComplete: () => void }) {
+  const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
@@ -64,7 +67,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
               className="mb-8 flex justify-center"
             >
               <h1 className="text-6xl md:text-8xl font-black text-white tracking-tight drop-shadow-lg">
-                أكوان
+                {t('akwan')}
               </h1>
             </motion.div>
 
@@ -80,7 +83,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                 transition={{ duration: 0.8, delay: 0.7, ease: "easeOut" }}
                 className="text-3xl md:text-5xl font-bold text-brand-primary leading-relaxed drop-shadow-md"
               >
-                مرحباً بك في عالم الطفل
+                {t('welcome_to_akwan')}
               </motion.h2>
               
               <motion.p 
@@ -89,7 +92,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
                 transition={{ duration: 0.8, delay: 0.9, ease: "easeOut" }}
                 className="text-xl md:text-2xl text-white/90 font-medium leading-relaxed max-w-2xl mx-auto"
               >
-                عالمٌ يحتضن جذورنا العربية.. ويبث البهجة في قلوب أطفالنا ✨
+                {t('akwan_slogan')}
               </motion.p>
             </motion.div>
           </div>

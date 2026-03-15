@@ -1,9 +1,11 @@
 import { motion, useScroll, useTransform } from 'motion/react';
 import { Sparkles, Star, Moon, Cloud, Sun } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useStore } from '../store/useStore';
 
 export default function Hero() {
+  const { t, i18n } = useTranslation();
   const { scrollY } = useScroll();
   const y1 = useTransform(scrollY, [0, 500], [0, 100]);
   const y2 = useTransform(scrollY, [0, 500], [0, -100]);
@@ -99,7 +101,7 @@ export default function Hero() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-accent opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 md:h-4 md:w-4 bg-brand-accent"></span>
               </span>
-              <span className="text-xs md:text-base font-black text-brand-secondary">عالم من الخيال والمرح! 🪁</span>
+              <span className="text-xs md:text-base font-black text-brand-secondary">{t('hero_badge')}</span>
             </motion.div>
 
             <motion.h1 
@@ -110,7 +112,7 @@ export default function Hero() {
             >
               {settings.heroTitle.includes('جذوري العربية!') ? (
                 <span dangerouslySetInnerHTML={{ 
-                  __html: settings.heroTitle.replace('جذوري العربية!', '<span class="text-brand-primary relative inline-block group mt-2 md:mt-0">جذوري العربية!<svg class="absolute w-[110%] h-3 md:h-6 -bottom-2 md:-bottom-4 -right-[5%] text-brand-accent opacity-90 group-hover:animate-pulse-soft" viewBox="0 0 100 20" preserveAspectRatio="none"><path d="M0 10 Q 25 20 50 10 T 100 10" stroke="currentColor" stroke-width="8" stroke-linecap="round" fill="none" /></svg></span>') 
+                  __html: settings.heroTitle.replace('جذوري العربية!', `<span class="text-brand-primary relative inline-block group mt-2 md:mt-0">${t('my_arabic_roots')}<svg class="absolute w-[110%] h-3 md:h-6 -bottom-2 md:-bottom-4 -right-[5%] text-brand-accent opacity-90 group-hover:animate-pulse-soft" viewBox="0 0 100 20" preserveAspectRatio="none"><path d="M0 10 Q 25 20 50 10 T 100 10" stroke="currentColor" stroke-width="8" stroke-linecap="round" fill="none" /></svg></span>`) 
                 }} />
               ) : (
                 settings.heroTitle
@@ -160,7 +162,7 @@ export default function Hero() {
                   to="/about" 
                   className="inline-flex items-center justify-center px-6 py-3.5 md:px-10 md:py-5 text-base md:text-xl font-black text-brand-secondary bg-white border-2 md:border-4 border-white shadow-lg rounded-[1.5rem] md:rounded-[2rem] hover:border-brand-primary/30 hover:shadow-xl transition-all w-full sm:w-auto"
                 >
-                  تعرف علينا 🎈
+                  {t('about_us_btn')}
                 </Link>
               </motion.div>
             </motion.div>
@@ -203,7 +205,7 @@ export default function Hero() {
                   ✨
                 </div>
                 <div>
-                  <p className="text-xs sm:text-sm text-brand-muted font-black">تقييم العملاء</p>
+                  <p className="text-xs sm:text-sm text-brand-muted font-black">{t('customer_rating')}</p>
                   <p className="text-base sm:text-xl font-black text-brand-secondary">4.9/5.0 ⭐</p>
                 </div>
               </motion.div>
@@ -217,8 +219,8 @@ export default function Hero() {
                   🎨
                 </div>
                 <div>
-                  <p className="text-xs sm:text-sm text-brand-muted font-black">ألعاب تعليمية</p>
-                  <p className="text-base sm:text-xl font-black text-brand-secondary">+50 منتج</p>
+                  <p className="text-xs sm:text-sm text-brand-muted font-black">{t('educational_games')}</p>
+                  <p className="text-base sm:text-xl font-black text-brand-secondary">{t('products_count')}</p>
                 </div>
               </motion.div>
 

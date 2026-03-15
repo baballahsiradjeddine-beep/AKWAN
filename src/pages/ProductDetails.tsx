@@ -4,6 +4,7 @@ import { motion } from 'motion/react';
 import { Star, ShoppingCart, Share2, ChevronRight, Check, Sparkles, MessageCircle, ShoppingBag, Play } from 'lucide-react';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 
 function VideoReviewItem({ review }: { review: VideoReview }) {
   const [playing, setPlaying] = useState(false);
@@ -59,6 +60,7 @@ function VideoReviewItem({ review }: { review: VideoReview }) {
 }
 
 export default function ProductDetails() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const products = useStore((state) => state.products);
@@ -92,12 +94,12 @@ export default function ProductDetails() {
         >
           🔍
         </motion.div>
-        <h2 className="text-3xl md:text-4xl font-black text-brand-secondary mb-6">المنتج غير موجود 😔</h2>
+        <h2 className="text-3xl md:text-4xl font-black text-brand-secondary mb-6">{t('product_not_found')}</h2>
         <Link 
           to="/shop" 
           className="px-8 py-4 bg-brand-primary text-white rounded-full font-black hover:bg-brand-secondary transition-colors shadow-lg border-4 border-transparent hover:border-brand-accent/50"
         >
-          العودة للمتجر
+          {t('back_to_shop')}
         </Link>
       </div>
     );
@@ -129,7 +131,7 @@ export default function ProductDetails() {
       } else {
         // Fallback: Copy to clipboard
         await navigator.clipboard.writeText(window.location.href);
-        toast.success('تم نسخ رابط المنتج بنجاح!');
+        toast.success(t('link_copied'));
       }
     } catch (err) {
       console.error('Error sharing:', err);
@@ -150,7 +152,7 @@ export default function ProductDetails() {
 
   const handleWhatsAppContact = () => {
     if (!product) return;
-    const message = `مرحباً، أود الاستفسار عن منتج: ${product.name}\nالرابط: ${window.location.href}`;
+    const message = `${t('whatsapp_inquiry_prefix')} ${product.name}\n${t('link')}: ${window.location.href}`;
     const encodedMessage = encodeURIComponent(message);
     const phone = settings.contactPhone.replace(/\s+/g, '');
     window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
@@ -177,10 +179,10 @@ export default function ProductDetails() {
         {/* Breadcrumbs */}
         <nav className="flex items-center space-x-2 space-x-reverse text-xs md:text-sm font-bold text-brand-muted mb-6 md:mb-8 bg-white/50 backdrop-blur-sm w-fit px-3 md:px-4 py-1.5 md:py-2 rounded-full border-2 border-white shadow-sm">
           <Link to="/" className="hover:text-brand-primary transition-colors flex items-center">
-            الرئيسية
+            {t('home')}
           </Link>
           <ChevronRight className="w-3 h-3 md:w-4 md:h-4" />
-          <Link to="/shop" className="hover:text-brand-primary transition-colors">المتجر</Link>
+          <Link to="/shop" className="hover:text-brand-primary transition-colors">{t('shop')}</Link>
           <ChevronRight className="w-3 h-3 md:w-4 md:h-4" />
           <span className="text-brand-secondary">{product.name}</span>
         </nav>
@@ -255,7 +257,7 @@ export default function ProductDetails() {
                   className="flex-1 flex items-center justify-center gap-3 bg-green-500 text-white px-6 py-4 rounded-2xl font-black text-lg shadow-[0_10px_25px_rgba(34,197,94,0.3)] hover:bg-green-600 transition-all"
                 >
                   <MessageCircle className="w-6 h-6" />
-                  <span>واتساب</span>
+                  <span>{t('whatsapp')}</span>
                 </motion.button>
                 
                 <motion.button 
@@ -265,7 +267,7 @@ export default function ProductDetails() {
                   className="flex-1 flex items-center justify-center gap-3 bg-[#f5ae0b] text-white px-6 py-4 rounded-2xl font-black text-lg shadow-[0_10px_25px_rgba(245,174,11,0.2)] hover:bg-[#e09e0a] transition-all"
                 >
                   <Share2 className="w-6 h-6" />
-                  <span>مشاركة</span>
+                  <span>{t('share')}</span>
                 </motion.button>
               </div>
             </div>
@@ -291,7 +293,7 @@ export default function ProductDetails() {
               </h1>
 
               <div className="text-2xl md:text-3xl font-black text-brand-secondary mb-6 md:mb-8 flex items-center justify-center gap-2 bg-brand-surface w-full px-4 md:px-6 py-2 md:py-3 rounded-xl md:rounded-2xl border-2 md:border-4 border-brand-bg shadow-sm">
-                {product.price.toFixed(2)} <span className="text-base md:text-lg font-bold text-brand-muted">ر.س</span>
+                {product.price.toFixed(2)} <span className="text-base md:text-lg font-bold text-brand-muted">{t('sar')}</span>
               </div>
 
               {/* Actions */}
@@ -329,7 +331,7 @@ export default function ProductDetails() {
                       }`}
                     >
                       {added ? <Check className="w-4 h-4 md:w-5 md:h-5" /> : <ShoppingCart className="w-4 h-4 md:w-5 md:h-5" />}
-                      <span>{added ? 'تمت الإضافة' : 'أضف للسلة'}</span>
+                      <span>{added ? t('added_to_cart') : t('add_to_cart')}</span>
                     </motion.button>
                   </div>
 
@@ -346,14 +348,14 @@ export default function ProductDetails() {
                   }`}
                 >
                   <ShoppingBag className="w-5 h-5 md:w-6 md:h-6" />
-                  <span>{product.soldOut ? 'نفدت الكمية' : 'اطلب الآن'}</span>
+                  <span>{product.soldOut ? t('out_of_stock') : t('order_now')}</span>
                 </motion.button>
               </div>
             </div>
 
               {/* Description - Now below buttons */}
               <div className="bg-brand-surface/50 rounded-2xl md:rounded-3xl p-4 md:p-6 border-2 border-brand-bg mb-6 md:mb-8">
-                <h3 className="text-lg md:text-xl font-black text-brand-secondary mb-2 md:mb-3">وصف المنتج</h3>
+                <h3 className="text-lg md:text-xl font-black text-brand-secondary mb-2 md:mb-3">{t('product_description')}</h3>
                 <p className="text-base md:text-lg text-brand-secondary/80 font-bold leading-relaxed">
                   {product.description}
                 </p>
@@ -368,7 +370,7 @@ export default function ProductDetails() {
                   className="w-full flex items-center justify-center gap-3 bg-green-500 text-white px-6 py-3.5 rounded-xl md:rounded-2xl font-black text-lg md:text-xl shadow-[0_10px_25px_rgba(34,197,94,0.3)] hover:bg-green-600 transition-all"
                 >
                   <MessageCircle className="w-6 h-6 md:w-7 md:h-7" />
-                  <span>تواصل عبر واتساب</span>
+                  <span>{t('contact_whatsapp')}</span>
                 </motion.button>
                 
                 <motion.button 
@@ -378,7 +380,7 @@ export default function ProductDetails() {
                   className="w-full flex items-center justify-center gap-3 bg-[#f5ae0b] text-white px-6 py-3.5 rounded-xl md:rounded-2xl font-black text-lg md:text-xl shadow-[0_10px_25px_rgba(245,174,11,0.2)] hover:bg-[#e09e0a] transition-all"
                 >
                   <Share2 className="w-6 h-6 md:w-7 md:h-7" />
-                  <span>مشاركة المنتج</span>
+                  <span>{t('share_product')}</span>
                 </motion.button>
               </div>
 
@@ -391,9 +393,9 @@ export default function ProductDetails() {
           <section className="mt-12 md:mt-16 py-10 md:py-16 bg-white rounded-[2rem] md:rounded-[3rem] p-6 md:p-12 shadow-[0_20px_50px_rgba(92,67,106,0.08)] border-4 md:border-8 border-brand-bg">
             <div className="text-center mb-8 md:mb-12">
               <h2 className="text-2xl md:text-4xl font-black text-brand-secondary mb-3 md:mb-4 flex items-center justify-center gap-2">
-                تجارب وآراء عن المنتج 🎥
+                {t('product_reviews')} 🎥
               </h2>
-              <p className="text-brand-muted font-bold text-base md:text-lg">شاهد كيف يستمتع الأطفال بألعاب أكوان التعليمية</p>
+              <p className="text-brand-muted font-bold text-base md:text-lg">{t('product_reviews_desc')}</p>
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
@@ -419,7 +421,7 @@ export default function ProductDetails() {
             className="inline-flex items-center justify-center space-x-2 space-x-reverse px-8 py-4 md:px-12 md:py-6 text-lg md:text-2xl font-black text-brand-secondary bg-brand-bg border-[4px] md:border-[6px] border-white shadow-lg rounded-full cursor-pointer mt-[20px] md:mt-[30px]"
           >
             <Sparkles className="w-5 h-5 md:w-8 md:h-8 text-brand-accent animate-pulse-soft" />
-            <span>عرض جميع الألعاب</span>
+            <span>{t('view_all_games')}</span>
             <motion.span 
               animate={{ y: [0, -10, 0] }}
               transition={{ repeat: Infinity, duration: 1.5 }}

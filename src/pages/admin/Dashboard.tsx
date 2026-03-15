@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useStore } from '../../store/useStore';
 import { exportToCSV } from '../../utils/export';
+import PrintableReport from '../../components/admin/PrintableReport';
+import { useTranslation } from 'react-i18next';
 
 const salesData = [
   { name: 'السبت', sales: 4200, orders: 45 },
@@ -41,10 +43,26 @@ export default function Dashboard() {
       image: product.image
     }));
 
+  const { t } = useTranslation();
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  const handleExport = () => {
+    exportToCSV(orders.map(o => ({ 
+      'رقم الطلب': o.id, 
+      'العميل': o.customer_name, 
+      'المبلغ': o.total_amount, 
+      'الحالة': o.status, 
+      'التاريخ': new Date(o.created_at).toLocaleDateString('ar-SA') 
+    })), `orders_report_${new Date().toISOString().split('T')[0]}`);
+    toast.success('تم تصدير البيانات بنجاح');
+  };
   const stats = [
     { 
-      name: 'إجمالي المبيعات', 
-      value: `${totalSales.toFixed(2)} ر.س`, 
+      name: t('total_sales'), 
+      value: `${totalSales.toFixed(2)} ${t('sar')}`, 
       icon: DollarSign, 
       change: '+12.5%', 
       isUp: true,
@@ -52,7 +70,7 @@ export default function Dashboard() {
       bg: 'bg-emerald-50'
     },
     { 
-      name: 'الطلبات الجديدة', 
+      name: t('new_orders'), 
       value: orders.length.toString(), 
       icon: ShoppingBag, 
       change: '+18.2%', 
@@ -61,7 +79,7 @@ export default function Dashboard() {
       bg: 'bg-brand-bg'
     },
     { 
-      name: 'المنتجات', 
+      name: t('total_products'), 
       value: products.length.toString(), 
       icon: Package, 
       change: 'محدث', 
@@ -76,8 +94,8 @@ export default function Dashboard() {
       {/* Welcome Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-black text-slate-800 tracking-tight">لوحة التحكم</h1>
-          <p className="text-slate-400 font-bold mt-1">نظرة شاملة على أداء متجرك اليوم.</p>
+          <h1 className="text-3xl font-black text-slate-800 tracking-tight">{t('dashboard')}</h1>
+          <p className="text-slate-400 font-bold mt-1">{t('welcome_back')} {t('admin')}</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-1 bg-white p-1.5 rounded-2xl shadow-sm border border-slate-200">
@@ -92,33 +110,32 @@ export default function Dashboard() {
             ))}
           </div>
           <button 
-            onClick={() => exportToCSV(orders.map(o => ({ 
-              'رقم الطلب': o.id, 
-              'العميل': o.customer_name, 
-              'المبلغ': o.total_amount, 
-              'الحالة': o.status, 
-              'التاريخ': new Date(o.created_at).toLocaleDateString('ar-SA') 
-            })), 'الطلبات')}
+            onClick={handleExport}
             className="bg-white text-slate-600 px-4 py-2.5 rounded-xl font-black border border-slate-200 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm"
           >
             <Download className="w-4 h-4" />
-            <span className="hidden sm:inline text-sm">تصدير</span>
+            <span className="hidden sm:inline text-sm">{t('export')}</span>
           </button>
           <button 
-            onClick={() => {
-              try {
-                window.print();
-              } catch (e) {
-                toast.error('عذراً، ميزة الطباعة قد لا تعمل داخل نافذة المعاينة. يرجى فتح التطبيق في نافذة جديدة.');
-              }
-            }}
+            onClick={handlePrint}
             className="bg-brand-primary text-white px-4 py-2.5 rounded-xl font-black hover:bg-brand-secondary transition-all shadow-lg shadow-brand-primary/20 flex items-center gap-2"
           >
             <Printer className="w-4 h-4" />
-            <span className="hidden sm:inline text-sm">طباعة</span>
+            <span className="hidden sm:inline text-sm">{t('print')}</span>
           </button>
         </div>
       </div>
+
+      {/* Printable Component (Hidden) */}
+      <PrintableReport 
+        stats={{
+          totalSales,
+          orderCount: orders.length,
+          productCount: products.length
+        }}
+        recentOrders={orders.slice(0, 10)}
+        dateRange={timeRange}
+      />
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">

@@ -1,8 +1,10 @@
 import { motion } from 'motion/react';
 import { Sparkles, Heart, Star, Smile, BookOpen, Globe } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useStore } from '../store/useStore';
 
 export default function About() {
+  const { t } = useTranslation();
   const settings = useStore((state) => state.settings);
 
   return (
@@ -70,9 +72,9 @@ export default function About() {
               <div className="w-12 h-12 md:w-16 md:h-16 bg-brand-accent rounded-xl md:rounded-2xl flex items-center justify-center mb-4 md:mb-6 mx-auto md:mx-0 shadow-lg transform rotate-6">
                 <Heart className="w-6 h-6 md:w-8 md:h-8 text-brand-secondary" />
               </div>
-              <h2 className="text-2xl md:text-3xl font-black text-brand-secondary mb-3 md:mb-4">بداية الفكرة 💡</h2>
+              <h2 className="text-2xl md:text-3xl font-black text-brand-secondary mb-3 md:mb-4">{t('about_idea_title')}</h2>
               <p className="text-base md:text-lg text-brand-muted font-bold leading-relaxed">
-                لاحظنا أن الكثير من الألعاب التعليمية تفتقر إلى الروح العربية الأصيلة، فقررنا أن نصنع ألعاباً تشبهنا، تتحدث لغتنا، وتحتضن ثقافتنا بأسلوب عصري ومرح يجذب الأطفال.
+                {t('about_idea_desc')}
               </p>
             </div>
           </motion.div>
@@ -99,9 +101,9 @@ export default function About() {
               <div className="w-12 h-12 md:w-16 md:h-16 bg-brand-primary rounded-xl md:rounded-2xl flex items-center justify-center mb-4 md:mb-6 mx-auto md:mx-0 shadow-lg transform -rotate-6">
                 <Star className="w-6 h-6 md:w-8 md:h-8 text-white" />
               </div>
-              <h2 className="text-2xl md:text-3xl font-black text-brand-secondary mb-3 md:mb-4">جودة تصنع الفرح 🎨</h2>
+              <h2 className="text-2xl md:text-3xl font-black text-brand-secondary mb-3 md:mb-4">{t('about_quality_title')}</h2>
               <p className="text-base md:text-lg text-brand-muted font-bold leading-relaxed">
-                نحن نؤمن بأن اللعب هو أهم وسيلة للتعلم. لذلك، نصمم كل لعبة بعناية فائقة، نختار مواد آمنة ومستدامة، ونحرص على أن تكون كل قطعة تحفة فنية تدخل البهجة لقلب طفلك.
+                {t('about_quality_desc')}
               </p>
             </div>
           </motion.div>
@@ -110,12 +112,12 @@ export default function About() {
 
         {/* Core Values */}
         <div className="mt-16 md:mt-32">
-          <h2 className="text-2xl md:text-4xl font-black text-brand-secondary text-center mb-8 md:mb-12">قيمنا الأساسية 🌟</h2>
+          <h2 className="text-2xl md:text-4xl font-black text-brand-secondary text-center mb-8 md:mb-12">{t('core_values')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
             {[
-              { icon: BookOpen, title: 'التعلم بالمرح', desc: 'نجعل من كل لحظة لعب فرصة لاكتشاف شيء جديد.', color: 'bg-brand-primary' },
-              { icon: Globe, title: 'الهوية العربية', desc: 'نعتز بلغتنا وثقافتنا ونغرسها في نفوس أطفالنا.', color: 'bg-brand-accent' },
-              { icon: Smile, title: 'السعادة والإبداع', desc: 'نصمم ألعاباً تطلق العنان لخيال الطفل وإبداعه.', color: 'bg-[#A8DADC]' },
+              { icon: BookOpen, title: t('value_learning_title'), desc: t('value_learning_desc'), color: 'bg-brand-primary' },
+              { icon: Globe, title: t('value_identity_title'), desc: t('value_identity_desc'), color: 'bg-brand-accent' },
+              { icon: Smile, title: t('value_creativity_title'), desc: t('value_creativity_desc'), color: 'bg-[#A8DADC]' },
             ].map((val, i) => (
               <motion.div 
                 key={i}

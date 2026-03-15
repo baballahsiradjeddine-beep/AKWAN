@@ -1,8 +1,10 @@
 import { motion } from 'motion/react';
 import { Sparkles } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useStore } from '../store/useStore';
 
 export default function Partners() {
+  const { t } = useTranslation();
   const partners = useStore((state) => state.settings.partners);
 
   if (!partners || partners.length === 0) return null;
@@ -36,11 +38,11 @@ export default function Partners() {
             className="inline-flex items-center justify-center space-x-2 space-x-reverse mb-4 md:mb-6 bg-brand-bg px-4 py-2 md:px-8 md:py-4 rounded-full border-2 md:border-4 border-white shadow-lg cursor-pointer"
           >
             <Sparkles className="w-5 h-5 md:w-8 md:h-8 text-brand-accent animate-pulse-soft" />
-            <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-brand-secondary">شركاؤنا</h2>
+            <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-brand-secondary">{t('our_partners')}</h2>
             <Sparkles className="w-5 h-5 md:w-8 md:h-8 text-brand-accent animate-pulse-soft" />
           </motion.div>
           <p className="text-brand-muted max-w-2xl mx-auto text-base md:text-xl font-bold px-4">
-            نفخر بالعمل مع نخبة من الشركاء والجهات التي تدعم رؤيتنا في تطوير مهارات الأطفال. ✨
+            {t('our_partners_desc')}
           </p>
         </motion.div>
 

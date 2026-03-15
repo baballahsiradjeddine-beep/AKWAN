@@ -1,9 +1,11 @@
 import { Star, ShoppingCart, Sparkles } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useStore } from '../store/useStore';
 
 export default function ProductGrid() {
+  const { t } = useTranslation();
   const products = useStore((state) => state.products);
   const addToCart = useStore((state) => state.addToCart);
   // Only show first 4 products on home page
@@ -50,11 +52,11 @@ export default function ProductGrid() {
             className="inline-flex items-center justify-center space-x-2 space-x-reverse mb-4 md:mb-6 bg-brand-bg px-4 py-2 md:px-8 md:py-4 rounded-full border-2 md:border-4 border-white shadow-lg cursor-pointer"
           >
             <Sparkles className="w-5 h-5 md:w-8 md:h-8 text-brand-accent animate-pulse-soft" />
-            <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-brand-secondary">أحدث إصداراتنا</h2>
+            <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-brand-secondary">{t('latest_releases')}</h2>
             <Sparkles className="w-5 h-5 md:w-8 md:h-8 text-brand-accent animate-pulse-soft" />
           </motion.div>
           <p className="text-brand-muted max-w-2xl mx-auto text-base md:text-xl font-bold px-4">
-            اكتشف مجموعتنا المميزة من الألعاب التعليمية المصممة بعناية لتنمية مهارات طفلك اللغوية والإبداعية. 🧩
+            {t('latest_releases_desc')}
           </p>
         </motion.div>
 
@@ -78,7 +80,7 @@ export default function ProductGrid() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-3 md:p-6">
                   <span className="text-white text-[10px] md:text-sm font-bold bg-white/20 backdrop-blur-md self-start px-3 py-1 md:px-4 md:py-1.5 rounded-full border border-white/30">
-                    عرض التفاصيل
+                    {t('view_details')}
                   </span>
                 </div>
                 
@@ -108,7 +110,7 @@ export default function ProductGrid() {
                     <span className="text-lg md:text-2xl font-black text-brand-primary">
                       {product.price.toFixed(2)}
                     </span>
-                    <span className="text-[10px] md:text-xs font-medium text-slate-400 -mt-1">ر.س</span>
+                    <span className="text-[10px] md:text-xs font-medium text-slate-400 -mt-1">{t('sar')}</span>
                   </div>
                   <motion.button 
                     whileHover={{ scale: 1.05 }}
@@ -142,7 +144,7 @@ export default function ProductGrid() {
           >
             <p className="text-base md:text-xl font-bold text-[#8d699f] leading-relaxed">
               <span className="text-brand-accent/40 mx-2">•</span>
-              نصمم ألعابًا تحتضن التجربة والإبداع وتغرس حب الثقافة واللغة العربية في القلوب الصغيرة.
+              {t('vision_text')}
               <span className="text-brand-accent/40 mx-2">•</span>
             </p>
           </motion.div>
@@ -154,7 +156,7 @@ export default function ProductGrid() {
               className="inline-flex items-center justify-center space-x-2 space-x-reverse px-6 py-3 md:px-12 md:py-6 text-lg md:text-2xl font-black text-brand-secondary bg-brand-bg border-4 md:border-[6px] border-white shadow-lg rounded-full cursor-pointer"
             >
               <Sparkles className="w-5 h-5 md:w-8 md:h-8 text-brand-accent animate-pulse-soft" />
-              <span>عرض جميع الألعاب</span>
+              <span>{t('view_all_games')}</span>
               <motion.span 
                 animate={{ y: [0, -10, 0] }}
                 transition={{ repeat: Infinity, duration: 1.5 }}
