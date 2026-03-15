@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { Plus, Search, Edit, Trash2, MoreVertical, X, Upload, Loader2, Eye, ExternalLink, Filter, ChevronRight, ChevronLeft, Star } from 'lucide-react';
-import { useStore, Product } from '../../store/useStore';
+import { useStore, Product, VideoReview } from '../../store/useStore';
 import React, { useState, useRef, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import toast from 'react-hot-toast';
@@ -39,8 +39,34 @@ export default function AdminProducts() {
     additionalImages: [] as string[],
     description: '',
     rating: 5,
-    soldOut: false
+    soldOut: false,
+    video_reviews: [] as VideoReview[]
   });
+
+  const [uploadingFields, setUploadingFields] = useState<Record<string, boolean>>({});
+
+  const uploadFile = async (file: File, bucket: string, pathPrefix: string, fieldId: string): Promise<string> => {
+    setUploadingFields(prev => ({ ...prev, [fieldId]: true }));
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `${pathPrefix}/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from(bucket)
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage
+        .from(bucket)
+        .getPublicUrl(filePath);
+
+      return data.publicUrl;
+    } finally {
+      setUploadingFields(prev => ({ ...prev, [fieldId]: false }));
+    }
+  };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -48,21 +74,8 @@ export default function AdminProducts() {
 
     try {
       setIsUploading(true);
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `product-images/${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('images')
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data } = supabase.storage
-        .from('images')
-        .getPublicUrl(filePath);
-
-      setProductForm({ ...productForm, image: data.publicUrl });
+      const url = await uploadFile(file, 'images', 'product-images', 'main-image');
+      setProductForm({ ...productForm, image: url });
     } catch (error) {
       console.error('Error uploading image:', error);
       toast.error('حدث خطأ أثناء رفع الصورة');
@@ -161,7 +174,8 @@ export default function AdminProducts() {
       additionalImages: product.additionalImages || [],
       description: product.description,
       rating: product.rating,
-      soldOut: product.soldOut || false
+      soldOut: product.soldOut || false,
+      video_reviews: product.video_reviews || []
     });
     setEditingId(product.id);
     setIsEditing(true);
@@ -175,7 +189,7 @@ export default function AdminProducts() {
   };
 
   const resetForm = () => {
-    setProductForm({ name: '', price: 0, category: '', image: '', additionalImages: [], description: '', rating: 5, soldOut: false });
+    setProductForm({ name: '', price: 0, category: '', image: '', additionalImages: [], description: '', rating: 5, soldOut: false, video_reviews: [] });
   };
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -383,6 +397,94 @@ export default function AdminProducts() {
                           className="absolute inset-0 opacity-0 cursor-pointer"
                         />
                       </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-black text-slate-700 mb-4">فيديوهات المراجعة</label>
+                    <div className="space-y-4">
+                      {productForm.video_reviews?.map((review, index) => (
+                        <div key={index} className="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm space-y-4">
+                          <div className="flex justify-between items-center">
+                            <h4 className="font-bold text-slate-800">مراجعة رقم {index + 1}</h4>
+                            <button type="button" onClick={() => {
+                              const newReviews = productForm.video_reviews!.filter((_, i) => i !== index);
+                              setProductForm({...productForm, video_reviews: newReviews});
+                            }} className="text-sm text-red-500 hover:text-red-700 font-bold">حذف المراجعة</button>
+                          </div>
+
+                          <input type="text" placeholder="اسم الشخص" value={review.name || ''} onChange={(e) => {
+                            const newReviews = [...productForm.video_reviews!];
+                            newReviews[index].name = e.target.value;
+                            setProductForm({...productForm, video_reviews: newReviews});
+                          }} className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary outline-none" />
+                          
+                          <textarea placeholder="وصف المراجعة" value={review.description || ''} onChange={(e) => {
+                            const newReviews = [...productForm.video_reviews!];
+                            newReviews[index].description = e.target.value;
+                            setProductForm({...productForm, video_reviews: newReviews});
+                          }} className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary outline-none" rows={2} />
+                          
+                          <div className="grid grid-cols-3 gap-4">
+                            <div className="space-y-2">
+                              <label className="block text-xs font-bold text-slate-500">صورة الشخص</label>
+                              <label className="flex flex-col items-center justify-center h-32 cursor-pointer bg-slate-50 rounded-xl border-2 border-dashed border-slate-200 hover:border-brand-primary transition-colors">
+                                {uploadingFields[`video-avatar-${index}`] ? <div className="animate-spin w-6 h-6 border-2 border-brand-primary border-t-transparent rounded-full" /> : 
+                                 review.avatar ? <img src={review.avatar} className="w-full h-full object-cover rounded-xl" /> : <span className="text-sm font-bold text-slate-400">رفع</span>}
+                                <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) {
+                                    uploadFile(file, 'images', 'product-images', `video-avatar-${index}`).then(url => {
+                                      const newReviews = [...productForm.video_reviews!];
+                                      newReviews[index].avatar = url;
+                                      setProductForm({...productForm, video_reviews: newReviews});
+                                    });
+                                  }
+                                }} />
+                              </label>
+                            </div>
+
+                            <div className="space-y-2">
+                              <label className="block text-xs font-bold text-slate-500">الفيديو</label>
+                              <label className="flex flex-col items-center justify-center h-32 cursor-pointer bg-slate-50 rounded-xl border-2 border-dashed border-slate-200 hover:border-brand-primary transition-colors overflow-hidden">
+                                {uploadingFields[`video-url-${index}`] ? <div className="animate-spin w-6 h-6 border-2 border-brand-primary border-t-transparent rounded-full" /> : 
+                                 review.videoUrl ? <video src={review.videoUrl} className="w-full h-full object-cover" controls /> : <span className="text-sm font-bold text-slate-400">رفع</span>}
+                                <input type="file" accept="video/*" className="hidden" onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) {
+                                    uploadFile(file, 'videos', 'product-videos', `video-url-${index}`).then(url => {
+                                      const newReviews = [...productForm.video_reviews!];
+                                      newReviews[index].videoUrl = url;
+                                      setProductForm({...productForm, video_reviews: newReviews});
+                                    });
+                                  }
+                                }} />
+                              </label>
+                            </div>
+
+                            <div className="space-y-2">
+                              <label className="block text-xs font-bold text-slate-500">غلاف الفيديو</label>
+                              <label className="flex flex-col items-center justify-center h-32 cursor-pointer bg-slate-50 rounded-xl border-2 border-dashed border-slate-200 hover:border-brand-primary transition-colors">
+                                {uploadingFields[`video-thumb-${index}`] ? <div className="animate-spin w-6 h-6 border-2 border-brand-primary border-t-transparent rounded-full" /> : 
+                                 review.thumbnailUrl ? <img src={review.thumbnailUrl} className="w-full h-full object-cover rounded-xl" /> : <span className="text-sm font-bold text-slate-400">رفع</span>}
+                                <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) {
+                                    uploadFile(file, 'images', 'product-images', `video-thumb-${index}`).then(url => {
+                                      const newReviews = [...productForm.video_reviews!];
+                                      newReviews[index].thumbnailUrl = url;
+                                      setProductForm({...productForm, video_reviews: newReviews});
+                                    });
+                                  }
+                                }} />
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      <button type="button" onClick={() => {
+                        setProductForm({...productForm, video_reviews: [...(productForm.video_reviews || []), { name: '', avatar: '', videoUrl: '', thumbnailUrl: '', description: '' }]});
+                      }} className="bg-brand-primary text-white px-4 py-2 rounded-xl font-bold">إضافة فيديو مراجعة</button>
                     </div>
                   </div>
 

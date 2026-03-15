@@ -1,9 +1,62 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useStore } from '../store/useStore';
+import { useStore, VideoReview } from '../store/useStore';
 import { motion } from 'motion/react';
-import { Star, ShoppingCart, Share2, ChevronRight, Check, Sparkles, MessageCircle, ShoppingBag } from 'lucide-react';
+import { Star, ShoppingCart, Share2, ChevronRight, Check, Sparkles, MessageCircle, ShoppingBag, Play } from 'lucide-react';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
+
+function VideoReviewItem({ review }: { review: VideoReview }) {
+  const [playing, setPlaying] = useState(false);
+  
+  return (
+    <motion.div 
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="flex flex-col gap-4"
+    >
+      {/* Description */}
+      {review.description && (
+        <div className="bg-slate-50 p-2.5 rounded-3xl border border-slate-100 shadow-sm text-center">
+          <span className="text-brand-primary font-black text-2xl block mb-0 text-right">"</span>
+          <p className="text-slate-700 font-bold leading-[24px] text-[22px] mt-[-12px]">
+            {review.description}
+          </p>
+        </div>
+      )}
+      
+      <div className="relative aspect-[9/16] rounded-[2rem] overflow-hidden shadow-xl group bg-slate-100">
+        {!playing ? (
+          <>
+            <img src={review.thumbnailUrl} alt={review.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+            <button 
+              onClick={() => setPlaying(true)}
+              className="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/30 transition-all"
+            >
+              <div className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform">
+                <Play className="w-8 h-8 text-brand-secondary fill-brand-secondary ml-1" />
+              </div>
+            </button>
+          </>
+        ) : (
+          <video src={review.videoUrl} className="w-full h-full object-cover" controls autoPlay />
+        )}
+        
+        {/* Darker gradient shadow at the bottom */}
+        <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 via-black/40 to-transparent text-white">
+          <div className="flex items-center justify-start gap-3">
+            <img src={review.avatar} alt={review.name} className="w-10 h-10 rounded-full object-cover border-2 border-white/20" referrerPolicy="no-referrer" />
+            <span className="font-bold text-lg">{review.name}</span>
+          </div>
+          <div className="flex gap-1 mt-2 text-brand-accent">
+            {[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 fill-brand-accent" />)}
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -23,6 +76,11 @@ export default function ProductDetails() {
       setSelectedImage(product.image);
     }
   }, [product]);
+
+  // Scroll to top on mount
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   if (!product) {
     return (
@@ -220,58 +278,60 @@ export default function ProductDetails() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, type: "spring", bounce: 0.4 }}
             >
-              <div className="flex items-center space-x-6 space-x-reverse mb-6">
-                <div className="flex items-center bg-brand-surface px-6 py-3 rounded-full border-2 border-brand-bg shadow-sm">
-                  <Star className="w-6 h-6 fill-brand-accent text-brand-accent ml-3" />
-                  <span className="text-lg font-black text-brand-secondary">{product.rating}</span>
+              <div className="flex items-center justify-center lg:justify-start mb-6">
+                <div className="flex items-center bg-brand-surface px-5 py-2 rounded-full border-2 border-brand-bg shadow-sm">
+                  <Star className="w-5 h-5 fill-brand-accent text-brand-accent ml-2" />
+                  <span className="text-base font-black text-brand-secondary">{product.rating}</span>
                 </div>
               </div>
 
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-brand-secondary mb-6 leading-tight relative inline-block">
+              <h1 className="text-3xl md:text-5xl font-black text-brand-secondary mb-6 leading-tight relative inline-block text-center lg:text-right w-full">
                 {product.name}
                 <Sparkles className="absolute -top-6 -right-6 w-8 h-8 text-brand-accent animate-pulse-soft opacity-70" />
               </h1>
 
-              <div className="text-4xl font-black text-brand-primary mb-8 flex items-baseline gap-3 bg-brand-surface w-fit px-8 py-4 rounded-2xl border-4 border-brand-bg shadow-sm">
-                {product.price.toFixed(2)} <span className="text-xl font-bold text-brand-muted">ر.س</span>
+              <div className="text-3xl font-black text-brand-secondary mb-8 flex items-center justify-center gap-2 bg-brand-surface w-full px-6 py-3 rounded-2xl border-4 border-brand-bg shadow-sm">
+                {product.price.toFixed(2)} <span className="text-lg font-bold text-brand-muted">ر.س</span>
               </div>
 
               {/* Actions */}
-              <div className="flex flex-col gap-6 mb-8">
-                <div className="flex flex-wrap items-center gap-4">
-                  {/* Quantity */}
-                  <div className="flex items-center justify-between bg-brand-surface rounded-2xl px-4 py-2 border-4 border-brand-bg w-40 shadow-inner">
-                    <button 
-                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="w-10 h-10 flex items-center justify-center bg-white rounded-xl text-brand-secondary font-black text-xl hover:text-brand-primary hover:shadow-md transition-all"
-                    >
-                      -
-                    </button>
-                    <span className="font-black text-2xl text-brand-secondary">{quantity}</span>
-                    <button 
-                      onClick={() => setQuantity(quantity + 1)}
-                      className="w-10 h-10 flex items-center justify-center bg-white rounded-xl text-brand-secondary font-black text-xl hover:text-brand-primary hover:shadow-md transition-all"
-                    >
-                      +
-                    </button>
-                  </div>
+              <div className="flex flex-col gap-4 mb-8 items-center lg:items-start">
+                <div className="flex flex-col gap-4 w-full">
+                  {/* Add to Cart and Quantity */}
+                  <div className="flex items-center gap-4 w-full">
+                    {/* Quantity */}
+                    <div className="flex items-center justify-between bg-brand-surface rounded-2xl px-3 py-1.5 border-4 border-brand-bg w-32 shadow-inner">
+                      <button 
+                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                        className="w-8 h-8 flex items-center justify-center bg-white rounded-xl text-brand-secondary font-black text-lg hover:text-brand-primary transition-all"
+                      >
+                        -
+                      </button>
+                      <span className="font-black text-xl text-brand-secondary">{quantity}</span>
+                      <button 
+                        onClick={() => setQuantity(quantity + 1)}
+                        className="w-8 h-8 flex items-center justify-center bg-white rounded-xl text-brand-secondary font-black text-lg hover:text-brand-primary transition-all"
+                      >
+                        +
+                      </button>
+                    </div>
 
-                  {/* Add to Cart Button */}
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={handleAddToCart}
-                    disabled={product.soldOut}
-                    className={`px-6 h-16 rounded-2xl flex items-center justify-center gap-3 border-4 transition-all font-black text-lg ${
-                      added 
-                        ? 'bg-green-500 border-green-400 text-white' 
-                        : 'bg-brand-surface border-brand-bg text-brand-primary hover:border-brand-primary/30'
-                    }`}
-                  >
-                    {added ? <Check className="w-6 h-6" /> : <ShoppingCart className="w-6 h-6" />}
-                    <span>{added ? 'تمت الإضافة' : 'أضف للسلة'}</span>
-                  </motion.button>
-                </div>
+                    {/* Add to Cart Button */}
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={handleAddToCart}
+                      disabled={product.soldOut}
+                      className={`flex-1 h-16 rounded-2xl flex items-center justify-center gap-2 border-4 transition-all font-black text-base ${
+                        added 
+                          ? 'bg-green-500 border-green-400 text-white' 
+                          : 'bg-brand-surface border-brand-bg text-brand-primary hover:border-brand-primary/30'
+                      }`}
+                    >
+                      {added ? <Check className="w-5 h-5" /> : <ShoppingCart className="w-5 h-5" />}
+                      <span>{added ? 'تمت الإضافة' : 'أضف للسلة'}</span>
+                    </motion.button>
+                  </div>
 
                 {/* Order Now Button */}
                 <motion.button 
@@ -279,16 +339,17 @@ export default function ProductDetails() {
                   whileTap={{ scale: 0.98 }}
                   onClick={handleOrderNow}
                   disabled={product.soldOut}
-                  className={`w-full py-5 rounded-[2rem] font-black text-2xl flex items-center justify-center space-x-4 space-x-reverse shadow-[0_15px_35px_rgba(141,105,159,0.3)] border-4 border-transparent transition-all ${
+                  className={`w-full py-5 rounded-[2rem] font-black text-xl flex items-center justify-center space-x-3 space-x-reverse shadow-[0_10px_20px_rgba(141,105,159,0.2)] border-4 border-transparent transition-all ${
                     product.soldOut 
                       ? 'bg-gray-200 text-gray-500 cursor-not-allowed border-gray-300 shadow-none' 
-                      : 'bg-brand-primary text-white hover:bg-brand-secondary hover:border-brand-accent/50'
+                      : 'bg-brand-secondary text-white hover:bg-brand-primary'
                   }`}
                 >
-                  <ShoppingBag className="w-8 h-8" />
+                  <ShoppingBag className="w-6 h-6" />
                   <span>{product.soldOut ? 'نفدت الكمية' : 'اطلب الآن'}</span>
                 </motion.button>
               </div>
+            </div>
 
               {/* Description - Now below buttons */}
               <div className="bg-brand-surface/50 rounded-3xl p-6 border-2 border-brand-bg mb-8">
@@ -324,6 +385,24 @@ export default function ProductDetails() {
             </motion.div>
           </div>
         </div>
+
+        {/* Video Reviews Section - Moved out of the main container */}
+        {product.video_reviews && product.video_reviews.length > 0 && (
+          <section className="mt-16 py-16 bg-white rounded-[3rem] p-8 md:p-12 shadow-[0_20px_50px_rgba(92,67,106,0.08)] border-8 border-brand-bg">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-black text-brand-secondary mb-4 flex items-center justify-center gap-2">
+                تجارب وآراء عن المنتج 🎥
+              </h2>
+              <p className="text-brand-muted font-bold text-lg">شاهد كيف يستمتع الأطفال بألعاب أكوان التعليمية</p>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {product.video_reviews.map((review, index) => (
+                <VideoReviewItem key={index} review={review} />
+              ))}
+            </div>
+          </section>
+        )}
       </div>
 
       {/* View All Games Button */}
@@ -337,7 +416,7 @@ export default function ProductDetails() {
           <motion.div 
             whileHover={{ scale: 1.05, rotate: -2 }}
             whileTap={{ scale: 0.95 }}
-            className="inline-flex items-center justify-center space-x-2 space-x-reverse px-8 py-4 md:px-12 md:py-6 text-xl md:text-2xl font-black text-brand-secondary bg-brand-bg border-[6px] border-white shadow-lg rounded-full cursor-pointer"
+            className="inline-flex items-center justify-center space-x-2 space-x-reverse px-8 py-4 md:px-12 md:py-6 text-xl md:text-2xl font-black text-brand-secondary bg-brand-bg border-[6px] border-white shadow-lg rounded-full cursor-pointer mt-[30px]"
           >
             <Sparkles className="w-6 h-6 md:w-8 md:h-8 text-brand-accent animate-pulse-soft" />
             <span>عرض جميع الألعاب</span>

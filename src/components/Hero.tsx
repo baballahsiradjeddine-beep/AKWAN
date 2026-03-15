@@ -11,7 +11,7 @@ export default function Hero() {
   const settings = useStore((state) => state.settings);
 
   return (
-    <div className="relative bg-brand-bg min-h-[100svh] lg:min-h-[90vh] flex items-start lg:items-center pt-20 pb-24 lg:pt-16 lg:pb-16 px-4 lg:px-8">
+    <div className="relative bg-brand-bg min-h-[100svh] lg:min-h-[90vh] flex items-start lg:items-center pt-16 pb-20 lg:pt-16 lg:pb-16 px-4 lg:px-8">
       {/* Decorative background elements - Playful Shapes */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
         {/* Glowing Orbs */}
@@ -32,12 +32,12 @@ export default function Hero() {
         />
 
         {/* Parallax Floating Icons - Hidden some on mobile to prevent clutter */}
-        <motion.div style={{ y: y1 }} className="absolute top-32 right-10 md:right-1/4 opacity-60">
-          <Star className="text-brand-accent w-8 h-8 md:w-10 md:h-10 animate-float" fill="currentColor" />
+        <motion.div style={{ y: y1 }} className="absolute top-24 right-6 md:right-1/4 opacity-60">
+          <Star className="text-brand-accent w-6 h-6 md:w-10 md:h-10 animate-float" fill="currentColor" />
         </motion.div>
         
-        <motion.div style={{ y: y2 }} className="absolute bottom-32 left-10 md:left-1/4 opacity-40">
-          <Star className="text-brand-primary w-6 h-6 md:w-8 md:h-8 animate-float-reverse" fill="currentColor" />
+        <motion.div style={{ y: y2 }} className="absolute bottom-24 left-6 md:left-1/4 opacity-40">
+          <Star className="text-brand-primary w-4 h-4 md:w-8 md:h-8 animate-float-reverse" fill="currentColor" />
         </motion.div>
         
         <motion.div style={{ y: y1, rotate: rotate1 }} className="absolute top-40 left-10 md:left-20 opacity-30 hidden sm:block">
@@ -45,7 +45,7 @@ export default function Hero() {
         </motion.div>
         
         <motion.div style={{ y: y2 }} className="absolute bottom-40 right-10 md:right-20 opacity-50">
-          <Sparkles className="text-brand-accent w-10 h-10 md:w-14 md:h-14 animate-float-reverse" />
+          <Sparkles className="text-brand-accent w-8 h-8 md:w-14 md:h-14 animate-float-reverse" />
         </motion.div>
 
         <motion.div 
@@ -61,7 +61,7 @@ export default function Hero() {
           transition={{ duration: 15, repeat: Infinity, ease: "easeInOut", delay: 2 }}
           className="absolute top-1/3 left-4 md:left-1/3 opacity-30"
         >
-          <Cloud className="text-white w-20 h-20 md:w-32 md:h-32" fill="currentColor" />
+          <Cloud className="text-white w-12 h-12 md:w-32 md:h-32" fill="currentColor" />
         </motion.div>
 
         <motion.div 
@@ -69,22 +69,22 @@ export default function Hero() {
           transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
           className="absolute top-10 left-1/2 opacity-20"
         >
-          <Sun className="text-brand-accent w-24 h-24 md:w-32 md:h-32" fill="currentColor" />
+          <Sun className="text-brand-accent w-16 h-16 md:w-32 md:h-32" fill="currentColor" />
         </motion.div>
         
         {/* Abstract Shapes */}
         <motion.div 
           style={{ y: y1 }}
-          className="absolute top-1/3 right-1/4 md:right-1/3 w-12 h-12 md:w-16 md:h-16 border-4 md:border-8 border-brand-primary/20 rounded-full animate-pulse-soft" 
+          className="absolute top-1/3 right-1/4 md:right-1/3 w-8 h-8 md:w-16 md:h-16 border-2 md:border-8 border-brand-primary/20 rounded-full animate-pulse-soft" 
         />
         <motion.div 
           style={{ y: y2 }}
-          className="absolute bottom-1/4 left-5 md:left-10 w-16 h-16 md:w-20 md:h-20 border-4 md:border-8 border-brand-accent/20 rounded-2xl md:rounded-3xl rotate-45 animate-float" 
+          className="absolute bottom-1/4 left-5 md:left-10 w-10 h-10 md:w-20 md:h-20 border-2 md:border-8 border-brand-accent/20 rounded-xl md:rounded-3xl rotate-45 animate-float" 
         />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-8">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-8">
           
           {/* Text Content */}
           <div className="w-full lg:w-1/2 text-center lg:text-right flex flex-col items-center lg:items-start mt-0">
@@ -93,24 +93,24 @@ export default function Hero() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ type: "spring", bounce: 0.7, duration: 1.2 }}
               whileHover={{ scale: 1.05, rotate: -5 }}
-              className="inline-flex items-center space-x-2 space-x-reverse bg-white/80 backdrop-blur-sm px-4 py-2 md:px-5 md:py-2.5 rounded-full mb-6 md:mb-8 border-2 border-brand-accent/30 shadow-[0_4px_15px_rgba(255,209,102,0.3)] cursor-pointer"
+              className="inline-flex items-center space-x-2 space-x-reverse bg-white/80 backdrop-blur-sm px-4 py-1.5 md:px-5 md:py-2.5 rounded-full mb-6 md:mb-8 border-2 border-brand-accent/30 shadow-[0_4px_15px_rgba(255,209,102,0.3)] cursor-pointer"
             >
-              <span className="flex h-3 w-3 md:h-4 md:w-4 relative">
+              <span className="flex h-2.5 w-2.5 md:h-4 md:w-4 relative">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-accent opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 md:h-4 md:w-4 bg-brand-accent"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 md:h-4 md:w-4 bg-brand-accent"></span>
               </span>
-              <span className="text-sm md:text-base font-black text-brand-secondary">عالم من الخيال والمرح! 🪁</span>
+              <span className="text-xs md:text-base font-black text-brand-secondary">عالم من الخيال والمرح! 🪁</span>
             </motion.div>
 
             <motion.h1 
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ type: "spring", stiffness: 100, damping: 12, delay: 0.2 }}
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-brand-secondary leading-[1.6] md:leading-[1.5] mb-8 md:mb-10 drop-shadow-sm"
+              className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-brand-secondary leading-[1.5] md:leading-[1.5] mb-6 md:mb-10 drop-shadow-sm"
             >
               {settings.heroTitle.includes('جذوري العربية!') ? (
                 <span dangerouslySetInnerHTML={{ 
-                  __html: settings.heroTitle.replace('جذوري العربية!', '<span class="text-brand-primary relative inline-block group mt-4 md:mt-0">جذوري العربية!<svg class="absolute w-[110%] h-4 md:h-6 -bottom-3 md:-bottom-4 -right-[5%] text-brand-accent opacity-90 group-hover:animate-pulse-soft" viewBox="0 0 100 20" preserveAspectRatio="none"><path d="M0 10 Q 25 20 50 10 T 100 10" stroke="currentColor" stroke-width="8" stroke-linecap="round" fill="none" /></svg></span>') 
+                  __html: settings.heroTitle.replace('جذوري العربية!', '<span class="text-brand-primary relative inline-block group mt-2 md:mt-0">جذوري العربية!<svg class="absolute w-[110%] h-3 md:h-6 -bottom-2 md:-bottom-4 -right-[5%] text-brand-accent opacity-90 group-hover:animate-pulse-soft" viewBox="0 0 100 20" preserveAspectRatio="none"><path d="M0 10 Q 25 20 50 10 T 100 10" stroke="currentColor" stroke-width="8" stroke-linecap="round" fill="none" /></svg></span>') 
                 }} />
               ) : (
                 settings.heroTitle
@@ -121,7 +121,7 @@ export default function Hero() {
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.4, type: "spring", bounce: 0.4 }}
-              className="text-lg sm:text-xl md:text-2xl text-brand-secondary/80 mb-10 md:mb-12 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-bold px-4 lg:px-0"
+              className="text-base sm:text-xl md:text-2xl text-brand-secondary/80 mb-8 md:mb-12 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-bold px-2 lg:px-0"
             >
               {settings.heroSubtitle}
             </motion.p>
@@ -130,20 +130,20 @@ export default function Hero() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.6, type: "spring", bounce: 0.5 }}
-              className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-8 md:gap-10 w-full sm:w-auto px-4 sm:px-0"
+              className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 md:gap-10 w-full sm:w-auto px-2 sm:px-0"
             >
               <motion.a 
                 whileHover={{ scale: 1.05, y: -5, rotate: -2 }}
                 whileTap={{ scale: 0.95, rotate: 2 }}
                 href="#products" 
-                className="inline-flex items-center justify-center px-8 py-4 md:px-10 md:py-5 text-lg md:text-xl font-black text-white bg-brand-primary rounded-[2rem] hover:bg-brand-secondary transition-colors shadow-[0_10px_30px_rgba(141,105,159,0.4)] w-full sm:w-auto relative overflow-hidden group border-4 border-transparent hover:border-brand-accent/50"
+                className="inline-flex items-center justify-center px-6 py-3.5 md:px-10 md:py-5 text-base md:text-xl font-black text-white bg-brand-primary rounded-[1.5rem] md:rounded-[2rem] hover:bg-brand-secondary transition-colors shadow-[0_10px_30px_rgba(141,105,159,0.4)] w-full sm:w-auto relative overflow-hidden group border-4 border-transparent hover:border-brand-accent/50"
               >
                 <span className="relative z-10 flex items-center">
                   {settings.heroButtonText}
                   <motion.span 
                     animate={{ y: [0, -8, 0], rotate: [0, 10, -10, 0] }} 
                     transition={{ repeat: Infinity, duration: 2 }}
-                    className="mr-2 md:mr-3 text-xl md:text-2xl"
+                    className="mr-2 md:mr-3 text-lg md:text-2xl"
                   >
                     🚀
                   </motion.span>
@@ -158,7 +158,7 @@ export default function Hero() {
               >
                 <Link 
                   to="/about" 
-                  className="inline-flex items-center justify-center px-8 py-4 md:px-10 md:py-5 text-lg md:text-xl font-black text-brand-secondary bg-white border-4 border-white shadow-lg rounded-[2rem] hover:border-brand-primary/30 hover:shadow-xl transition-all w-full sm:w-auto"
+                  className="inline-flex items-center justify-center px-6 py-3.5 md:px-10 md:py-5 text-base md:text-xl font-black text-brand-secondary bg-white border-2 md:border-4 border-white shadow-lg rounded-[1.5rem] md:rounded-[2rem] hover:border-brand-primary/30 hover:shadow-xl transition-all w-full sm:w-auto"
                 >
                   تعرف علينا 🎈
                 </Link>

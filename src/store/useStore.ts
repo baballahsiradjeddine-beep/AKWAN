@@ -1,6 +1,14 @@
 import { create } from 'zustand';
 import { supabase } from '../lib/supabase';
 
+export interface VideoReview {
+  name: string;
+  avatar: string;
+  videoUrl: string;
+  thumbnailUrl: string;
+  description: string;
+}
+
 export interface Product {
   id: number;
   name: string;
@@ -13,7 +21,7 @@ export interface Product {
   description: string;
   category: string;
   soldOut?: boolean;
-  video_reviews?: any[];
+  video_reviews?: VideoReview[];
 }
 
 export interface CartItem extends Product {

@@ -20,8 +20,8 @@ export default function Navbar() {
       <header className="relative z-50 bg-white border-b border-gray-100 shadow-sm">
         {/* Top Announcement Bar */}
         {settings.announcementText && (
-          <div className="bg-brand-primary text-white px-6 py-3 text-center text-sm font-bold tracking-wide shadow-sm">
-            <span className="inline-flex items-center justify-center gap-4">
+          <div className="bg-brand-primary text-white px-4 py-2 text-center text-xs md:text-sm font-bold tracking-wide shadow-sm">
+            <span className="inline-flex items-center justify-center gap-2 md:gap-4">
               <span className="animate-pulse">✨</span>
               {settings.announcementText}
               <span className="animate-pulse">✨</span>
@@ -30,24 +30,24 @@ export default function Navbar() {
         )}
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
+          <div className="flex justify-between items-center h-16 md:h-20">
             
             {/* Mobile menu button */}
             <div className="flex items-center lg:hidden">
               <button
                 onClick={() => setIsMenuOpen(true)}
-                className="text-gray-500 hover:text-brand-primary hover:bg-brand-primary/5 p-2.5 rounded-full transition-all"
+                className="text-gray-500 hover:text-brand-primary hover:bg-brand-primary/5 p-2 rounded-full transition-all"
               >
                 <Menu className="h-6 w-6" />
               </button>
             </div>
 
             {/* Logo */}
-            <Link to="/" className="flex-shrink-0 flex items-center ml-16">
+            <Link to="/" className="flex-shrink-0 flex items-center ml-4 md:ml-16">
               {settings.logoType === 'image' && settings.logoImage ? (
-                <img src={settings.logoImage} alt={settings.siteName} className="h-12 w-auto object-contain" />
+                <img src={settings.logoImage} alt={settings.siteName} className="h-8 md:h-12 w-auto object-contain" />
               ) : (
-                <span className="text-3xl font-black text-brand-primary tracking-tight">
+                <span className="text-2xl md:text-3xl font-black text-brand-primary tracking-tight">
                   {settings.siteName}
                 </span>
               )}
@@ -127,32 +127,32 @@ export default function Navbar() {
           </button>
         </div>
         
-        <div className="flex-1 overflow-y-auto py-8 px-5 space-y-6">
-          {/* Search Bar in Drawer */}
-          <div className="mb-8">
-            <div className="relative w-full group">
-              <input 
-                type="text" 
-                placeholder="ابحث عن ألعاب..." 
-                className="w-full bg-gray-50 border-2 border-brand-bg rounded-2xl py-3 px-4 pr-11 focus:outline-none focus:border-brand-primary/50 focus:ring-4 focus:ring-brand-primary/10 text-base transition-all font-bold text-brand-secondary shadow-inner"
-              />
-              <Search className="absolute right-4 top-3.5 h-5 w-5 text-brand-muted" />
-            </div>
-          </div>
+            <div className="flex-1 overflow-y-auto py-6 px-4 space-y-4">
+              {/* Search Bar in Drawer */}
+              <div className="mb-6">
+                <div className="relative w-full group">
+                  <input 
+                    type="text" 
+                    placeholder="ابحث عن ألعاب..." 
+                    className="w-full bg-gray-50 border-2 border-brand-bg rounded-2xl py-2.5 px-4 pr-11 focus:outline-none focus:border-brand-primary/50 focus:ring-4 focus:ring-brand-primary/10 text-sm transition-all font-bold text-brand-secondary shadow-inner"
+                  />
+                  <Search className="absolute right-4 top-3 h-4 w-4 text-brand-muted" />
+                </div>
+              </div>
 
-          <nav className="space-y-2">
-            {navLinks.map((link) => (
-              <Link 
-                key={link.name}
-                onClick={() => setIsMenuOpen(false)} 
-                to={link.path} 
-                className="block px-5 py-4 text-lg font-black text-brand-secondary hover:bg-brand-primary/5 hover:text-brand-primary rounded-2xl transition-all border-2 border-transparent hover:border-brand-primary/10"
-              >
-                {link.name}
-              </Link>
-            ))}
-          </nav>
-        </div>
+              <nav className="space-y-1">
+                {navLinks.map((link) => (
+                  <Link 
+                    key={link.name}
+                    onClick={() => setIsMenuOpen(false)} 
+                    to={link.path} 
+                    className="block px-4 py-3.5 text-base font-black text-brand-secondary hover:bg-brand-primary/5 hover:text-brand-primary rounded-2xl transition-all border-2 border-transparent hover:border-brand-primary/10"
+                  >
+                    {link.name}
+                  </Link>
+                ))}
+              </nav>
+            </div>
 
         {/* Footer of Drawer */}
         <div className="p-6 border-t border-gray-100 bg-gray-50 shrink-0">
