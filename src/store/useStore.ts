@@ -59,21 +59,28 @@ export interface SiteSettings {
   
   // Navbar
   announcementText: string;
+  announcementTextEn?: string;
   
   // Hero Section
   heroTitle: string;
+  heroTitleEn?: string;
   heroSubtitle: string;
+  heroSubtitleEn?: string;
   heroButtonText: string;
+  heroButtonTextEn?: string;
   heroImage: string;
   
   // About Section
   aboutTitle: string;
+  aboutTitleEn?: string;
   aboutSubtitle: string;
+  aboutSubtitleEn?: string;
   aboutImage1: string;
   aboutImage2: string;
   
   // Footer
   footerDescription: string;
+  footerDescriptionEn?: string;
   socialLinks: {
     facebook: string;
     snapchat: string;
@@ -509,7 +516,7 @@ export const useStore = create<StoreState>((set, get) => ({
           customer_phone: orderData.customer_phone,
           customer_address: orderData.customer_address,
           total_amount: orderData.total_amount,
-          status: 'pending',
+          status: 'قيد المعالجة',
           items_count: orderData.items.reduce((sum, item) => sum + item.quantity, 0)
         }])
         .select()

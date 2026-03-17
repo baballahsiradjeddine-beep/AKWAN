@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useStore } from '../store/useStore';
 
 export default function About() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const settings = useStore((state) => state.settings);
 
   return (
@@ -34,7 +34,9 @@ export default function About() {
             className="inline-flex items-center justify-center space-x-2 space-x-reverse mb-4 md:mb-6 bg-white px-6 md:px-8 py-3 md:py-4 rounded-full border-2 md:border-4 border-brand-bg shadow-xl"
           >
             <Sparkles className="w-6 h-6 md:w-8 md:h-8 text-brand-accent animate-pulse-soft" />
-            <h1 className="text-2xl md:text-5xl font-black text-brand-secondary">{settings.aboutTitle}</h1>
+            <h1 className="text-2xl md:text-5xl font-black text-brand-secondary">
+              {i18n.language === 'en' && settings.aboutTitleEn ? settings.aboutTitleEn : settings.aboutTitle}
+            </h1>
             <Sparkles className="w-6 h-6 md:w-8 md:h-8 text-brand-accent animate-pulse-soft" />
           </motion.div>
           <motion.p 
@@ -43,7 +45,7 @@ export default function About() {
             transition={{ delay: 0.2 }}
             className="text-lg md:text-2xl text-brand-muted font-bold max-w-2xl mx-auto leading-relaxed"
           >
-            {settings.aboutSubtitle}
+            {i18n.language === 'en' && settings.aboutSubtitleEn ? settings.aboutSubtitleEn : settings.aboutSubtitle}
           </motion.p>
         </div>
 

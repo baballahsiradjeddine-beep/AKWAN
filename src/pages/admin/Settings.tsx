@@ -103,10 +103,30 @@ export default function AdminSettings() {
 
   const handleSave = async () => {
     setIsSaving(true);
-    setSaveMessage('');
+    setSaveMessage('جاري الحفظ و الترجمة...'); // Saving and translating
     try {
-      await updateSettings(formData);
-      setSaveMessage('تم حفظ الإعدادات بنجاح!');
+      const translatedData = { ...formData };
+      const { translateText } = await import('../../utils/translate');
+
+      const fieldsToTranslate = [
+        ['announcementText', 'announcementTextEn'],
+        ['heroTitle', 'heroTitleEn'],
+        ['heroSubtitle', 'heroSubtitleEn'],
+        ['heroButtonText', 'heroButtonTextEn'],
+        ['aboutTitle', 'aboutTitleEn'],
+        ['aboutSubtitle', 'aboutSubtitleEn'],
+        ['footerDescription', 'footerDescriptionEn'],
+      ] as const;
+
+      for (const [arField, enField] of fieldsToTranslate) {
+        if (translatedData[arField]) {
+          translatedData[enField] = await translateText(translatedData[arField]);
+        }
+      }
+
+      await updateSettings(translatedData);
+      setFormData(translatedData);
+      setSaveMessage('تم الحفظ والترجمة بنجاح!');
     } catch (error: any) {
       console.error('Error saving settings:', error);
       setSaveMessage(`حدث خطأ: ${error.message || 'يرجى المحاولة مرة أخرى'}`);

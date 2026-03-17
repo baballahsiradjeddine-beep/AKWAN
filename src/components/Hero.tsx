@@ -115,7 +115,7 @@ export default function Hero() {
                   __html: settings.heroTitle.replace('جذوري العربية!', `<span class="text-brand-primary relative inline-block group mt-2 md:mt-0">${t('my_arabic_roots')}<svg class="absolute w-[110%] h-3 md:h-6 -bottom-2 md:-bottom-4 -right-[5%] text-brand-accent opacity-90 group-hover:animate-pulse-soft" viewBox="0 0 100 20" preserveAspectRatio="none"><path d="M0 10 Q 25 20 50 10 T 100 10" stroke="currentColor" stroke-width="8" stroke-linecap="round" fill="none" /></svg></span>`) 
                 }} />
               ) : (
-                settings.heroTitle
+                i18n.language === 'en' && settings.heroTitleEn ? settings.heroTitleEn : settings.heroTitle
               )}
             </motion.h1>
             
@@ -125,7 +125,7 @@ export default function Hero() {
               transition={{ duration: 0.8, delay: 0.4, type: "spring", bounce: 0.4 }}
               className="text-sm sm:text-xl md:text-2xl text-brand-secondary/80 mb-6 md:mb-12 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-bold px-2 lg:px-0"
             >
-              {settings.heroSubtitle}
+              {i18n.language === 'en' && settings.heroSubtitleEn ? settings.heroSubtitleEn : settings.heroSubtitle}
             </motion.p>
             
             <motion.div
@@ -141,7 +141,7 @@ export default function Hero() {
                 className="inline-flex items-center justify-center px-6 py-3.5 md:px-10 md:py-5 text-base md:text-xl font-black text-white bg-brand-primary rounded-[1.5rem] md:rounded-[2rem] hover:bg-brand-secondary transition-colors shadow-[0_10px_30px_rgba(141,105,159,0.4)] w-full sm:w-auto relative overflow-hidden group border-4 border-transparent hover:border-brand-accent/50"
               >
                 <span className="relative z-10 flex items-center">
-                  {settings.heroButtonText}
+                  {i18n.language === 'en' && settings.heroButtonTextEn ? settings.heroButtonTextEn : settings.heroButtonText}
                   <motion.span 
                     animate={{ y: [0, -8, 0], rotate: [0, 10, -10, 0] }} 
                     transition={{ repeat: Infinity, duration: 2 }}

@@ -20,7 +20,7 @@ const TikTokIcon = ({ className }: { className?: string }) => (
 );
 
 export default function Footer() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const settings = useStore((state) => state.settings);
 
   return (
@@ -38,7 +38,7 @@ export default function Footer() {
               {settings.siteName}
             </Link>
             <p className="text-gray-300 mb-6 md:mb-8 text-xs md:text-sm leading-loose max-w-sm">
-              {settings.footerDescription}
+              {i18n.language === 'en' && settings.footerDescriptionEn ? settings.footerDescriptionEn : settings.footerDescription}
             </p>
             <div className="flex flex-wrap justify-center md:justify-start gap-3 md:gap-4 space-x-reverse">
               <a 

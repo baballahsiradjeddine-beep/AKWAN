@@ -1,5 +1,5 @@
 import React from 'react';
-import { Order } from '../../store/useStore';
+import { Order, useStore } from '../../store/useStore';
 import { useTranslation } from 'react-i18next';
 
 interface PrintableReportProps {
@@ -14,15 +14,16 @@ interface PrintableReportProps {
 
 const PrintableReport: React.FC<PrintableReportProps> = ({ stats, recentOrders, dateRange }) => {
   const { t, i18n } = useTranslation();
+  const settings = useStore(state => state.settings);
   const isRTL = i18n.language === 'ar';
 
   return (
     <div className={`print-only p-8 bg-white text-black font-sans ${isRTL ? '' : 'font-inter'}`} dir={isRTL ? 'rtl' : 'ltr'} style={{ width: '210mm', minHeight: '297mm', margin: '0 auto' }}>
       {/* Header */}
-      <div className={`flex justify-between items-start border-b-2 border-gray-200 pb-6 mb-8 ${isRTL ? 'text-right' : 'text-left'}`}>
+      <div className={`flex justify-between items-start border-b-4 border-brand-primary pb-6 mb-8 ${isRTL ? 'text-right' : 'text-left'}`}>
         <div>
-          <h1 className="text-3xl font-black uppercase tracking-tighter">{t('sales_analytics')}</h1>
-          <p className="text-gray-500 font-bold mt-1">{t('my_arabic_roots')}</p>
+          <h1 className="text-3xl font-black uppercase tracking-tighter text-brand-secondary">{t('sales_analytics')}</h1>
+          <p className="text-gray-500 font-bold mt-1 text-sm">{settings.siteName}</p>
         </div>
         <div className={isRTL ? 'text-left' : 'text-right'}>
           <p className="text-sm font-bold">{t('date')}: {new Date().toLocaleDateString(isRTL ? 'ar-EG' : 'en-US')}</p>
@@ -75,8 +76,8 @@ const PrintableReport: React.FC<PrintableReportProps> = ({ stats, recentOrders, 
 
       {/* Footer */}
       <div className="mt-20 pt-8 border-t border-gray-200 text-center text-xs text-gray-400 font-bold">
-        <p>تم إنشاء هذا التقرير آلياً من لوحة تحكم المتجر</p>
-        <p className="mt-1">جميع الحقوق محفوظة © {new Date().getFullYear()}</p>
+        <p>{t('auto_generated_report', 'تم إنشاء هذا التقرير آلياً من لوحة تحكم المتجر')}</p>
+        <p className="mt-1">{t('all_rights_reserved')} © {new Date().getFullYear()} {settings.siteName}</p>
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `

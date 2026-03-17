@@ -77,8 +77,8 @@ export default function AdminLayout() {
       >
         <div className="p-8 flex items-center justify-between border-b border-white/5">
           <Link to="/admin" className="text-3xl font-black text-brand-accent tracking-tighter flex items-center gap-3">
-            <div className="bg-gradient-to-br from-white to-slate-200 text-brand-dark w-10 h-10 rounded-xl flex items-center justify-center text-2xl shadow-lg">أ</div>
-            <span>أكوان</span>
+            <div className="bg-gradient-to-br from-white to-slate-200 text-brand-dark w-10 h-10 rounded-xl flex items-center justify-center text-2xl shadow-lg">A</div>
+            <span>{t('akwan')}</span>
           </Link>
           <button onClick={() => setIsSidebarOpen(false)} className="md:hidden text-white/50 hover:text-white transition-colors">
             <X className="w-7 h-7" />
@@ -86,7 +86,7 @@ export default function AdminLayout() {
         </div>
 
         <nav className="flex-1 overflow-y-auto py-8 px-5 space-y-1.5 custom-scrollbar">
-          <p className="text-[10px] font-black text-white/30 uppercase tracking-[2px] mb-4 mr-4">القائمة الرئيسية</p>
+          <p className="text-[10px] font-black text-white/30 uppercase tracking-[2px] mb-4 mx-4">{t('dashboard')}</p>
           {sidebarLinks.map((link) => {
             const isActive = location.pathname === link.path;
             const Icon = link.icon;
@@ -117,14 +117,14 @@ export default function AdminLayout() {
         <div className="p-6 border-t border-white/5 space-y-3">
           <Link to="/" className="flex items-center px-5 py-3.5 rounded-2xl text-white/60 hover:bg-white/5 hover:text-white transition-all font-bold group">
             <LayoutDashboard className="w-5 h-5 ml-4 group-hover:rotate-12 transition-transform" />
-            <span className="text-[14px]">العودة للمتجر</span>
+            <span className="text-[14px]">{t('back_to_shop')}</span>
           </Link>
           <button 
             onClick={handleLogout}
             className="w-full flex items-center px-5 py-3.5 rounded-2xl text-red-400/80 hover:bg-red-500/10 hover:text-red-400 transition-all font-bold group"
           >
             <LogOut className="w-5 h-5 ml-4 group-hover:translate-x-1 transition-transform" />
-            <span className="text-[14px]">تسجيل الخروج</span>
+            <span className="text-[14px]">{t('logout')}</span>
           </button>
         </div>
       </aside>
@@ -141,8 +141,8 @@ export default function AdminLayout() {
               <Menu className="w-6 h-6" />
             </button>
             <div className="hidden sm:block">
-              <h2 className="text-sm font-bold text-slate-400">مرحباً بك مجدداً،</h2>
-              <p className="text-lg font-black text-slate-800">مدير النظام 👋</p>
+              <h2 className="text-sm font-bold text-slate-400">{t('welcome_back')}</h2>
+              <p className="text-lg font-black text-slate-800">{t('admin')} 👋</p>
             </div>
           </div>
 
@@ -167,8 +167,8 @@ export default function AdminLayout() {
                     className="absolute top-full left-0 mt-3 w-80 bg-white rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-slate-100 overflow-hidden z-50"
                   >
                     <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                      <h3 className="font-black text-slate-800">الإشعارات</h3>
-                      <span className="text-[10px] font-black bg-brand-primary text-white px-2 py-0.5 rounded-full">3 جديدة</span>
+                      <h3 className="font-black text-slate-800">Notifications</h3>
+                      <span className="text-[10px] font-black bg-brand-primary text-white px-2 py-0.5 rounded-full">3 New</span>
                     </div>
                     <div className="max-h-[400px] overflow-y-auto">
                       {mockNotifications.map((notif) => (
@@ -191,7 +191,7 @@ export default function AdminLayout() {
                       }}
                       className="w-full p-4 text-sm font-bold text-brand-primary hover:bg-slate-50 transition-colors border-t border-slate-100"
                     >
-                      عرض جميع الإشعارات
+                      View all notifications
                     </button>
                   </motion.div>
                 )}
@@ -205,8 +205,8 @@ export default function AdminLayout() {
                 className="flex items-center gap-3 p-1.5 pr-4 rounded-2xl border border-slate-200 hover:border-brand-primary/30 hover:bg-slate-50 transition-all group"
               >
                 <div className="hidden sm:block text-left ml-2">
-                  <p className="text-xs font-black text-slate-800">مدير النظام</p>
-                  <p className="text-[10px] font-bold text-slate-400">الوصول الكامل</p>
+                  <p className="text-xs font-black text-slate-800">{t('admin')}</p>
+                  <p className="text-[10px] font-bold text-slate-400">Full Access</p>
                 </div>
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-primary to-brand-secondary text-white flex items-center justify-center font-black shadow-lg shadow-brand-primary/20 group-hover:scale-105 transition-transform">
                   م
@@ -223,7 +223,7 @@ export default function AdminLayout() {
                     className="absolute top-full left-0 mt-3 w-64 bg-white rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-slate-100 overflow-hidden z-50"
                   >
                     <div className="p-5 border-b border-slate-100 bg-slate-50/50">
-                      <p className="text-sm font-black text-slate-800">أهلاً بك، مدير النظام</p>
+                      <p className="text-sm font-black text-slate-800">{t('welcome_back')} {t('admin')}</p>
                       <p className="text-xs text-slate-400 font-medium mt-0.5">admin@akwan.com</p>
                     </div>
                     <div className="p-2 border-t border-slate-100">
@@ -232,7 +232,7 @@ export default function AdminLayout() {
                         className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 transition-all font-bold text-sm"
                       >
                         <LogOut className="w-4 h-4" />
-                        <span>تسجيل الخروج</span>
+                        <span>{t('logout')}</span>
                       </button>
                     </div>
                   </motion.div>

@@ -43,7 +43,7 @@ export default function Dashboard() {
       image: product.image
     }));
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const handlePrint = () => {
     window.print();
@@ -51,13 +51,13 @@ export default function Dashboard() {
 
   const handleExport = () => {
     exportToCSV(orders.map(o => ({ 
-      'رقم الطلب': o.id, 
-      'العميل': o.customer_name, 
-      'المبلغ': o.total_amount, 
-      'الحالة': o.status, 
-      'التاريخ': new Date(o.created_at).toLocaleDateString('ar-SA') 
+      [t('order_number')]: o.id, 
+      [t('customer')]: o.customer_name, 
+      [t('amount')]: o.total_amount, 
+      [t('status')]: o.status, 
+      [t('date')]: new Date(o.created_at).toLocaleDateString(i18n.language === 'ar' ? 'ar-SA' : 'en-US') 
     })), `orders_report_${new Date().toISOString().split('T')[0]}`);
-    toast.success('تم تصدير البيانات بنجاح');
+    toast.success(t('update_success') || 'تم تصدير البيانات بنجاح');
   };
   const stats = [
     { 
@@ -99,7 +99,7 @@ export default function Dashboard() {
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-1 bg-white p-1.5 rounded-2xl shadow-sm border border-slate-200">
-            {['اليوم', '7 أيام', '30 يوم'].map((range) => (
+            {[t('today'), t('days_7'), t('days_30')].map((range) => (
               <button
                 key={range}
                 onClick={() => setTimeRange(range)}
@@ -174,8 +174,8 @@ export default function Dashboard() {
         <div className="lg:col-span-2 bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col">
           <div className="flex items-center justify-between mb-10">
             <div>
-              <h2 className="text-xl font-black text-slate-800">تحليلات المبيعات</h2>
-              <p className="text-xs text-slate-400 font-bold mt-1">مقارنة المبيعات والطلبات خلال الأسبوع</p>
+              <h2 className="text-xl font-black text-slate-800">{t('sales_analytics')}</h2>
+              <p className="text-xs text-slate-400 font-bold mt-1">Weekly Sales & Orders Comparison</p>
             </div>
             <button className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-xl transition-all">
               <MoreHorizontal className="w-6 h-6" />
@@ -224,8 +224,8 @@ export default function Dashboard() {
 
         <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col">
           <div className="flex items-center justify-between mb-10">
-            <h2 className="text-xl font-black text-slate-800">الأكثر مبيعاً</h2>
-            <Link to="/admin/products" className="text-xs font-black text-brand-primary hover:underline">عرض الكل</Link>
+            <h2 className="text-xl font-black text-slate-800">{t('top_selling')}</h2>
+            <Link to="/admin/products" className="text-xs font-black text-brand-primary hover:underline">{t('view_all')}</Link>
           </div>
           <div className="space-y-6 flex-1">
             {topProducts.length > 0 ? (
@@ -236,10 +236,10 @@ export default function Dashboard() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <h4 className="font-black text-slate-800 text-sm truncate">{product.name}</h4>
-                    <p className="text-[11px] text-slate-400 font-bold mt-0.5">{product.sales} مبيعة</p>
+                    <p className="text-[11px] text-slate-400 font-bold mt-0.5">{product.sales} Sales</p>
                   </div>
                   <div className="text-left">
-                    <p className="font-black text-brand-primary text-sm">{product.price} ر.س</p>
+                    <p className="font-black text-brand-primary text-sm">{product.price} {t('sar')}</p>
                     <div className="w-full bg-slate-100 h-1.5 rounded-full mt-2 overflow-hidden">
                       <motion.div 
                         initial={{ width: 0 }}
@@ -258,50 +258,52 @@ export default function Dashboard() {
               </div>
             )}
           </div>
-          <button 
-            onClick={() => exportToCSV(orders.map(o => ({ 
-              'رقم الطلب': o.id, 
-              'العميل': o.customer_name, 
-              'المبلغ': o.total_amount, 
-              'الحالة': o.status, 
-              'التاريخ': new Date(o.created_at).toLocaleDateString('ar-SA') 
-            })), 'التقرير_الكامل_للطلبات')}
-            className="w-full mt-8 py-4 bg-slate-50 text-slate-600 rounded-2xl font-black text-sm hover:bg-slate-100 transition-all flex items-center justify-center gap-2"
-          >
-            <span>تحميل التقرير الكامل</span>
-            <ExternalLink className="w-4 h-4" />
-          </button>
+          <div className="flex gap-3">
+            <button 
+              onClick={() => exportToCSV(orders.map(o => ({ 
+                [t('order_number')]: o.id, 
+                [t('customer')]: o.customer_name, 
+                [t('amount')]: o.total_amount, 
+                [t('status')]: o.status, 
+                [t('date')]: new Date(o.created_at).toLocaleDateString(i18n.language === 'ar' ? 'ar-SA' : 'en-US') 
+              })), `recent_orders_${new Date().toISOString().split('T')[0]}`)}
+              className="w-full mt-8 py-4 bg-slate-50 text-slate-600 rounded-2xl font-black text-sm hover:bg-slate-100 transition-all flex items-center justify-center gap-2"
+            >
+              <span>{t('download_report')}</span>
+              <ExternalLink className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Recent Orders Table */}
       <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-xl font-black text-slate-800">أحدث الطلبات</h2>
+          <h2 className="text-xl font-black text-slate-800">{t('recent_orders')}</h2>
           <Link to="/admin/orders" className="px-6 py-2.5 bg-brand-bg text-brand-primary rounded-xl font-black text-sm hover:bg-brand-primary hover:text-white transition-all">
-            إدارة جميع الطلبات
+            {t('view_all')}
           </Link>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-right">
             <thead>
               <tr className="text-slate-400 text-xs font-black uppercase tracking-wider border-b border-slate-100">
-                <th className="pb-4 pr-4">العميل</th>
-                <th className="pb-4">رقم الطلب</th>
-                <th className="pb-4">التاريخ</th>
-                <th className="pb-4">المبلغ</th>
-                <th className="pb-4">الحالة</th>
-                <th className="pb-4 text-center">الإجراء</th>
+                <th className="pb-4 pr-4">{t('customer')}</th>
+                <th className="pb-4">{t('order_number')}</th>
+                <th className="pb-4">{t('date')}</th>
+                <th className="pb-4">{t('amount')}</th>
+                <th className="pb-4">{t('status')}</th>
+                <th className="pb-4 text-center">{t('action')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {isLoadingOrders ? (
                 <tr>
-                  <td colSpan={6} className="py-10 text-center text-slate-400 font-bold">جاري التحميل...</td>
+                  <td colSpan={6} className="py-10 text-center text-slate-400 font-bold">{t('loading_orders')}</td>
                 </tr>
               ) : orders.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-10 text-center text-slate-400 font-bold">لا توجد طلبات.</td>
+                  <td colSpan={6} className="py-10 text-center text-slate-400 font-bold">{t('no_orders')}</td>
                 </tr>
               ) : (
                 orders.slice(0, 5).map((order) => (
@@ -318,14 +320,17 @@ export default function Dashboard() {
                     <td className="py-5 text-slate-400 font-medium text-sm">
                       {new Date(order.created_at).toLocaleDateString('ar-SA')}
                     </td>
-                    <td className="py-5 font-black text-slate-800">{order.total_amount.toFixed(2)} ر.س</td>
+                    <td className="py-5 font-black text-slate-800">{order.total_amount.toFixed(2)} {t('sar')}</td>
                     <td className="py-5">
                       <span className={`px-3 py-1 rounded-full text-[10px] font-black ${
                         order.status === 'تم التوصيل' ? 'bg-emerald-100 text-emerald-600' : 
                         order.status === 'قيد المعالجة' ? 'bg-amber-100 text-amber-600' : 
                         'bg-blue-100 text-blue-600'
                       }`}>
-                        {order.status}
+                        {order.status === 'قيد المعالجة' ? t('processing') : 
+                         order.status === 'تم الشحن' ? t('shipped') : 
+                         order.status === 'تم التوصيل' ? t('delivered') : 
+                         order.status === 'ملغي' ? t('cancelled') : order.status}
                       </span>
                     </td>
                     <td className="py-5 text-center">

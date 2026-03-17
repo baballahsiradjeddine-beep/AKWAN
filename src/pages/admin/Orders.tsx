@@ -9,8 +9,8 @@ import { exportToCSV } from '../../utils/export';
 import PrintableOrder from '../../components/admin/PrintableOrder';
 
 export default function AdminOrders() {
-  const { t } = useTranslation();
-  const { orders, fetchOrders, updateOrderStatus, isLoadingOrders } = useStore();
+  const { t, i18n } = useTranslation();
+  const { orders, fetchOrders, updateOrderStatus, isLoadingOrders, settings } = useStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('الكل');
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
@@ -96,12 +96,12 @@ export default function AdminOrders() {
         <div className="flex gap-3">
           <button 
             onClick={() => exportToCSV(filteredOrders.map(o => ({ 
-              'رقم الطلب': o.id, 
-              'العميل': o.customer_name, 
-              'المبلغ': o.total_amount, 
-              'الحالة': o.status, 
-              'التاريخ': new Date(o.created_at).toLocaleDateString('ar-SA') 
-            })), 'الطلبات')}
+              [t('order_number')]: o.id, 
+              [t('customer')]: o.customer_name, 
+              [t('amount')]: o.total_amount, 
+              [t('status')]: o.status, 
+              [t('date')]: new Date(o.created_at).toLocaleDateString(i18n.language === 'ar' ? 'ar-SA' : 'en-US') 
+            })), `orders_${new Date().toISOString().split('T')[0]}`)}
             className="bg-white text-slate-600 px-4 py-2.5 sm:px-6 sm:py-4 rounded-xl sm:rounded-[1.5rem] font-black border border-slate-200 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm"
           >
             <Download className="w-5 h-5" />
@@ -371,14 +371,26 @@ export default function AdminOrders() {
                   <div className="space-y-4">
                     <h4 className="text-sm font-black text-slate-400 uppercase tracking-widest">{t('payment_summary')}</h4>
                     <div className="bg-slate-50 p-6 rounded-[1.5rem] border border-slate-100 space-y-4">
-                      <div className="flex justify-between text-sm font-bold text-slate-600">
-                        <span>{t('products_value')} ({selectedOrder.items_count})</span>
-                        <span>{(selectedOrder.total_amount - 25).toFixed(2)} {t('sar')}</span>
-                      </div>
-                      <div className="flex justify-between text-sm font-bold text-slate-600">
-                        <span>{t('shipping')}</span>
-                        <span>25.00 {t('sar')}</span>
-                      </div>
+                      
+                      {(() => {
+                        const shippingFee = typeof settings?.shippingFee === 'number' ? settings.shippingFee : 0;
+                        const productsValue = selectedOrder.total_amount > shippingFee 
+                          ? selectedOrder.total_amount - shippingFee 
+                          : selectedOrder.total_amount;
+                        return (
+                          <>
+                            <div className="flex justify-between text-sm font-bold text-slate-600">
+                              <span>{t('products_value')} ({selectedOrder.items_count})</span>
+                              <span>{productsValue.toFixed(2)} {t('sar')}</span>
+                            </div>
+                            <div className="flex justify-between text-sm font-bold text-slate-600">
+                              <span>{t('shipping')}</span>
+                              <span>{shippingFee.toFixed(2)} {t('sar')}</span>
+                            </div>
+                          </>
+                        );
+                      })()}
+                      
                       <div className="pt-4 border-t border-slate-200 flex justify-between items-center">
                         <span className="font-black text-slate-800">{t('total')}</span>
                         <span className="text-xl font-black text-brand-primary">{selectedOrder.total_amount.toFixed(2)} {t('sar')}</span>

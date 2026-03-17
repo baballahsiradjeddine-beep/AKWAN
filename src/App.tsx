@@ -40,6 +40,24 @@ export default function App() {
     fetchOrders();
   }, [fetchSettings, fetchProducts, fetchOrders]);
 
+  useEffect(() => {
+    import('./i18n/config').then((module) => {
+      const i18n = module.default;
+      const setDirection = (lng: string) => {
+        const isRtl = lng === 'ar' || lng.startsWith('ar-');
+        document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
+        document.documentElement.lang = lng;
+      };
+      
+      setDirection(i18n.language);
+      i18n.on('languageChanged', setDirection);
+      return () => {
+        i18n.off('languageChanged', setDirection);
+      };
+    });
+  }, []);
+
+
   // Update favicon dynamically
   const settings = useStore(state => state.settings);
   useEffect(() => {

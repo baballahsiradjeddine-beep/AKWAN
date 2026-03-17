@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
 
 export default function Navbar() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const cart = useStore((state) => state.cart);
   const settings = useStore((state) => state.settings);
@@ -26,7 +26,7 @@ export default function Navbar() {
           <div className="bg-brand-primary text-white px-4 py-2 text-center text-xs md:text-sm font-bold tracking-wide shadow-sm">
             <span className="inline-flex items-center justify-center gap-2 md:gap-4">
               <span className="animate-pulse">✨</span>
-              {settings.announcementText}
+              {i18n.language === 'en' && settings.announcementTextEn ? settings.announcementTextEn : settings.announcementText}
               <span className="animate-pulse">✨</span>
             </span>
           </div>

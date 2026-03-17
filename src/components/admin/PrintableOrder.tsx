@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useStore } from '../../store/useStore';
 
 interface PrintableOrderProps {
   order: any;
@@ -7,7 +8,11 @@ interface PrintableOrderProps {
 
 const PrintableOrder: React.FC<PrintableOrderProps> = ({ order }) => {
   const { t, i18n } = useTranslation();
+  const settings = useStore(state => state.settings);
   const isRTL = i18n.language === 'ar';
+  
+  const shippingFee = settings.shippingFee || 0;
+  const subtotal = order.total_amount > shippingFee ? order.total_amount - shippingFee : order.total_amount;
 
   return (
     <div className={`print-only p-12 bg-white text-black font-sans ${isRTL ? '' : 'font-inter'}`} dir={isRTL ? 'rtl' : 'ltr'} style={{ width: '210mm', minHeight: '297mm', margin: '0 auto' }}>
@@ -18,8 +23,9 @@ const PrintableOrder: React.FC<PrintableOrderProps> = ({ order }) => {
           <p className="text-xl font-bold text-gray-600">{new Date(order.created_at).toLocaleDateString(isRTL ? 'ar-EG' : 'en-US')}</p>
         </div>
         <div className={isRTL ? 'text-left' : 'text-right'}>
-          <h2 className="text-2xl font-black text-brand-primary">{t('my_arabic_roots')}</h2>
-          <p className="font-bold text-gray-500 mt-1">www.akwan.com</p>
+          <h2 className="text-2xl font-black text-brand-primary">{settings.siteName}</h2>
+          <p className="font-bold text-gray-500 mt-1">{settings.contactEmail}</p>
+          <p className="font-bold text-gray-400 text-sm mt-1">{settings.contactPhone}</p>
         </div>
       </div>
 
@@ -54,26 +60,36 @@ const PrintableOrder: React.FC<PrintableOrderProps> = ({ order }) => {
             </tr>
           </thead>
           <tbody>
-            <tr className="border-b border-gray-100">
-              <td className="p-4 font-bold">منتجات متنوعة</td>
-              <td className="p-4 font-bold text-center">1</td>
-              <td className="p-4 font-black text-center">{(order.total_amount - 25).toFixed(2)} {t('sar')}</td>
-            </tr>
+            {order.items && order.items.length > 0 ? (
+              order.items.map((item: any, index: number) => (
+                <tr key={index} className="border-b border-gray-100">
+                  <td className="p-4 font-bold">{item.name}</td>
+                  <td className="p-4 font-bold text-center">{item.quantity}</td>
+                  <td className="p-4 font-black text-center">{(item.price * item.quantity).toFixed(2)} {t('sar')}</td>
+                </tr>
+              ))
+            ) : (
+              <tr className="border-b border-gray-100">
+                <td className="p-4 font-bold">{t('products')}</td>
+                <td className="p-4 font-bold text-center">1</td>
+                <td className="p-4 font-black text-center">{subtotal.toFixed(2)} {t('sar')}</td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
 
       {/* Summary */}
-      <div className={`flex flex-col items-end space-y-3 ${isRTL ? 'mr-auto' : 'ml-auto'} w-64`}>
-        <div className="flex justify-between w-full text-gray-600 font-bold">
+      <div className={`flex flex-col items-end space-y-3 pt-6 ${isRTL ? 'mr-auto' : 'ml-auto'} w-72`}>
+        <div className="flex justify-between w-full text-gray-600 font-bold border-b border-gray-100 pb-2">
           <span>{t('subtotal')}</span>
-          <span>{(order.total_amount - 25).toFixed(2)} {t('sar')}</span>
+          <span>{subtotal.toFixed(2)} {t('sar')}</span>
         </div>
-        <div className="flex justify-between w-full text-gray-600 font-bold">
+        <div className="flex justify-between w-full text-gray-600 font-bold border-b border-gray-100 pb-2">
           <span>{t('shipping')}</span>
-          <span>25.00 {t('sar')}</span>
+          <span>{shippingFee.toFixed(2)} {t('sar')}</span>
         </div>
-        <div className="flex justify-between w-full pt-4 border-t-2 border-black text-2xl font-black">
+        <div className="flex justify-between w-full pt-4 border-t-2 border-brand-primary text-2xl font-black text-brand-secondary">
           <span>{t('total')}</span>
           <span>{order.total_amount.toFixed(2)} {t('sar')}</span>
         </div>
@@ -81,10 +97,10 @@ const PrintableOrder: React.FC<PrintableOrderProps> = ({ order }) => {
 
       {/* Footer */}
       <div className="mt-auto pt-20 text-center">
-        <div className="inline-block border-2 border-black px-8 py-4 mb-8">
-          <p className="text-xl font-black uppercase tracking-widest">شكراً لثقتكم بنا</p>
+        <div className="inline-block border-2 border-brand-primary/20 bg-brand-bg rounded-2xl px-8 py-4 mb-8">
+          <p className="text-xl font-black uppercase tracking-widest text-brand-secondary">{t('thank_you_trust', 'شكراً لثقتكم بنا')}</p>
         </div>
-        <p className="text-xs text-gray-400 font-bold">هذه الفاتورة تم إنشاؤها آلياً ولا تحتاج لختم أو توقيع</p>
+        <p className="text-xs text-gray-400 font-bold">{t('auto_generated_invoice', 'هذه الفاتورة تم إنشاؤها آلياً ولا تحتاج لختم أو توقيع')}</p>
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `
