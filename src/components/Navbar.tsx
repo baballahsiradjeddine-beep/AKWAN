@@ -119,8 +119,8 @@ export default function Navbar() {
 
       {/* Mobile Menu Drawer */}
       <div 
-        className={`fixed inset-y-0 end-0 w-[85%] max-w-sm bg-white z-[9999] transform transition-transform duration-300 ease-in-out lg:hidden shadow-2xl flex flex-col ${
-          isMenuOpen ? 'translate-x-0' : 'translate-x-full'
+        className={`fixed inset-y-0 start-0 w-[85%] max-w-sm bg-white z-[9999] transform transition-transform duration-300 ease-in-out lg:hidden shadow-2xl flex flex-col ${
+          isMenuOpen ? 'translate-x-0' : 'ltr:-translate-x-full rtl:translate-x-full'
         }`}
       >
         <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 bg-white shrink-0">
