@@ -177,7 +177,14 @@ const resources = {
       value_identity_title: "Arabic Identity",
       value_identity_desc: "We cherish our language and culture and instill them in the hearts of our children.",
       value_creativity_title: "Happiness and Creativity",
-      value_creativity_desc: "We design games that unleash the child's imagination and creativity."
+      value_creativity_desc: "We design games that unleash the child's imagination and creativity.",
+      no_products_found_yet: "No products found yet",
+      add_new_product: "Add New Product",
+      product_management_desc: "Manage your products, add new products, and track inventory easily.",
+      product_management: "Product Management",
+      weekly_sales_orders: "Weekly Sales & Orders Comparison",
+      sales: "Sales",
+      updated_stat: "Updated"
     }
   },
   ar: {
@@ -354,7 +361,14 @@ const resources = {
       value_identity_title: "الهوية العربية",
       value_identity_desc: "نعتز بلغتنا وثقافتنا ونغرسها في نفوس أطفالنا.",
       value_creativity_title: "السعادة والإبداع",
-      value_creativity_desc: "نصمم ألعاباً تطلق العنان لخيال الطفل وإبداعه."
+      value_creativity_desc: "نصمم ألعاباً تطلق العنان لخيال الطفل وإبداعه.",
+      no_products_found_yet: "لا توجد منتجات بعد",
+      add_new_product: "إضافة منتج جديد",
+      product_management_desc: "إدارة منتجاتك، إضافة منتجات جديدة، وتتبع المخزون.",
+      product_management: "إدارة المنتجات",
+      weekly_sales_orders: "مقارنة المبيعات والطلبات الأسبوعية",
+      sales: "مبيعات",
+      updated_stat: "محدث"
     }
   }
 };

@@ -82,7 +82,7 @@ export default function Dashboard() {
       name: t('total_products'), 
       value: products.length.toString(), 
       icon: Package, 
-      change: 'محدث', 
+      change: t('updated_stat'), 
       isUp: true,
       color: 'from-amber-500 to-orange-600',
       bg: 'bg-amber-50'
@@ -175,7 +175,7 @@ export default function Dashboard() {
           <div className="flex items-center justify-between mb-10">
             <div>
               <h2 className="text-xl font-black text-slate-800">{t('sales_analytics')}</h2>
-              <p className="text-xs text-slate-400 font-bold mt-1">Weekly Sales & Orders Comparison</p>
+              <p className="text-xs text-slate-400 font-bold mt-1">{t('weekly_sales_orders')}</p>
             </div>
             <button className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-xl transition-all">
               <MoreHorizontal className="w-6 h-6" />
@@ -236,7 +236,7 @@ export default function Dashboard() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <h4 className="font-black text-slate-800 text-sm truncate">{product.name}</h4>
-                    <p className="text-[11px] text-slate-400 font-bold mt-0.5">{product.sales} Sales</p>
+                    <p className="text-[11px] text-slate-400 font-bold mt-0.5">{product.sales} {t('sales')}</p>
                   </div>
                   <div className="text-left">
                     <p className="font-black text-brand-primary text-sm">{product.price} {t('sar')}</p>
@@ -254,7 +254,7 @@ export default function Dashboard() {
             ) : (
               <div className="flex flex-col items-center justify-center h-full text-slate-400 space-y-2 py-10">
                 <Package className="w-8 h-8 opacity-50" />
-                <p className="text-sm font-bold">لا توجد منتجات بعد</p>
+                <p className="text-sm font-bold">{t('no_products_found')}</p>
               </div>
             )}
           </div>

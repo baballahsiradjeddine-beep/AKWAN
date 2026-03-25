@@ -356,9 +356,10 @@ export default function ProductDetails() {
               {/* Description - Now below buttons */}
               <div className="bg-brand-surface/50 rounded-2xl md:rounded-3xl p-4 md:p-6 border-2 border-brand-bg mb-6 md:mb-8">
                 <h3 className="text-lg md:text-xl font-black text-brand-secondary mb-2 md:mb-3">{t('product_description')}</h3>
-                <p className="text-base md:text-lg text-brand-secondary/80 font-bold leading-relaxed">
-                  {product.description}
-                </p>
+                <div 
+                  className="prose prose-slate max-w-none text-base md:text-lg text-brand-secondary/90 font-bold leading-relaxed prose-headings:font-black prose-headings:text-brand-secondary prose-p:mb-4 prose-ul:list-disc prose-ul:mr-6 prose-ol:list-decimal prose-ol:mr-6 prose-a:text-brand-primary"
+                  dangerouslySetInnerHTML={{ __html: product.description }} 
+                />
               </div>
 
               {/* Mobile Social Buttons - Hidden on Desktop */}

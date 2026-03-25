@@ -3,9 +3,12 @@ import { Plus, Search, Edit, Trash2, MoreVertical, X, Upload, Loader2, Eye, Exte
 import { useStore, Product, VideoReview } from '../../store/useStore';
 import React, { useState, useRef, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
+import Editor from 'react-simple-wysiwyg';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 
 export default function AdminProducts() {
+  const { t } = useTranslation();
   const products = useStore((state) => state.products);
   const deleteProduct = useStore((state) => state.deleteProduct);
   const addProduct = useStore((state) => state.addProduct);
@@ -229,8 +232,8 @@ export default function AdminProducts() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-black text-slate-800 tracking-tight">إدارة المنتجات</h1>
-          <p className="text-slate-400 font-bold mt-1">تحكم في مخزونك ومنتجاتك بكل سهولة.</p>
+          <h1 className="text-3xl font-black text-slate-800 tracking-tight">{t('products')}</h1>
+          <p className="text-slate-400 font-bold mt-1">{t('product_management_desc')}</p>
         </div>
         <button 
           onClick={() => {
@@ -240,7 +243,7 @@ export default function AdminProducts() {
           className="bg-brand-primary text-white px-8 py-4 rounded-[1.5rem] font-black hover:bg-brand-secondary transition-all shadow-lg shadow-brand-primary/20 flex items-center justify-center gap-3 group"
         >
           <Plus className="w-6 h-6 group-hover:rotate-90 transition-transform" />
-          <span>إضافة منتج جديد</span>
+          <span>{t('add_product')}</span>
         </button>
       </div>
 
@@ -319,14 +322,12 @@ export default function AdminProducts() {
                         </div>
                       </div>
                       <div>
-                        <label className="block text-sm font-black text-slate-700 mb-2">الوصف</label>
-                        <textarea 
-                          rows={4}
+                        <label className="block text-sm font-black text-slate-700 mb-2">الوصف (يدعم النصوص المنسقة)</label>
+                        <Editor 
                           value={productForm.description}
                           onChange={(e) => setProductForm({...productForm, description: e.target.value})}
-                          className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/5 transition-all font-bold resize-none"
-                          placeholder="اكتب وصفاً جذاباً للمنتج..."
-                        ></textarea>
+                          containerProps={{ style: { minHeight: '200px', backgroundColor: '#f8fafc', borderRadius: '1rem', border: '1px solid #e2e8f0', direction: 'rtl' } }}
+                        />
                       </div>
                     </div>
 
@@ -557,7 +558,11 @@ export default function AdminProducts() {
                     
                     <div className="space-y-4">
                       <h4 className="text-sm font-black text-slate-400 uppercase tracking-widest">الوصف</h4>
-                      <p className="text-slate-600 font-bold leading-relaxed">{selectedProduct.description || 'لا يوجد وصف لهذا المنتج.'}</p>
+                      {selectedProduct.description ? (
+                         <div className="prose prose-slate prose-sm font-medium leading-relaxed max-w-none prose-headings:font-black prose-p:text-slate-600 prose-a:text-brand-primary" dangerouslySetInnerHTML={{ __html: selectedProduct.description }} />
+                      ) : (
+                         <p className="text-slate-600 font-bold leading-relaxed">لا يوجد وصف لهذا المنتج.</p>
+                      )}
                     </div>
 
                     <div className="grid grid-cols-2 gap-6">
@@ -596,7 +601,7 @@ export default function AdminProducts() {
           <Search className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 w-6 h-6" />
           <input 
             type="text" 
-            placeholder="ابحث عن منتج بالاسم أو التصنيف..." 
+            placeholder={t('search_placeholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-6 pr-14 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/5 transition-all font-bold text-slate-700"

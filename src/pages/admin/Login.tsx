@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { Lock, Mail, Loader2 } from 'lucide-react';
+import { Lock, Mail, Loader2, Globe } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function Login() {
+  const { t, i18n } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -33,8 +35,22 @@ export default function Login() {
     }
   };
 
+  const toggleLanguage = () => {
+    i18n.changeLanguage(i18n.language === 'ar' ? 'en' : 'ar');
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8" dir="rtl">
+    <div className={`min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 ${i18n.language === 'ar' ? '' : 'font-inter'}`} dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}>
+      <div className="absolute top-6 left-6">
+        <button
+          onClick={toggleLanguage}
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-white rounded-full shadow-md text-sm font-bold text-gray-700 hover:text-brand-primary"
+        >
+          <Globe className="w-5 h-5" />
+          <span>{i18n.language === 'ar' ? 'EN' : 'عربي'}</span>
+        </button>
+      </div>
+      
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
           <div className="w-16 h-16 bg-brand-primary rounded-2xl flex items-center justify-center shadow-lg">
@@ -42,10 +58,10 @@ export default function Login() {
           </div>
         </div>
         <h2 className="mt-6 text-center text-3xl font-black text-gray-900">
-          تسجيل الدخول للوحة التحكم
+          {t('login_title', 'تسجيل الدخول للوحة التحكم')}
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600 font-medium">
-          يرجى إدخال بيانات الاعتماد الخاصة بك للوصول
+          {t('login_subtitle', 'يرجى إدخال بيانات الاعتماد الخاصة بك للوصول')}
         </p>
       </div>
 
@@ -60,7 +76,7 @@ export default function Login() {
 
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-2">
-                البريد الإلكتروني
+                {t('email_label', 'البريد الإلكتروني')}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -80,7 +96,7 @@ export default function Login() {
 
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-2">
-                كلمة المرور
+                {t('password_label', 'كلمة المرور')}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -106,7 +122,7 @@ export default function Login() {
               {loading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
               ) : (
-                'تسجيل الدخول'
+                t('login_btn', 'تسجيل الدخول')
               )}
             </button>
           </form>

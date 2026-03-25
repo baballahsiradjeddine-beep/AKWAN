@@ -5,8 +5,10 @@ import { useStore, SiteSettings } from '../../store/useStore';
 import { supabase } from '../../lib/supabase';
 import toast from 'react-hot-toast';
 import AdminTestimonials from '../../components/admin/Testimonials';
+import { useTranslation } from 'react-i18next';
 
 export default function AdminSettings() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('general');
   const settings = useStore((state) => state.settings);
   const updateSettings = useStore((state) => state.updateSettings);
@@ -137,14 +139,14 @@ export default function AdminSettings() {
   };
 
   const tabs = [
-    { id: 'general', label: 'عام', icon: Store },
-    { id: 'content', label: 'محتوى الموقع', icon: Type },
-    { id: 'images', label: 'الصور', icon: ImageIcon },
-    { id: 'social', label: 'التواصل الاجتماعي', icon: LinkIcon },
-    { id: 'partners', label: 'الشركاء', icon: Handshake },
-    { id: 'testimonials', label: 'آراء العملاء', icon: MessageSquareQuote },
-    { id: 'payment', label: 'الدفع', icon: CreditCard },
-    { id: 'shipping', label: 'الشحن', icon: Truck },
+    { id: 'general', label: t('general_settings', 'عام'), icon: Store },
+    { id: 'content', label: t('site_content', 'محتوى الموقع'), icon: Type },
+    { id: 'images', label: t('images_settings', 'الصور'), icon: ImageIcon },
+    { id: 'social', label: t('social_media', 'التواصل الاجتماعي'), icon: LinkIcon },
+    { id: 'partners', label: t('partners', 'الشركاء'), icon: Handshake },
+    { id: 'testimonials', label: t('testimonials', 'آراء العملاء'), icon: MessageSquareQuote },
+    { id: 'payment', label: t('payment_settings', 'الدفع'), icon: CreditCard },
+    { id: 'shipping', label: t('shipping_settings', 'الشحن'), icon: Truck },
   ];
 
   return (
@@ -152,7 +154,7 @@ export default function AdminSettings() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-gray-800">الإعدادات</h1>
+          <h1 className="text-2xl font-black text-gray-800">{t('settings')}</h1>
           {saveMessage && (
             <p className="text-green-600 font-bold text-sm mt-1">{saveMessage}</p>
           )}
@@ -163,7 +165,7 @@ export default function AdminSettings() {
           className="bg-brand-primary text-white px-6 py-2.5 rounded-xl font-bold hover:bg-brand-secondary transition-colors shadow-sm flex items-center justify-center gap-2 disabled:opacity-70"
         >
           <Save className="w-5 h-5" />
-          <span>{isSaving ? 'جاري الحفظ...' : 'حفظ التغييرات'}</span>
+          <span>{isSaving ? t('saving_changes', 'جاري الحفظ...') : t('save_changes', 'حفظ التغييرات')}</span>
         </button>
       </div>
 
@@ -213,8 +215,8 @@ export default function AdminSettings() {
             {activeTab === 'general' && (
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-xl font-black text-gray-800 mb-1">إعدادات المتجر العامة</h2>
-                  <p className="text-sm text-gray-500 font-medium mb-6">قم بتحديث معلومات متجرك الأساسية والهوية البصرية.</p>
+                  <h2 className="text-xl font-black text-gray-800 mb-1">{t('general_store_settings')}</h2>
+                  <p className="text-sm text-gray-500 font-medium mb-6">{t('general_store_settings_desc')}</p>
                 </div>
                 
                 <div className="space-y-6">
@@ -222,7 +224,7 @@ export default function AdminSettings() {
                   <div className="bg-brand-primary/5 p-6 rounded-2xl border border-brand-primary/10">
                     <h3 className="text-lg font-bold text-brand-primary mb-4 flex items-center gap-2">
                       <ImageIcon className="w-5 h-5" />
-                      هوية المتجر (الشعار والـ Favicon)
+                      {t('store_identity')}
                     </h3>
                     
                     <div className="space-y-6">

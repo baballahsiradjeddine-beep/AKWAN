@@ -6,12 +6,7 @@ import { supabase } from '../lib/supabase';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 
-const sidebarLinks = [
-  { name: 'لوحة التحكم', path: '/admin', icon: LayoutDashboard },
-  { name: 'المنتجات', path: '/admin/products', icon: Package },
-  { name: 'الطلبات', path: '/admin/orders', icon: ShoppingCart },
-  { name: 'الإعدادات', path: '/admin/settings', icon: Settings },
-];
+
 
 const mockNotifications = [
   { id: 1, title: 'طلب جديد #1005', time: 'منذ 5 دقائق', type: 'order', read: false },

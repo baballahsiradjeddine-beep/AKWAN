@@ -15,6 +15,8 @@ import Settings from './pages/admin/Settings';
 import Login from './pages/admin/Login';
 import ProtectedRoute from './components/admin/ProtectedRoute';
 import SplashScreen from './components/SplashScreen';
+import ScrollRestoration from './components/ScrollRestoration';
+import NotFound from './pages/NotFound';
 import { useStore } from './store/useStore';
 
 export default function App() {
@@ -86,6 +88,7 @@ export default function App() {
       <Toaster position="top-center" />
       {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
       <BrowserRouter>
+        <ScrollRestoration />
         <Routes>
           {/* Public Routes */}
           <Route element={<PublicLayout />}>
@@ -94,6 +97,7 @@ export default function App() {
             <Route path="/product/:id" element={<ProductDetails />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/about" element={<About />} />
+            <Route path="*" element={<NotFound />} />
           </Route>
 
           {/* Admin Auth Route */}
