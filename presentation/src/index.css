@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&family=Outfit:wght@100..900&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --color-brand-primary: #8D699F;
+  --color-brand-secondary: #5C436A;
+  --color-brand-accent: #FFD166;
+  --color-brand-bg: #F5F1F7;
+  --color-brand-surface: #FFFFFF;
+  --color-brand-dark: #2D1B36;
+  --color-brand-muted: #A592AD;
+
+  --font-sans: 'Tajawal', sans-serif;
+  --font-inter: 'Outfit', sans-serif;
+
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-pulse-soft: pulse-soft 3s ease-in-out infinite;
+  --animate-spin-super-slow: spin 45s linear infinite;
+  --animate-spin-super-slow-reverse: spin-reverse 50s linear infinite;
+  --animate-float-wide: float-wide 20s ease-in-out infinite;
+  --animate-float-vertical: float-vertical 15s ease-in-out infinite;
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+
+  @keyframes pulse-soft {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+  }
+
+  @keyframes spin-reverse {
+    from { transform: rotate(360deg); }
+    to { transform: rotate(0deg); }
+  }
+
+  @keyframes float-wide {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(40px, -40px) scale(1.1); }
+    66% { transform: translate(-30px, 40px) scale(0.95); }
+  }
+
+  @keyframes float-vertical {
+    0%, 100% { transform: translateY(0) scale(1); opacity: 0.2; }
+    50% { transform: translateY(-100px) scale(1.2); opacity: 0.6; }
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-brand-bg text-brand-dark font-sans md:overflow-hidden;
+  margin: 0;
+  padding: 0;
+}
+
+@utility no-scrollbar {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
