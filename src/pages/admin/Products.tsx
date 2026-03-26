@@ -230,45 +230,42 @@ export default function AdminProducts() {
   return (
     <div className="space-y-8 pb-20">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-        <div>
-          <h1 className="text-3xl font-black text-slate-800 tracking-tight">{t('products')}</h1>
-          <p className="text-slate-400 font-bold mt-1">{t('product_management_desc')}</p>
+      {!(isAdding || isEditing) && (
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+          <div>
+            <h1 className="text-3xl font-black text-slate-800 tracking-tight">{t('products')}</h1>
+            <p className="text-slate-400 font-bold mt-1">{t('product_management_desc')}</p>
+          </div>
+          <button 
+            onClick={() => {
+              resetForm();
+              setIsAdding(true);
+            }}
+            className="bg-brand-primary text-white px-8 py-4 rounded-[1.5rem] font-black hover:bg-brand-secondary transition-all shadow-lg shadow-brand-primary/20 flex items-center justify-center gap-3 group"
+          >
+            <Plus className="w-6 h-6 group-hover:rotate-90 transition-transform" />
+            <span>{t('add_product')}</span>
+          </button>
         </div>
-        <button 
-          onClick={() => {
-            resetForm();
-            setIsAdding(true);
-          }}
-          className="bg-brand-primary text-white px-8 py-4 rounded-[1.5rem] font-black hover:bg-brand-secondary transition-all shadow-lg shadow-brand-primary/20 flex items-center justify-center gap-3 group"
-        >
-          <Plus className="w-6 h-6 group-hover:rotate-90 transition-transform" />
-          <span>{t('add_product')}</span>
-        </button>
-      </div>
+      )}
 
       {/* Modals */}
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {(isAdding || isEditing) && (
           <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4"
+            key="product-form"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden flex flex-col w-full max-w-5xl mx-auto"
           >
-            <motion.div 
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-2xl overflow-hidden max-h-[90vh] flex flex-col"
-            >
-              <div className="p-8 border-b border-slate-100 flex justify-between items-center shrink-0 bg-slate-50/50">
+            <div className="p-8 border-b border-slate-100 flex justify-between items-center shrink-0 bg-slate-50/50">
                 <h2 className="text-2xl font-black text-slate-800">{isEditing ? t('edit_product_title') : t('add_new_product_title')}</h2>
                 <button onClick={() => { setIsAdding(false); setIsEditing(false); }} className="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all">
                   <X className="w-7 h-7" />
                 </button>
               </div>
-              <div className="p-8 overflow-y-auto custom-scrollbar">
+              <div className="p-8">
                 <form id="productForm" onSubmit={isEditing ? handleEditSubmit : handleAddSubmit} className="space-y-8">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-6">
@@ -510,12 +507,15 @@ export default function AdminProducts() {
                 </button>
               </div>
             </motion.div>
-          </motion.div>
         )}
+      </AnimatePresence>
 
-        {/* View Modal */}
-        {isViewing && selectedProduct && (
-          <motion.div 
+      {!(isAdding || isEditing) && (
+        <div className="space-y-8">
+          {/* View Modal */}
+          <AnimatePresence>
+            {isViewing && selectedProduct && (
+              <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -774,6 +774,8 @@ export default function AdminProducts() {
           </div>
         </div>
       </div>
+        </div>
+      )}
     </div>
   );
 }
