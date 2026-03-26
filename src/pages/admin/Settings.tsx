@@ -31,13 +31,13 @@ export default function AdminSettings() {
 
     // Validate file type
     if (!file.type.startsWith('image/')) {
-      toast.error('يرجى اختيار ملف صورة فقط');
+      toast.error(t('only_image_file_allowed'));
       return;
     }
 
     // Validate file size (max 2MB)
     if (file.size > 2 * 1024 * 1024) {
-      toast.error('حجم الصورة يجب أن يكون أقل من 2 ميجابايت');
+      toast.error(t('image_size_limit'));
       return;
     }
 
@@ -69,10 +69,10 @@ export default function AdminSettings() {
         }));
       }
       
-      toast.success('تم رفع الصورة بنجاح');
+      toast.success(t('image_uploaded_success'));
     } catch (error: any) {
       console.error('Upload error:', error);
-      toast.error(`فشل الرفع: ${error.message || 'تأكد من وجود Bucket باسم site-assets في Supabase'}`);
+      toast.error(`${t('upload_failed')}: ${error.message}`);
     } finally {
       setUploadingField(null);
     }
@@ -105,7 +105,7 @@ export default function AdminSettings() {
 
   const handleSave = async () => {
     setIsSaving(true);
-    setSaveMessage('جاري الحفظ و الترجمة...'); // Saving and translating
+    setSaveMessage(t('saving_and_translating')); // Saving and translating
     try {
       const translatedData = { ...formData };
       const { translateText } = await import('../../utils/translate');
@@ -128,10 +128,10 @@ export default function AdminSettings() {
 
       await updateSettings(translatedData);
       setFormData(translatedData);
-      setSaveMessage('تم الحفظ والترجمة بنجاح!');
+      setSaveMessage(t('save_translate_success'));
     } catch (error: any) {
       console.error('Error saving settings:', error);
-      setSaveMessage(`حدث خطأ: ${error.message || 'يرجى المحاولة مرة أخرى'}`);
+      setSaveMessage(`${t('error_occurred')}: ${error.message}`);
     } finally {
       setIsSaving(false);
       setTimeout(() => setSaveMessage(''), 3000);
@@ -229,7 +229,7 @@ export default function AdminSettings() {
                     
                     <div className="space-y-6">
                       <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-2">نوع الشعار</label>
+                        <label className="block text-sm font-bold text-gray-700 mb-2">{t('logo_type')}</label>
                         <div className="flex gap-4">
                           <button
                             onClick={() => setFormData(prev => ({ ...prev, logoType: 'text' }))}
@@ -248,7 +248,7 @@ export default function AdminSettings() {
 
                       {formData.logoType === 'image' && (
                         <div className="p-4 bg-white rounded-xl border border-gray-100">
-                          <label className="block text-sm font-bold text-gray-700 mb-3">صورة الشعار</label>
+                          <label className="block text-sm font-bold text-gray-700 mb-3">{t('logo_image_label')}</label>
                           <div 
                             onClick={() => triggerUpload('logoImage')}
                             className={`relative group cursor-pointer border-2 border-dashed rounded-2xl p-4 transition-all flex flex-col items-center justify-center min-h-[120px] ${formData.logoImage ? 'border-brand-primary/30 bg-brand-primary/5' : 'border-gray-200 hover:border-brand-primary/50 bg-gray-50'}`}
@@ -256,13 +256,13 @@ export default function AdminSettings() {
                             {uploadingField === 'logoImage' ? (
                               <div className="flex flex-col items-center gap-2">
                                 <Loader2 className="w-8 h-8 text-brand-primary animate-spin" />
-                                <span className="text-sm font-bold text-brand-primary">جاري الرفع...</span>
+                                <span className="text-sm font-bold text-brand-primary">{t('uploading')}</span>
                               </div>
                             ) : formData.logoImage ? (
                               <div className="relative w-full flex flex-col items-center gap-3">
                                 <img src={formData.logoImage} alt="Logo" className="max-h-24 object-contain rounded-lg" />
                                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
-                                  <span className="text-white text-xs font-bold bg-brand-primary px-3 py-1 rounded-full">تغيير الصورة</span>
+                                  <span className="text-white text-xs font-bold bg-brand-primary px-3 py-1 rounded-full">{t('change_image')}</span>
                                 </div>
                                 <p className="text-[10px] text-gray-400 truncate max-w-full">{formData.logoImage}</p>
                               </div>
@@ -271,8 +271,8 @@ export default function AdminSettings() {
                                 <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm">
                                   <Upload className="w-6 h-6" />
                                 </div>
-                                <span className="text-sm font-bold">اضغط لرفع الشعار</span>
-                                <span className="text-[10px]">يفضل خلفية شفافة PNG</span>
+                                <span className="text-sm font-bold">{t('click_to_upload_logo')}</span>
+                                <span className="text-[10px]">{t('transparent_png_preferred')}</span>
                               </div>
                             )}
                           </div>
@@ -280,7 +280,7 @@ export default function AdminSettings() {
                       )}
 
                       <div className="p-4 bg-white rounded-xl border border-gray-100">
-                        <label className="block text-sm font-bold text-gray-700 mb-3">أيقونة المتصفح (Favicon)</label>
+                        <label className="block text-sm font-bold text-gray-700 mb-3">{t('browser_favicon')}</label>
                         <div 
                           onClick={() => triggerUpload('favicon')}
                           className={`relative group cursor-pointer border-2 border-dashed rounded-2xl p-4 transition-all flex flex-col items-center justify-center min-h-[100px] ${formData.favicon ? 'border-brand-primary/30 bg-brand-primary/5' : 'border-gray-200 hover:border-brand-primary/50 bg-gray-50'}`}
@@ -290,12 +290,12 @@ export default function AdminSettings() {
                           ) : formData.favicon ? (
                             <div className="flex flex-col items-center gap-2">
                               <img src={formData.favicon} alt="Favicon" className="w-10 h-10 object-contain" />
-                              <span className="text-[10px] text-gray-400">اضغط للتغيير</span>
+                              <span className="text-[10px] text-gray-400">{t('click_to_change')}</span>
                             </div>
                           ) : (
                             <div className="flex flex-col items-center gap-2 text-gray-400">
                               <Upload className="w-5 h-5" />
-                              <span className="text-xs font-bold">رفع أيقونة</span>
+                              <span className="text-xs font-bold">{t('upload_icon')}</span>
                             </div>
                           )}
                         </div>
@@ -304,33 +304,33 @@ export default function AdminSettings() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">اسم المتجر</label>
+                    <label className="block text-sm font-bold text-gray-700 mb-1">{t('store_name_label')}</label>
                     <input type="text" name="siteName" value={formData.siteName} onChange={handleChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary" />
                   </div>
                   
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-bold text-gray-700 mb-1">البريد الإلكتروني للتواصل</label>
+                      <label className="block text-sm font-bold text-gray-700 mb-1">{t('contact_email')}</label>
                       <input type="email" name="contactEmail" value={formData.contactEmail} onChange={handleChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary text-left" dir="ltr" />
                     </div>
                     <div>
-                      <label className="block text-sm font-bold text-gray-700 mb-1">رقم الهاتف</label>
+                      <label className="block text-sm font-bold text-gray-700 mb-1">{t('phone_number')}</label>
                       <input type="tel" name="contactPhone" value={formData.contactPhone} onChange={handleChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary text-left" dir="ltr" />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">العنوان</label>
+                    <label className="block text-sm font-bold text-gray-700 mb-1">{t('address')}</label>
                     <input type="text" name="contactAddress" value={formData.contactAddress} onChange={handleChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary" />
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-bold text-gray-700 mb-1">السجل التجاري</label>
+                      <label className="block text-sm font-bold text-gray-700 mb-1">{t('commercial_register')}</label>
                       <input type="text" name="commercialRegister" value={formData.commercialRegister} onChange={handleChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary text-left" dir="ltr" />
                     </div>
                     <div>
-                      <label className="block text-sm font-bold text-gray-700 mb-1">الرقم الضريبي</label>
+                      <label className="block text-sm font-bold text-gray-700 mb-1">{t('tax_number_label')}</label>
                       <input type="text" name="taxNumber" value={formData.taxNumber} onChange={handleChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary text-left" dir="ltr" />
                     </div>
                   </div>
@@ -341,54 +341,54 @@ export default function AdminSettings() {
             {activeTab === 'content' && (
               <div className="space-y-8">
                 <div>
-                  <h2 className="text-xl font-black text-gray-800 mb-1">محتوى الموقع</h2>
-                  <p className="text-sm text-gray-500 font-medium mb-6">تعديل النصوص الثابتة في صفحات الموقع.</p>
+                  <h2 className="text-xl font-black text-gray-800 mb-1">{t('site_content', 'محتوى الموقع')}</h2>
+                  <p className="text-sm text-gray-500 font-medium mb-6">{t('site_content_desc')}</p>
                 </div>
                 
                 {/* Navbar */}
                 <div className="space-y-4 pb-6 border-b border-gray-100">
-                  <h3 className="text-lg font-bold text-brand-primary">الشريط العلوي</h3>
+                  <h3 className="text-lg font-bold text-brand-primary">{t('top_bar')}</h3>
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">شريط الإعلانات (اتركه فارغاً لإخفائه)</label>
+                    <label className="block text-sm font-bold text-gray-700 mb-1">{t('announcement_bar_label')}</label>
                     <input type="text" name="announcementText" value={formData.announcementText} onChange={handleChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary" />
                   </div>
                 </div>
 
                 {/* Hero */}
                 <div className="space-y-4 pb-6 border-b border-gray-100">
-                  <h3 className="text-lg font-bold text-brand-primary">القسم الرئيسي (الرئيسية)</h3>
+                  <h3 className="text-lg font-bold text-brand-primary">{t('hero_section_label')}</h3>
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">العنوان الرئيسي</label>
+                    <label className="block text-sm font-bold text-gray-700 mb-1">{t('main_heading')}</label>
                     <input type="text" name="heroTitle" value={formData.heroTitle} onChange={handleChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary" />
                   </div>
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">النص الفرعي</label>
+                    <label className="block text-sm font-bold text-gray-700 mb-1">{t('subheading')}</label>
                     <textarea rows={3} name="heroSubtitle" value={formData.heroSubtitle} onChange={handleChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary resize-none"></textarea>
                   </div>
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">نص الزر</label>
+                    <label className="block text-sm font-bold text-gray-700 mb-1">{t('button_text')}</label>
                     <input type="text" name="heroButtonText" value={formData.heroButtonText} onChange={handleChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary" />
                   </div>
                 </div>
 
                 {/* About */}
                 <div className="space-y-4 pb-6 border-b border-gray-100">
-                  <h3 className="text-lg font-bold text-brand-primary">قسم من نحن</h3>
+                  <h3 className="text-lg font-bold text-brand-primary">{t('about_section_label')}</h3>
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">العنوان</label>
+                    <label className="block text-sm font-bold text-gray-700 mb-1">{t('address')}</label>
                     <input type="text" name="aboutTitle" value={formData.aboutTitle} onChange={handleChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary" />
                   </div>
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">النص الفرعي</label>
+                    <label className="block text-sm font-bold text-gray-700 mb-1">{t('subheading')}</label>
                     <textarea rows={2} name="aboutSubtitle" value={formData.aboutSubtitle} onChange={handleChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary resize-none"></textarea>
                   </div>
                 </div>
 
                 {/* Footer */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-bold text-brand-primary">الفوتر (أسفل الصفحة)</h3>
+                  <h3 className="text-lg font-bold text-brand-primary">{t('footer_label')}</h3>
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">وصف المتجر القصير</label>
+                    <label className="block text-sm font-bold text-gray-700 mb-1">{t('short_store_desc')}</label>
                     <textarea rows={3} name="footerDescription" value={formData.footerDescription} onChange={handleChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary resize-none"></textarea>
                   </div>
                 </div>
@@ -398,8 +398,8 @@ export default function AdminSettings() {
             {activeTab === 'images' && (
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-xl font-black text-gray-800 mb-1">صور الموقع</h2>
-                  <p className="text-sm text-gray-500 font-medium mb-6">تغيير الصور الثابتة في الموقع (رفع مباشر أو روابط).</p>
+                  <h2 className="text-xl font-black text-gray-800 mb-1">{t('images_settings')}</h2>
+                  <p className="text-sm text-gray-500 font-medium mb-6">{t('site_images_desc')}</p>
                 </div>
                 
                 <div className="space-y-8">
@@ -417,13 +417,13 @@ export default function AdminSettings() {
                         {uploadingField === field.id ? (
                           <div className="flex flex-col items-center gap-2">
                             <Loader2 className="w-10 h-10 text-brand-primary animate-spin" />
-                            <span className="text-sm font-bold text-brand-primary">جاري الرفع...</span>
+                            <span className="text-sm font-bold text-brand-primary">{t('uploading')}</span>
                           </div>
                         ) : (formData as any)[field.id] ? (
                           <div className="relative w-full flex flex-col items-center gap-4">
                             <img src={(formData as any)[field.id]} alt="Preview" className="max-h-40 w-auto object-contain rounded-xl shadow-sm" />
                             <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-xl">
-                              <span className="bg-white text-brand-primary px-4 py-2 rounded-xl font-bold shadow-lg transform scale-90 group-hover:scale-100 transition-transform">تغيير الصورة</span>
+                              <span className="bg-white text-brand-primary px-4 py-2 rounded-xl font-bold shadow-lg transform scale-90 group-hover:scale-100 transition-transform">{t('change_image')}</span>
                             </div>
                             <p className="text-[10px] text-gray-400 truncate max-w-xs">{(formData as any)[field.id]}</p>
                           </div>
@@ -433,8 +433,8 @@ export default function AdminSettings() {
                               <Upload className="w-8 h-8" />
                             </div>
                             <div className="text-center">
-                              <p className="text-sm font-bold text-gray-600">اضغط لرفع الصورة</p>
-                              <p className="text-xs">أو اسحب الملف هنا</p>
+                              <p className="text-sm font-bold text-gray-600">{t('click_to_upload_image')}</p>
+                              <p className="text-xs">{t('or_drag_drop')}</p>
                             </div>
                           </div>
                         )}
@@ -448,25 +448,25 @@ export default function AdminSettings() {
             {activeTab === 'social' && (
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-xl font-black text-gray-800 mb-1">التواصل الاجتماعي</h2>
-                  <p className="text-sm text-gray-500 font-medium mb-6">روابط حسابات المتجر على منصات التواصل.</p>
+                  <h2 className="text-xl font-black text-gray-800 mb-1">{t('social_media')}</h2>
+                  <p className="text-sm text-gray-500 font-medium mb-6">{t('social_media_desc')}</p>
                 </div>
                 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">انستغرام</label>
+                    <label className="block text-sm font-bold text-gray-700 mb-1">{t('instagram')}</label>
                     <input type="url" name="social_instagram" value={formData.socialLinks.instagram} onChange={handleChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary text-left" dir="ltr" />
                   </div>
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">سناب شات</label>
+                    <label className="block text-sm font-bold text-gray-700 mb-1">{t('snapchat')}</label>
                     <input type="url" name="social_snapchat" value={formData.socialLinks.snapchat} onChange={handleChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary text-left" dir="ltr" />
                   </div>
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">تيك توك</label>
+                    <label className="block text-sm font-bold text-gray-700 mb-1">{t('tiktok')}</label>
                     <input type="url" name="social_tiktok" value={formData.socialLinks.tiktok} onChange={handleChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary text-left" dir="ltr" />
                   </div>
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">فيسبوك</label>
+                    <label className="block text-sm font-bold text-gray-700 mb-1">{t('facebook')}</label>
                     <input type="url" name="social_facebook" value={formData.socialLinks.facebook} onChange={handleChange} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-brand-primary text-left" dir="ltr" />
                   </div>
                 </div>
@@ -476,8 +476,8 @@ export default function AdminSettings() {
             {activeTab === 'partners' && (
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-xl font-black text-gray-800 mb-1">شركاؤنا</h2>
-                  <p className="text-sm text-gray-500 font-medium mb-6">إدارة شعارات الشركاء التي تظهر في الصفحة الرئيسية.</p>
+                  <h2 className="text-xl font-black text-gray-800 mb-1">{t('partners')}</h2>
+                  <p className="text-sm text-gray-500 font-medium mb-6">{t('partners_desc')}</p>
                 </div>
                 
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -506,7 +506,7 @@ export default function AdminSettings() {
                     ) : (
                       <>
                         <Plus className="w-8 h-8 mb-2" />
-                        <span className="text-sm font-bold">إضافة شريك</span>
+                        <span className="text-sm font-bold">{t('add_partner')}</span>
                       </>
                     )}
                   </button>
@@ -521,8 +521,8 @@ export default function AdminSettings() {
             {activeTab === 'shipping' && (
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-xl font-black text-gray-800 mb-1">إعدادات الشحن</h2>
-                  <p className="text-sm text-gray-500 font-medium mb-6">تحكم في تكاليف الشحن وعروض الشحن المجاني.</p>
+                  <h2 className="text-xl font-black text-gray-800 mb-1">{t('shipping_settings')}</h2>
+                  <p className="text-sm text-gray-500 font-medium mb-6">{t('shipping_settings_desc')}</p>
                 </div>
                 
                 <div className="space-y-6">
@@ -532,14 +532,14 @@ export default function AdminSettings() {
                         <Truck className="w-6 h-6 text-brand-primary" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-bold text-brand-secondary">تكاليف التوصيل</h3>
-                        <p className="text-xs text-brand-muted font-medium">حدد المبلغ الذي يدفعه العميل للشحن.</p>
+                        <h3 className="text-lg font-bold text-brand-secondary">{t('delivery_costs')}</h3>
+                        <p className="text-xs text-brand-muted font-medium">{t('delivery_costs_desc')}</p>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <label className="block text-sm font-bold text-gray-700">رسوم الشحن الثابتة (ر.س)</label>
+                        <label className="block text-sm font-bold text-gray-700">{t('fixed_shipping_fee')}</label>
                         <div className="relative">
                           <input 
                             type="number" 
@@ -552,11 +552,11 @@ export default function AdminSettings() {
                           />
                           <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">ر.س</span>
                         </div>
-                        <p className="text-[10px] text-gray-400 font-medium">سيتم إضافة هذا المبلغ تلقائياً لكل طلب.</p>
+                        <p className="text-[10px] text-gray-400 font-medium">{t('shipping_fee_note')}</p>
                       </div>
 
                       <div className="space-y-2">
-                        <label className="block text-sm font-bold text-gray-700">حد الشحن المجاني (ر.س)</label>
+                        <label className="block text-sm font-bold text-gray-700">{t('free_shipping_threshold')}</label>
                         <div className="relative">
                           <input 
                             type="number" 
@@ -569,7 +569,7 @@ export default function AdminSettings() {
                           />
                           <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">ر.س</span>
                         </div>
-                        <p className="text-[10px] text-gray-400 font-medium">اجعل الشحن مجانياً إذا تجاوز الطلب هذا المبلغ (0 تعني لا يوجد شحن مجاني).</p>
+                        <p className="text-[10px] text-gray-400 font-medium">{t('free_shipping_note')}</p>
                       </div>
                     </div>
                   </div>
@@ -579,8 +579,8 @@ export default function AdminSettings() {
                       <Shield className="w-5 h-5 text-amber-500" />
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-amber-800">ملاحظة هامة</p>
-                      <p className="text-xs text-amber-700 font-medium mt-0.5">إذا كنت تريد إلغاء رسوم الشحن تماماً، اجعل "رسوم الشحن الثابتة" تساوي 0.</p>
+                      <p className="text-sm font-bold text-amber-800">{t('important_note')}</p>
+                      <p className="text-xs text-amber-700 font-medium mt-0.5">{t('remove_shipping_fee_note')}</p>
                     </div>
                   </div>
                 </div>
@@ -592,7 +592,7 @@ export default function AdminSettings() {
                 <div className="w-20 h-20 bg-brand-bg rounded-full flex items-center justify-center mb-4">
                   <CreditCard className="w-10 h-10 text-brand-primary opacity-50" />
                 </div>
-                <h3 className="text-lg font-black text-gray-800 mb-2">قريباً </h3>
+                <h3 className="text-lg font-black text-gray-800 mb-2">{t('coming_soon')}</h3>
                 <p className="text-gray-500 font-medium max-w-sm">
                   هذا القسم قيد التطوير حالياً. سيتم إضافة إعدادات الدفع قريباً.
                 </p>
