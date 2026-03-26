@@ -87,10 +87,10 @@ export default function Footer() {
               <span className="absolute -bottom-2 end-1/2 translate-x-1/2 md:end-0 md:translate-x-0 w-1/2 h-1 bg-brand-accent rounded-full"></span>
             </h4>
             <ul className="space-y-3 md:space-y-4 text-sm md:text-base text-gray-300 w-full">
-              <li><Link to="/" className="flex items-center justify-center md:justify-start hover:text-brand-accent transition-all duration-300 ltr:hover:translate-x-1 rtl:hover:-translate-x-1 group"><span className="w-2 h-2 rounded-full bg-brand-primary ms-3 group-hover:bg-brand-accent transition-colors"></span>{t('home')}</Link></li>
-              <li><Link to="/shop" className="flex items-center justify-center md:justify-start hover:text-brand-accent transition-all duration-300 ltr:hover:translate-x-1 rtl:hover:-translate-x-1 group"><span className="w-2 h-2 rounded-full bg-brand-primary ms-3 group-hover:bg-brand-accent transition-colors"></span>{t('shop')}</Link></li>
-              <li><Link to="/about" className="flex items-center justify-center md:justify-start hover:text-brand-accent transition-all duration-300 ltr:hover:translate-x-1 rtl:hover:-translate-x-1 group"><span className="w-2 h-2 rounded-full bg-brand-primary ms-3 group-hover:bg-brand-accent transition-colors"></span>{t('about')}</Link></li>
-              <li><Link to="/cart" className="flex items-center justify-center md:justify-start hover:text-brand-accent transition-all duration-300 ltr:hover:translate-x-1 rtl:hover:-translate-x-1 group"><span className="w-2 h-2 rounded-full bg-brand-primary ms-3 group-hover:bg-brand-accent transition-colors"></span>{t('cart')}</Link></li>
+              <li><Link to="/" className="flex items-center justify-center md:justify-start gap-2.5 hover:text-brand-accent transition-all duration-300 ltr:hover:translate-x-1 rtl:hover:-translate-x-1 group"><span className="w-2 h-2 rounded-full bg-brand-primary group-hover:bg-brand-accent transition-colors"></span>{t('home')}</Link></li>
+              <li><Link to="/shop" className="flex items-center justify-center md:justify-start gap-2.5 hover:text-brand-accent transition-all duration-300 ltr:hover:translate-x-1 rtl:hover:-translate-x-1 group"><span className="w-2 h-2 rounded-full bg-brand-primary group-hover:bg-brand-accent transition-colors"></span>{t('shop')}</Link></li>
+              <li><Link to="/about" className="flex items-center justify-center md:justify-start gap-2.5 hover:text-brand-accent transition-all duration-300 ltr:hover:translate-x-1 rtl:hover:-translate-x-1 group"><span className="w-2 h-2 rounded-full bg-brand-primary group-hover:bg-brand-accent transition-colors"></span>{t('about')}</Link></li>
+              <li><Link to="/cart" className="flex items-center justify-center md:justify-start gap-2.5 hover:text-brand-accent transition-all duration-300 ltr:hover:translate-x-1 rtl:hover:-translate-x-1 group"><span className="w-2 h-2 rounded-full bg-brand-primary group-hover:bg-brand-accent transition-colors"></span>{t('cart')}</Link></li>
             </ul>
           </div>
 
@@ -101,16 +101,16 @@ export default function Footer() {
               <span className="absolute -bottom-2 end-1/2 translate-x-1/2 md:end-0 md:translate-x-0 w-1/2 h-1 bg-brand-accent rounded-full"></span>
             </h4>
             <ul className="space-y-3 md:space-y-4 text-sm md:text-base text-gray-300">
-              <li className="flex flex-col md:flex-row items-center md:items-start gap-1 md:gap-0">
-                <MapPin className="w-5 h-5 md:w-6 md:h-6 md:ms-3 text-brand-accent shrink-0" />
+              <li className="flex flex-col md:flex-row items-center md:items-start gap-1 md:gap-3">
+                <MapPin className="w-5 h-5 md:w-6 md:h-6 text-brand-accent shrink-0" />
                 <span>{settings.contactAddress}</span>
               </li>
-              <li className="flex flex-col md:flex-row items-center gap-1 md:gap-0">
-                <Phone className="w-5 h-5 md:w-6 md:h-6 md:ms-3 text-brand-accent shrink-0" />
+              <li className="flex flex-col md:flex-row items-center gap-1 md:gap-3">
+                <Phone className="w-5 h-5 md:w-6 md:h-6 text-brand-accent shrink-0" />
                 <span dir="ltr">{settings.contactPhone}</span>
               </li>
-              <li className="flex flex-col md:flex-row items-center gap-1 md:gap-0">
-                <Mail className="w-5 h-5 md:w-6 md:h-6 md:ms-3 text-brand-accent shrink-0" />
+              <li className="flex flex-col md:flex-row items-center gap-1 md:gap-3">
+                <Mail className="w-5 h-5 md:w-6 md:h-6 text-brand-accent shrink-0" />
                 <span>{settings.contactEmail}</span>
               </li>
             </ul>
