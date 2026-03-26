@@ -81,7 +81,7 @@ export default function AdminProducts() {
       setProductForm({ ...productForm, image: url });
     } catch (error) {
       console.error('Error uploading image:', error);
-      toast.error('حدث خطأ أثناء رفع الصورة');
+      toast.error(t('image_upload_error'));
     } finally {
       setIsUploading(false);
     }
@@ -120,7 +120,7 @@ export default function AdminProducts() {
       }));
     } catch (error) {
       console.error('Error uploading additional images:', error);
-      toast.error('حدث خطأ أثناء رفع الصور الإضافية');
+      toast.error(t('additional_images_error'));
     } finally {
       setIsUploading(false);
     }
@@ -143,9 +143,9 @@ export default function AdminProducts() {
         });
         setIsAdding(false);
         resetForm();
-        toast.success('تمت إضافة المنتج بنجاح');
+        toast.success(t('product_success_add'));
       } catch (error: any) {
-        toast.error('حدث خطأ أثناء إضافة المنتج');
+        toast.error(t('product_error_add'));
       }
     }
   };
@@ -161,9 +161,9 @@ export default function AdminProducts() {
         setIsEditing(false);
         setEditingId(null);
         resetForm();
-        toast.success('تم تحديث المنتج بنجاح');
+        toast.success(t('product_success_update'));
       } catch (error: any) {
-        toast.error('حدث خطأ أثناء تحديث المنتج');
+        toast.error(t('product_error_update'));
       }
     }
   };
@@ -196,21 +196,21 @@ export default function AdminProducts() {
   };
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('جميع التصنيفات');
-  const [sortOrder, setSortOrder] = useState('الأحدث أولاً');
+  const [categoryFilter, setCategoryFilter] = useState(t('all_categories'));
+  const [sortOrder, setSortOrder] = useState(t('newest_first'));
 
-  const categories = ['جميع التصنيفات', ...Array.from(new Set(products.map(p => p.category).filter(Boolean)))];
+  const categories = [t('all_categories'), ...Array.from(new Set(products.map(p => p.category).filter(Boolean)))];
 
   const filteredAndSortedProducts = products
     .filter(p => {
       const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                             p.category?.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = categoryFilter === 'جميع التصنيفات' || p.category === categoryFilter;
+      const matchesCategory = categoryFilter === t('all_categories') || p.category === categoryFilter;
       return matchesSearch && matchesCategory;
     })
     .sort((a, b) => {
-      if (sortOrder === 'السعر: من الأقل للأعلى') return a.price - b.price;
-      if (sortOrder === 'السعر: من الأعلى للأقل') return b.price - a.price;
+      if (sortOrder === t('price_low_high')) return a.price - b.price;
+      if (sortOrder === t('price_high_low')) return b.price - a.price;
       return b.id - a.id; // Default to newest first
     });
 
@@ -263,7 +263,7 @@ export default function AdminProducts() {
               className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-2xl overflow-hidden max-h-[90vh] flex flex-col"
             >
               <div className="p-8 border-b border-slate-100 flex justify-between items-center shrink-0 bg-slate-50/50">
-                <h2 className="text-2xl font-black text-slate-800">{isEditing ? 'تعديل المنتج' : 'إضافة منتج جديد'}</h2>
+                <h2 className="text-2xl font-black text-slate-800">{isEditing ? t('edit_product_title') : t('add_new_product_title')}</h2>
                 <button onClick={() => { setIsAdding(false); setIsEditing(false); }} className="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all">
                   <X className="w-7 h-7" />
                 </button>
@@ -273,19 +273,19 @@ export default function AdminProducts() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-6">
                       <div>
-                        <label className="block text-sm font-black text-slate-700 mb-2">اسم المنتج</label>
+                        <label className="block text-sm font-black text-slate-700 mb-2">{t('product_name_label')}</label>
                         <input 
                           type="text" 
                           required
                           value={productForm.name}
                           onChange={(e) => setProductForm({...productForm, name: e.target.value})}
                           className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/5 transition-all font-bold"
-                          placeholder="مثال: طقم دلة خشبي"
+                          placeholder={t('product_name_placeholder')}
                         />
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-black text-slate-700 mb-2">السعر (ر.س)</label>
+                          <label className="block text-sm font-black text-slate-700 mb-2">{t('price_label')}</label>
                           <input 
                             type="number" 
                             required
@@ -297,19 +297,19 @@ export default function AdminProducts() {
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-black text-slate-700 mb-2">التصنيف</label>
+                          <label className="block text-sm font-black text-slate-700 mb-2">{t('category_label')}</label>
                           <input 
                             type="text" 
                             value={productForm.category}
                             onChange={(e) => setProductForm({...productForm, category: e.target.value})}
                             className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/5 transition-all font-bold"
-                            placeholder="مثال: أواني"
+                            placeholder={t('category_placeholder')}
                           />
                         </div>
                       </div>
                       <div className="grid grid-cols-1 gap-4">
                         <div>
-                          <label className="block text-sm font-black text-slate-700 mb-2">التقييم (1-5)</label>
+                          <label className="block text-sm font-black text-slate-700 mb-2">{t('rating_label')}</label>
                           <input 
                             type="number" 
                             min="1"
@@ -322,7 +322,7 @@ export default function AdminProducts() {
                         </div>
                       </div>
                       <div>
-                        <label className="block text-sm font-black text-slate-700 mb-2">الوصف (يدعم النصوص المنسقة)</label>
+                        <label className="block text-sm font-black text-slate-700 mb-2">{t('description_label')}</label>
                         <Editor 
                           value={productForm.description}
                           onChange={(e) => setProductForm({...productForm, description: e.target.value})}
@@ -333,7 +333,7 @@ export default function AdminProducts() {
 
                     <div className="space-y-6">
                       <div>
-                        <label className="block text-sm font-black text-slate-700 mb-2">صورة المنتج الأساسية</label>
+                        <label className="block text-sm font-black text-slate-700 mb-2">{t('main_image_label')}</label>
                         <div className="space-y-4">
                           <div className="aspect-square rounded-3xl overflow-hidden bg-slate-100 border-2 border-dashed border-slate-200 flex items-center justify-center relative group">
                             {productForm.image ? (
@@ -348,7 +348,7 @@ export default function AdminProducts() {
                             ) : (
                               <div className="text-center p-6">
                                 <Upload className="w-10 h-10 text-slate-300 mx-auto mb-2" />
-                                <p className="text-xs text-slate-400 font-bold">ارفع صورة المنتج</p>
+                                <p className="text-xs text-slate-400 font-bold">{t('upload_product_image')}</p>
                               </div>
                             )}
                             <input 
@@ -363,7 +363,7 @@ export default function AdminProducts() {
                             type="url" 
                             value={productForm.image}
                             onChange={(e) => setProductForm({...productForm, image: e.target.value})}
-                            placeholder="أو ضع رابط الصورة هنا..."
+                            placeholder={t('or_paste_image_link')}
                             className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:border-brand-primary text-left text-xs font-bold"
                             dir="ltr"
                           />
@@ -373,7 +373,7 @@ export default function AdminProducts() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-black text-slate-700 mb-4">صور إضافية للمنتج</label>
+                    <label className="block text-sm font-black text-slate-700 mb-4">{t('additional_images_label')}</label>
                     <div className="flex flex-wrap gap-4">
                       {productForm.additionalImages?.map((img, index) => (
                         <div key={index} className="relative w-24 h-24 rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 group">
@@ -402,25 +402,25 @@ export default function AdminProducts() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-black text-slate-700 mb-4">فيديوهات المراجعة</label>
+                    <label className="block text-sm font-black text-slate-700 mb-4">{t('video_reviews_label')}</label>
                     <div className="space-y-4">
                       {productForm.video_reviews?.map((review, index) => (
                         <div key={index} className="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm space-y-4">
                           <div className="flex justify-between items-center">
-                            <h4 className="font-bold text-slate-800">مراجعة رقم {index + 1}</h4>
+                            <h4 className="font-bold text-slate-800">{t('video_review_num', { num: index + 1 })}</h4>
                             <button type="button" onClick={() => {
                               const newReviews = productForm.video_reviews!.filter((_, i) => i !== index);
                               setProductForm({...productForm, video_reviews: newReviews});
-                            }} className="text-sm text-red-500 hover:text-red-700 font-bold">حذف المراجعة</button>
+                            }} className="text-sm text-red-500 hover:text-red-700 font-bold">{t('delete_review')}</button>
                           </div>
 
-                          <input type="text" placeholder="اسم الشخص" value={review.name || ''} onChange={(e) => {
+                          <input type="text" placeholder={t('person_name_ph')} value={review.name || ''} onChange={(e) => {
                             const newReviews = [...productForm.video_reviews!];
                             newReviews[index].name = e.target.value;
                             setProductForm({...productForm, video_reviews: newReviews});
                           }} className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary outline-none" />
                           
-                          <textarea placeholder="وصف المراجعة" value={review.description || ''} onChange={(e) => {
+                          <textarea placeholder={t('review_desc_ph')} value={review.description || ''} onChange={(e) => {
                             const newReviews = [...productForm.video_reviews!];
                             newReviews[index].description = e.target.value;
                             setProductForm({...productForm, video_reviews: newReviews});
@@ -428,10 +428,10 @@ export default function AdminProducts() {
                           
                           <div className="grid grid-cols-3 gap-4">
                             <div className="space-y-2">
-                              <label className="block text-xs font-bold text-slate-500">صورة الشخص</label>
+                              <label className="block text-xs font-bold text-slate-500">{t('person_avatar')}</label>
                               <label className="flex flex-col items-center justify-center h-32 cursor-pointer bg-slate-50 rounded-xl border-2 border-dashed border-slate-200 hover:border-brand-primary transition-colors">
                                 {uploadingFields[`video-avatar-${index}`] ? <div className="animate-spin w-6 h-6 border-2 border-brand-primary border-t-transparent rounded-full" /> : 
-                                 review.avatar ? <img src={review.avatar} className="w-full h-full object-cover rounded-xl" /> : <span className="text-sm font-bold text-slate-400">رفع</span>}
+                                 review.avatar ? <img src={review.avatar} className="w-full h-full object-cover rounded-xl" /> : <span className="text-sm font-bold text-slate-400">{t('upload')}</span>}
                                 <input type="file" accept="image/*" className="hidden" onChange={(e) => {
                                   const file = e.target.files?.[0];
                                   if (file) {
@@ -446,10 +446,10 @@ export default function AdminProducts() {
                             </div>
 
                             <div className="space-y-2">
-                              <label className="block text-xs font-bold text-slate-500">الفيديو</label>
+                              <label className="block text-xs font-bold text-slate-500">{t('video')}</label>
                               <label className="flex flex-col items-center justify-center h-32 cursor-pointer bg-slate-50 rounded-xl border-2 border-dashed border-slate-200 hover:border-brand-primary transition-colors overflow-hidden">
                                 {uploadingFields[`video-url-${index}`] ? <div className="animate-spin w-6 h-6 border-2 border-brand-primary border-t-transparent rounded-full" /> : 
-                                 review.videoUrl ? <video src={review.videoUrl} className="w-full h-full object-cover" controls /> : <span className="text-sm font-bold text-slate-400">رفع</span>}
+                                 review.videoUrl ? <video src={review.videoUrl} className="w-full h-full object-cover" controls /> : <span className="text-sm font-bold text-slate-400">{t('upload')}</span>}
                                 <input type="file" accept="video/*" className="hidden" onChange={(e) => {
                                   const file = e.target.files?.[0];
                                   if (file) {
@@ -464,10 +464,10 @@ export default function AdminProducts() {
                             </div>
 
                             <div className="space-y-2">
-                              <label className="block text-xs font-bold text-slate-500">غلاف الفيديو</label>
+                              <label className="block text-xs font-bold text-slate-500">{t('video_thumb')}</label>
                               <label className="flex flex-col items-center justify-center h-32 cursor-pointer bg-slate-50 rounded-xl border-2 border-dashed border-slate-200 hover:border-brand-primary transition-colors">
                                 {uploadingFields[`video-thumb-${index}`] ? <div className="animate-spin w-6 h-6 border-2 border-brand-primary border-t-transparent rounded-full" /> : 
-                                 review.thumbnailUrl ? <img src={review.thumbnailUrl} className="w-full h-full object-cover rounded-xl" /> : <span className="text-sm font-bold text-slate-400">رفع</span>}
+                                 review.thumbnailUrl ? <img src={review.thumbnailUrl} className="w-full h-full object-cover rounded-xl" /> : <span className="text-sm font-bold text-slate-400">{t('upload')}</span>}
                                 <input type="file" accept="image/*" className="hidden" onChange={(e) => {
                                   const file = e.target.files?.[0];
                                   if (file) {
@@ -485,7 +485,7 @@ export default function AdminProducts() {
                       ))}
                       <button type="button" onClick={() => {
                         setProductForm({...productForm, video_reviews: [...(productForm.video_reviews || []), { name: '', avatar: '', videoUrl: '', thumbnailUrl: '', description: '' }]});
-                      }} className="bg-brand-primary text-white px-4 py-2 rounded-xl font-bold">إضافة فيديو مراجعة</button>
+                      }} className="bg-brand-primary text-white px-4 py-2 rounded-xl font-bold">{t('add_video_review')}</button>
                     </div>
                   </div>
 
@@ -497,7 +497,7 @@ export default function AdminProducts() {
                       onChange={(e) => setProductForm({...productForm, soldOut: e.target.checked})}
                       className="w-5 h-5 text-brand-primary rounded-lg focus:ring-brand-primary border-slate-300"
                     />
-                    <label htmlFor="soldOut" className="text-sm font-black text-amber-900 cursor-pointer select-none">تحديد كمنتج "نفدت الكمية"</label>
+                    <label htmlFor="soldOut" className="text-sm font-black text-amber-900 cursor-pointer select-none">{t('sold_out_check')}</label>
                   </div>
                 </form>
               </div>
@@ -506,7 +506,7 @@ export default function AdminProducts() {
                   إلغاء
                 </button>
                 <button type="submit" form="productForm" className="flex-1 px-6 py-4 bg-brand-primary text-white rounded-2xl font-black hover:bg-brand-secondary transition-all shadow-lg shadow-brand-primary/20">
-                  {isEditing ? 'حفظ التعديلات' : 'إضافة المنتج'}
+                  {isEditing ? t('save_changes_btn') : t('add_product_btn')}
                 </button>
               </div>
             </motion.div>
@@ -528,7 +528,7 @@ export default function AdminProducts() {
               className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-4xl overflow-hidden max-h-[90vh] flex flex-col"
             >
               <div className="p-8 border-b border-slate-100 flex justify-between items-center shrink-0">
-                <h2 className="text-2xl font-black text-slate-800">تفاصيل المنتج</h2>
+                <h2 className="text-2xl font-black text-slate-800">{t('product_details_title')}</h2>
                 <button onClick={() => setIsViewing(false)} className="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all">
                   <X className="w-7 h-7" />
                 </button>
@@ -550,7 +550,7 @@ export default function AdminProducts() {
                   <div className="space-y-8">
                     <div>
                       <span className="px-4 py-1.5 bg-brand-bg text-brand-primary rounded-full text-xs font-black uppercase tracking-wider">
-                        {selectedProduct.category || 'عام'}
+                        {selectedProduct.category || t('all_categories')}
                       </span>
                       <h3 className="text-4xl font-black text-slate-800 mt-4 tracking-tight">{selectedProduct.name}</h3>
                       <p className="text-3xl font-black text-brand-primary mt-4">{selectedProduct.price.toFixed(2)} ر.س</p>
@@ -561,19 +561,19 @@ export default function AdminProducts() {
                       {selectedProduct.description ? (
                          <div className="prose prose-slate prose-sm font-medium leading-relaxed max-w-none prose-headings:font-black prose-p:text-slate-600 prose-a:text-brand-primary" dangerouslySetInnerHTML={{ __html: selectedProduct.description }} />
                       ) : (
-                         <p className="text-slate-600 font-bold leading-relaxed">لا يوجد وصف لهذا المنتج.</p>
+                         <p className="text-slate-600 font-bold leading-relaxed">{t('no_description_msg')}</p>
                       )}
                     </div>
 
                     <div className="grid grid-cols-2 gap-6">
                       <div className="p-6 bg-slate-50 rounded-[1.5rem] border border-slate-100">
-                        <p className="text-xs font-black text-slate-400 mb-1">الحالة</p>
+                        <p className="text-xs font-black text-slate-400 mb-1">{t('status')}</p>
                         <span className={`text-sm font-black ${selectedProduct.soldOut ? 'text-red-500' : 'text-emerald-500'}`}>
-                          {selectedProduct.soldOut ? 'نفدت الكمية' : 'متوفر في المخزون'}
+                          {selectedProduct.soldOut ? t('sold_out_status') : t('in_stock_status')}
                         </span>
                       </div>
                       <div className="p-6 bg-slate-50 rounded-[1.5rem] border border-slate-100">
-                        <p className="text-xs font-black text-slate-400 mb-1">التقييم</p>
+                        <p className="text-xs font-black text-slate-400 mb-1">{t('rating_col')}</p>
                         <span className="text-sm font-black text-amber-500">⭐ {selectedProduct.rating}</span>
                       </div>
                     </div>
@@ -581,7 +581,7 @@ export default function AdminProducts() {
                     <div className="flex gap-4 pt-4">
                       <button onClick={() => openEditModal(selectedProduct)} className="flex-1 bg-brand-primary text-white py-4 rounded-2xl font-black hover:bg-brand-secondary transition-all shadow-lg shadow-brand-primary/20 flex items-center justify-center gap-2">
                         <Edit className="w-5 h-5" />
-                        <span>تعديل المنتج</span>
+                        <span>{t('edit_product_btn')}</span>
                       </button>
                       <button className="p-4 bg-slate-100 text-slate-600 rounded-2xl font-black hover:bg-slate-200 transition-all">
                         <ExternalLink className="w-6 h-6" />
@@ -625,9 +625,9 @@ export default function AdminProducts() {
             onChange={(e) => setSortOrder(e.target.value)}
             className="bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 focus:outline-none focus:border-brand-primary font-black text-slate-700 text-sm cursor-pointer"
           >
-            <option>الأحدث أولاً</option>
-            <option>السعر: من الأقل للأعلى</option>
-            <option>السعر: من الأعلى للأقل</option>
+            <option>{t('newest_first')}</option>
+            <option>{t('price_low_high')}</option>
+            <option>{t('price_high_low')}</option>
           </select>
         </div>
       </div>
@@ -638,12 +638,12 @@ export default function AdminProducts() {
           <table className="w-full text-right">
             <thead>
               <tr className="bg-slate-50/50 border-b border-slate-100">
-                <th className="px-8 py-6 text-xs font-black text-slate-400 uppercase tracking-widest">المنتج</th>
-                <th className="px-8 py-6 text-xs font-black text-slate-400 uppercase tracking-widest">التصنيف</th>
-                <th className="px-8 py-6 text-xs font-black text-slate-400 uppercase tracking-widest">السعر</th>
-                <th className="px-8 py-6 text-xs font-black text-slate-400 uppercase tracking-widest">التقييم</th>
-                <th className="px-8 py-6 text-xs font-black text-slate-400 uppercase tracking-widest">الحالة</th>
-                <th className="px-8 py-6 text-xs font-black text-slate-400 uppercase tracking-widest text-center">الإجراءات</th>
+                <th className="px-8 py-6 text-xs font-black text-slate-400 uppercase tracking-widest">{t('product_col')}</th>
+                <th className="px-8 py-6 text-xs font-black text-slate-400 uppercase tracking-widest">{t('category_label')}</th>
+                <th className="px-8 py-6 text-xs font-black text-slate-400 uppercase tracking-widest">{t('price_col')}</th>
+                <th className="px-8 py-6 text-xs font-black text-slate-400 uppercase tracking-widest">{t('rating_col')}</th>
+                <th className="px-8 py-6 text-xs font-black text-slate-400 uppercase tracking-widest">{t('status')}</th>
+                <th className="px-8 py-6 text-xs font-black text-slate-400 uppercase tracking-widest text-center">{t('actions_col')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -668,7 +668,7 @@ export default function AdminProducts() {
                   </td>
                   <td className="px-8 py-5">
                     <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black bg-slate-100 text-slate-500 uppercase tracking-wider">
-                      {product.category || 'عام'}
+                      {product.category || t('all_categories')}
                     </span>
                   </td>
                   <td className="px-8 py-5 font-black text-brand-primary text-sm">
@@ -686,7 +686,7 @@ export default function AdminProducts() {
                         ? 'bg-red-100 text-red-600' 
                         : 'bg-emerald-100 text-emerald-600'
                     }`}>
-                      {product.soldOut ? 'نفدت الكمية' : 'متوفر'}
+                      {product.soldOut ? t('sold_out_status') : t('in_stock_status')}
                     </span>
                   </td>
                   <td className="px-8 py-5">
@@ -694,14 +694,14 @@ export default function AdminProducts() {
                       <button 
                         onClick={() => openViewModal(product)}
                         className="p-2.5 text-slate-400 hover:text-brand-primary hover:bg-brand-bg rounded-xl transition-all" 
-                        title="عرض"
+                        title={t('view_tooltip')}
                       >
                         <Eye className="w-5 h-5" />
                       </button>
                       <button 
                         onClick={() => openEditModal(product)}
                         className="p-2.5 text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-xl transition-all" 
-                        title="تعديل"
+                        title={t('edit_tooltip')}
                       >
                         <Edit className="w-5 h-5" />
                       </button>
@@ -724,11 +724,11 @@ export default function AdminProducts() {
                               <div className="p-2">
                                 <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 transition-all font-bold text-xs">
                                   <ExternalLink className="w-4 h-4" />
-                                  <span>رابط المنتج</span>
+                                  <span>{t('product_link_btn')}</span>
                                 </button>
                                 <button 
                                   onClick={() => {
-                                    if(confirm('هل أنت متأكد من حذف هذا المنتج؟')) {
+                                    if(confirm(t('delete_confirm_msg'))) {
                                       deleteProduct(product.id);
                                       setActiveDropdown(null);
                                     }
@@ -736,7 +736,7 @@ export default function AdminProducts() {
                                   className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-red-500 hover:bg-red-50 transition-all font-bold text-xs"
                                 >
                                   <Trash2 className="w-4 h-4" />
-                                  <span>حذف المنتج</span>
+                                  <span>{t('delete_product_btn')}</span>
                                 </button>
                               </div>
                             </motion.div>
@@ -754,7 +754,7 @@ export default function AdminProducts() {
         {/* Pagination */}
         <div className="px-8 py-6 border-t border-slate-100 flex items-center justify-between bg-slate-50/30">
           <span className="text-xs text-slate-400 font-black uppercase tracking-widest">
-            صفحة {currentPage} من {totalPages || 1}
+            {t('page_count', { current: currentPage, total: totalPages || 1 })}
           </span>
           <div className="flex gap-3">
             <button 
