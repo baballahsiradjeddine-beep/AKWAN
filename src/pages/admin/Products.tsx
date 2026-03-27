@@ -320,11 +320,13 @@ export default function AdminProducts() {
                       </div>
                       <div>
                         <label className="block text-sm font-black text-slate-700 mb-2">{t('description_label')}</label>
-                        <Editor 
-                          value={productForm.description}
-                          onChange={(e) => setProductForm({...productForm, description: e.target.value})}
-                          containerProps={{ style: { minHeight: '200px', backgroundColor: '#f8fafc', borderRadius: '1rem', border: '1px solid #e2e8f0', direction: 'rtl' } }}
-                        />
+                        <div className="prose prose-slate max-w-none prose-headings:font-black prose-p:text-slate-600 prose-ul:list-disc prose-ul:pr-6 prose-ol:list-decimal prose-ol:pr-6 prose-a:text-brand-primary">
+                          <Editor 
+                            value={productForm.description}
+                            onChange={(e) => setProductForm({...productForm, description: e.target.value})}
+                            containerProps={{ style: { minHeight: '200px', backgroundColor: '#f8fafc', borderRadius: '1rem', border: '1px solid #e2e8f0', direction: 'rtl' } }}
+                          />
+                        </div>
                       </div>
                     </div>
 
